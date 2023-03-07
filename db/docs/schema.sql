@@ -16,7 +16,7 @@ CREATE TABLE "tokens" (
 
 CREATE TABLE "pools" (
   "address" varchar PRIMARY KEY NOT NULL,
-  "dex_id" bigint NOT NULL,
+  "amm_id" bigint NOT NULL,
   "token_a" varchar NOT NULL,
   "token_b" varchar NOT NULL,
   "reserve_a" numeric NOT NULL DEFAULT 0,
@@ -33,7 +33,7 @@ CREATE TABLE "amms" (
   "algorithm_type" varchar NOT NULL DEFAULT ''
 );
 
-ALTER TABLE "pools" ADD FOREIGN KEY ("dex_id") REFERENCES "amms" ("amm_id");
+ALTER TABLE "pools" ADD FOREIGN KEY ("amm_id") REFERENCES "amms" ("amm_id");
 
 ALTER TABLE "pools" ADD FOREIGN KEY ("token_a") REFERENCES "tokens" ("address");
 

@@ -1,0 +1,22 @@
+-- name: CreateAmm :one
+INSERT INTO amms (
+  dex_name,
+  fee,
+  router_address,
+  algorithm_type
+) VALUES (
+  $1, $2, $3, $4
+) RETURNING *;
+
+-- name: GetAmmById :one
+SELECT * FROM amms
+WHERE amm_id = $1 LIMIT 1;
+
+-- name: GetAmmByDEX :many
+SELECT * FROM amms
+WHERE dex_name = $1
+ORDER BY dex_name;
+
+-- name: DeleteAmm :exec
+DELETE FROM amms
+WHERE amm_id = $1;
