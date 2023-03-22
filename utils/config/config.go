@@ -14,9 +14,9 @@ type Config struct {
 	RPCAddress    string `mapstructure:"RPC_ADDRESS"`
 }
 
-func LoadConfig(path string) (config Config, err error) {
+func LoadConfig(name, path string) (config Config, err error) {
 	viper.AddConfigPath(path)
-	viper.SetConfigName("app")
+	viper.SetConfigName(name)
 	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
