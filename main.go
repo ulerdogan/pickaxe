@@ -1,14 +1,13 @@
 package main
 
 import (
-	"log"
-
 	"github.com/ulerdogan/pickaxe/cmd"
+	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
 func main() {
 	err := cmd.Execute()
 	if err != nil {
-		log.Fatalf("couldn't start the app: %v", err)
+		logger.Error(err, "couldn't start the app")
 	}
 }

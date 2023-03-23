@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
-	//"github.com/ulerdogan/pickaxe/utils"
+	"github.com/ulerdogan/pickaxe/indexer"
 )
 
 var testnet bool
@@ -23,7 +21,11 @@ var rootCmd = &cobra.Command{
 				  data flow for https://fibrous.finance.`,
 	Version: "v0(dev)",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("app will be running soon in ", testnet)
+		if testnet {
+			indexer.Init("app_test")
+		} else {
+			indexer.Init("app")
+		}
 	},
 }
 

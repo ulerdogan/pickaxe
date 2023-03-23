@@ -5,12 +5,12 @@ import (
 )
 
 type Config struct {
+	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
 	DBDriver      string `mapstructure:"DB_DRIVER"`
 	DBUsername    string `mapstructure:"DB_USERNAME"`
 	DBPassword    string `mapstructure:"DB_PASSWORD"`
 	DBName        string `mapstructure:"DB_NAME"`
 	DBPort        string `mapstructure:"DB_PORT"`
-	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
 	RPCAddress    string `mapstructure:"RPC_ADDRESS"`
 }
 
