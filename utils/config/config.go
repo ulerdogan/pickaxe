@@ -11,6 +11,8 @@ type Config struct {
 	DBPassword    string `mapstructure:"DB_PASSWORD"`
 	DBName        string `mapstructure:"DB_NAME"`
 	DBPort        string `mapstructure:"DB_PORT"`
+	DBSource      string `mapstructure:"DB_SOURCE"`
+	MigrationURL  string `mapstructure:"MIGRATION_URL"`
 	RPCAddress    string `mapstructure:"RPC_ADDRESS"`
 }
 
