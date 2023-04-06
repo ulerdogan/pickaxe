@@ -3,8 +3,8 @@ package starknet_client
 import (
 	"context"
 
-	rpc "github.com/dontpanicdao/caigo/rpcv01"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
+	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	config "github.com/ulerdogan/pickaxe/utils/config"
 )
 

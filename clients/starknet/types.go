@@ -1,7 +1,7 @@
 package starknet_client
 
 import (
-	rpc "github.com/dontpanicdao/caigo/rpcv01"
+	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 )
 
 type starknetClient struct {

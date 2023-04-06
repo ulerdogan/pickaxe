@@ -1,16 +1,27 @@
 package starknet_client
 
 import (
-	rpc "github.com/dontpanicdao/caigo/rpcv01"
 	"github.com/dontpanicdao/caigo/types"
+	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 )
 
 func getBlockId(number uint64) rpc.BlockID {
+	if number == 0 {
+		return rpc.BlockID{
+			Tag: "latest",
+		}
+	}
+
 	return rpc.BlockID{
 		Number: &number,
 	}
 }
 
-func getAddressHash(address string) types.Hash {
-	return types.HexToHash(address)
+func getAddressHash(address string) *types.Hash {
+	if address == "" {
+		return nil
+	}
+
+	h := types.HexToHash(address)
+	return &h
 }
