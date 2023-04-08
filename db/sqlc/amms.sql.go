@@ -14,16 +14,18 @@ INSERT INTO amms (
   dex_name,
   fee,
   router_address,
+  key,
   algorithm_type
 ) VALUES (
-  $1, $2, $3, $4
-) RETURNING amm_id, dex_name, fee, router_address, algorithm_type
+  $1, $2, $3, $4, $5
+) RETURNING amm_id, dex_name, fee, router_address, key, algorithm_type
 `
 
 type CreateAmmParams struct {
 	DexName       string `json:"dex_name"`
 	Fee           string `json:"fee"`
 	RouterAddress string `json:"router_address"`
+	Key           string `json:"key"`
 	AlgorithmType string `json:"algorithm_type"`
 }
 
@@ -32,6 +34,7 @@ func (q *Queries) CreateAmm(ctx context.Context, arg CreateAmmParams) (Amm, erro
 		arg.DexName,
 		arg.Fee,
 		arg.RouterAddress,
+		arg.Key,
 		arg.AlgorithmType,
 	)
 	var i Amm
@@ -40,6 +43,7 @@ func (q *Queries) CreateAmm(ctx context.Context, arg CreateAmmParams) (Amm, erro
 		&i.DexName,
 		&i.Fee,
 		&i.RouterAddress,
+		&i.Key,
 		&i.AlgorithmType,
 	)
 	return i, err
@@ -56,7 +60,7 @@ func (q *Queries) DeleteAmm(ctx context.Context, ammID int64) error {
 }
 
 const getAmmByDEX = `-- name: GetAmmByDEX :many
-SELECT amm_id, dex_name, fee, router_address, algorithm_type FROM amms
+SELECT amm_id, dex_name, fee, router_address, key, algorithm_type FROM amms
 WHERE dex_name = $1
 ORDER BY dex_name
 `
@@ -75,6 +79,7 @@ func (q *Queries) GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error
 			&i.DexName,
 			&i.Fee,
 			&i.RouterAddress,
+			&i.Key,
 			&i.AlgorithmType,
 		); err != nil {
 			return nil, err
@@ -91,7 +96,7 @@ func (q *Queries) GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error
 }
 
 const getAmmById = `-- name: GetAmmById :one
-SELECT amm_id, dex_name, fee, router_address, algorithm_type FROM amms
+SELECT amm_id, dex_name, fee, router_address, key, algorithm_type FROM amms
 WHERE amm_id = $1 LIMIT 1
 `
 
@@ -103,7 +108,36 @@ func (q *Queries) GetAmmById(ctx context.Context, ammID int64) (Amm, error) {
 		&i.DexName,
 		&i.Fee,
 		&i.RouterAddress,
+		&i.Key,
 		&i.AlgorithmType,
 	)
 	return i, err
+}
+
+const getKeys = `-- name: GetKeys :many
+SELECT DISTINCT key FROM amms
+ORDER BY key
+`
+
+func (q *Queries) GetKeys(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getKeys)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []string{}
+	for rows.Next() {
+		var key string
+		if err := rows.Scan(&key); err != nil {
+			return nil, err
+		}
+		items = append(items, key)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

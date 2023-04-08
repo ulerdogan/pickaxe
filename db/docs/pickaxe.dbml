@@ -14,26 +14,20 @@ Table tokens as T {
   name varchar [not null]
   symbol varchar [not null]
   decimals int [not null]
-
   base bool [not null, default:false]
   native bool [not null, default:false]
-
   ticker varchar [not null, default:""]
   price varchar [not null, default:0]
-
   created_at timestamptz [not null, default: `now()`]
 }
 
 Table pools as P {
   address varchar [pk, not null]
   amm_id bigint [not null, ref: > A.amm_id]
-  
   token_a varchar [not null, ref: > T.address]
   token_b varchar [not null, ref: > T.address]
-  
   reserve_a numeric [not null, default:0]
   reserve_b numeric [not null, default:0]
-
   total_value numeric [not null, default:0]
   last_updated timestamptz [not null, default: '0001-01-01']
 
@@ -44,7 +38,9 @@ Table amms as A {
   dex_name varchar [not null]
   fee numeric [not null]
   router_address varchar [not null]
+  key varchar [not null, default:""]
   algorithm_type varchar [not null, default:""]
+  created_at timestamptz [not null, default: `now()`]
 }
 
 Table indexer as I {

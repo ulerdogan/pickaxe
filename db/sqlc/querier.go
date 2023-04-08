@@ -20,6 +20,7 @@ type Querier interface {
 	GetAmmById(ctx context.Context, ammID int64) (Amm, error)
 	GetBaseTokens(ctx context.Context) ([]Token, error)
 	GetIndexerStatus(ctx context.Context) (Indexer, error)
+	GetKeys(ctx context.Context) ([]string, error)
 	GetNativeTokens(ctx context.Context) ([]Token, error)
 	GetPoolByAddress(ctx context.Context, address string) (Pool, error)
 	GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error)

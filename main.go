@@ -8,6 +8,6 @@ import (
 func main() {
 	err := cmd.Execute()
 	if err != nil {
-		logger.Error(err, "couldn't start the app")
+		logger.Error(err, "cannot start the app")
 	}
 }

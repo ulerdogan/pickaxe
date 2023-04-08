@@ -42,6 +42,10 @@ pickaxe
 // Run the app (if the code has been built)
 ./bin/pickaxe
 
+// For testnet envs - run with testnet flag
+pickaxe -t
+pickaxe --testnet
+
 ```
 
 Notes:

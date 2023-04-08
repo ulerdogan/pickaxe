@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-04-08T01:01:36.961Z
+-- Generated at: 2023-04-08T21:54:04.135Z
 
 CREATE TABLE "tokens" (
   "address" varchar PRIMARY KEY NOT NULL,
@@ -30,7 +30,9 @@ CREATE TABLE "amms" (
   "dex_name" varchar NOT NULL,
   "fee" numeric NOT NULL,
   "router_address" varchar NOT NULL,
-  "algorithm_type" varchar NOT NULL DEFAULT ''
+  "key" varchar NOT NULL DEFAULT '',
+  "algorithm_type" varchar NOT NULL DEFAULT '',
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "indexer" (

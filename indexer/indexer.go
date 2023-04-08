@@ -55,7 +55,7 @@ func (ix *indexer) syncBlockFromDB() {
 		lb, err := ix.client.LastBlock()
 		ix.lastQueried = &lb
 		ix.store.InitIndexer(context.Background(), sql.NullInt64{Int64: int64(lb), Valid: true})
-		logger.Info("indexer initialized with last block in the db: " + fmt.Sprint(lb))
+		logger.Info("indexer initialized with the last block in the db: " + fmt.Sprint(lb))
 		if err != nil {
 			logger.Error(err, "cannot get the last block")
 			return
@@ -73,7 +73,7 @@ func (ix *indexer) QueryBlocks() {
 
 	lastBlock, err := ix.client.LastBlock()
 	if err != nil {
-		logger.Error(err, "couldn't get last block")
+		logger.Error(err, "cannot get the last block")
 	}
 
 	if lastBlock > *ix.lastQueried {

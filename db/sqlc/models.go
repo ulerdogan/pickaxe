@@ -14,6 +14,7 @@ type Amm struct {
 	DexName       string `json:"dex_name"`
 	Fee           string `json:"fee"`
 	RouterAddress string `json:"router_address"`
+	Key           string `json:"key"`
 	AlgorithmType string `json:"algorithm_type"`
 }
 
