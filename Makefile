@@ -24,4 +24,10 @@ migrateup:
 migratedown:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down
 
-.PHONY: sqlc db_docs db_schema postgres createdb migrateup migratedown
+build-go:
+	go build -o bin/pickaxe -v .
+
+install-go:
+	go install
+
+.PHONY: sqlc db_docs db_schema postgres createdb migrateup migratedown build-go install-go

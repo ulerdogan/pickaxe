@@ -27,11 +27,11 @@ func TestCall(t *testing.T) {
 	fmt.Println(r)
 }
 
-func TestGet(t *testing.T) {
+func TestGetEvents(t *testing.T) {
 	cnfg, _ := config.LoadConfig("app", "../..")
 	c := NewStarknetClient(cnfg)
 
-	events, err := c.Get(
+	events, err := c.GetEvents(
 		29588,
 		29589,
 		"0x04d0390b777b424e43839cd1e744799f3de6c176c7e32c1812a41dbd9c19db6a",
@@ -41,4 +41,13 @@ func TestGet(t *testing.T) {
 
 	assert.Nil(t, err)
 	fmt.Printf("Number of events found: %v\n", len(events))
+}
+
+func TestLastBlock(t *testing.T) {
+	cnfg, _ := config.LoadConfig("app", "../..")
+	c := NewStarknetClient(cnfg)
+
+	block, err := c.LastBlock()
+	assert.Nil(t, err)
+	fmt.Printf("Block number: %v\n", block)
 }

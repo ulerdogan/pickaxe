@@ -17,16 +17,31 @@ make postgres
 // Creates database in the container
 make createdb
 
-// Install migration tool (macos version)
+// Install migration tool (in macos)
 brew install golang-migrate
 
 // Create database tables
 make migrateup
+
+// To install the app (preferred)
+make install-go
+
+// To build Go code (optional)
+make build-go
 ```
+
+```
+
+Notes:
+* You should prepare a initial tokens - pools list for the initial run. The indexer will accept this point as a synced point.
 
 <hr/>
 
-Tools
+Requirements & Tools
+* GoLang (https://go.dev/)
 * [dbml](https://dbml-lang.org)
 * [docker](https://docker.com/)
 * [golang-migrate](https://github.com/golang-migrate/migrate)
+* [caigo](https://github.com/dontpanicdao/caigo)
+* [caigo-rpcv02](https://github.com/ulerdogan/caigo-rpcv02) (customized rpcv02 of caigo for pickaxe)
+* [gocron](https://github.com/go-co-op/gocron)
