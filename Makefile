@@ -24,6 +24,9 @@ migrateup:
 migratedown:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down
 
+make go:
+	go run main.go
+
 build-go:
 	go build -o bin/pickaxe -v .
 

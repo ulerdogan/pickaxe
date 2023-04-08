@@ -23,8 +23,7 @@ type indexer struct {
 	poolIndexes chan Item
 
 	scheduler  *gocron.Scheduler
-	storeMutex *sync.Mutex
-	stateMutex *sync.Mutex
+	ixMutex *sync.Mutex
 }
 
 type Item struct {
@@ -39,8 +38,7 @@ func NewIndexer(str db.Store, cli starknet.Client, cnfg config.Config) *indexer 
 		poolIndexes: make(chan Item),
 
 		scheduler:  gocron.NewScheduler(time.UTC),
-		storeMutex: &sync.Mutex{},
-		stateMutex: &sync.Mutex{},
+		ixMutex: &sync.Mutex{},
 	}
 
 	ix.syncBlockFromDB()
@@ -48,6 +46,9 @@ func NewIndexer(str db.Store, cli starknet.Client, cnfg config.Config) *indexer 
 }
 
 func (ix *indexer) syncBlockFromDB() {
+	ix.ixMutex.Lock()
+	defer ix.ixMutex.Unlock()
+	
 	// set indexer records in db if not exists
 	ixStatus, err := ix.store.GetIndexerStatus(context.Background())
 	if err == sql.ErrNoRows || ixStatus.LastQueried.Int64 == 0 {
@@ -67,8 +68,8 @@ func (ix *indexer) syncBlockFromDB() {
 }
 
 func (ix *indexer) QueryBlocks() {
-	ix.stateMutex.Lock()
-	defer ix.stateMutex.Unlock()
+	ix.ixMutex.Lock()
+	defer ix.ixMutex.Unlock()
 
 	lastBlock, err := ix.client.LastBlock()
 	if err != nil {

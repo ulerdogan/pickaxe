@@ -30,6 +30,18 @@ make install-go
 make build-go
 ```
 
+Run the app
+
+``` bash
+// Run the app (basic version)
+make go
+
+// Run the app (if the app has been installed)
+pickaxe
+
+// Run the app (if the code has been built)
+./bin/pickaxe
+
 ```
 
 Notes:
