@@ -19,6 +19,7 @@ type indexer struct {
 	client starknet.Client
 	config config.Config
 
+	isIndexing bool
 	lastQueried *uint64
 	poolIndexes chan Item
 
@@ -68,9 +69,15 @@ func (ix *indexer) syncBlockFromDB() {
 }
 
 func (ix *indexer) QueryBlocks() {
+	if ix.isIndexing {
+		return
+	}
+	
 	ix.ixMutex.Lock()
 	defer ix.ixMutex.Unlock()
 
+	ix.isIndexing = true
+	
 	lastBlock, err := ix.client.LastBlock()
 	if err != nil {
 		logger.Error(err, "cannot get the last block")
@@ -85,4 +92,6 @@ func (ix *indexer) QueryBlocks() {
 		// FIXME: remove the part
 		logger.Info("no new block: " + fmt.Sprint(lastBlock))
 	}
+
+	ix.isIndexing = false
 }
