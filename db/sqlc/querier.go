@@ -19,7 +19,7 @@ type Querier interface {
 	GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error)
 	GetAmmById(ctx context.Context, ammID int64) (Amm, error)
 	GetBaseTokens(ctx context.Context) ([]Token, error)
-	GetIndexerStatus(ctx context.Context, id int32) (Indexer, error)
+	GetIndexerStatus(ctx context.Context) (Indexer, error)
 	GetNativeTokens(ctx context.Context) ([]Token, error)
 	GetPoolByAddress(ctx context.Context, address string) (Pool, error)
 	GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error)

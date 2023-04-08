@@ -9,7 +9,7 @@ INSERT INTO indexer (
 
 -- name: GetIndexerStatus :one
 SELECT * FROM indexer
-WHERE id = $1 LIMIT 1;
+WHERE id = 0 LIMIT 1;
 
 -- name: UpdateIndexerStatus :one
 UPDATE indexer

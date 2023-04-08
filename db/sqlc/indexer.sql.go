@@ -12,11 +12,11 @@ import (
 
 const getIndexerStatus = `-- name: GetIndexerStatus :one
 SELECT id, last_queried, last_updated FROM indexer
-WHERE id = $1 LIMIT 1
+WHERE id = 0 LIMIT 1
 `
 
-func (q *Queries) GetIndexerStatus(ctx context.Context, id int32) (Indexer, error) {
-	row := q.db.QueryRowContext(ctx, getIndexerStatus, id)
+func (q *Queries) GetIndexerStatus(ctx context.Context) (Indexer, error) {
+	row := q.db.QueryRowContext(ctx, getIndexerStatus)
 	var i Indexer
 	err := row.Scan(&i.ID, &i.LastQueried, &i.LastUpdated)
 	return i, err
