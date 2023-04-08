@@ -6,6 +6,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Querier interface {
@@ -18,13 +19,16 @@ type Querier interface {
 	GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error)
 	GetAmmById(ctx context.Context, ammID int64) (Amm, error)
 	GetBaseTokens(ctx context.Context) ([]Token, error)
+	GetIndexerStatus(ctx context.Context, id int32) (Indexer, error)
 	GetNativeTokens(ctx context.Context) ([]Token, error)
 	GetPoolByAddress(ctx context.Context, address string) (Pool, error)
 	GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error)
 	GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) ([]Pool, error)
 	GetPoolsByToken(ctx context.Context, tokenA string) ([]Pool, error)
 	GetTokenByAddress(ctx context.Context, address string) (Token, error)
+	InitIndexer(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
 	UpdateBaseNativeStatus(ctx context.Context, arg UpdateBaseNativeStatusParams) (Token, error)
+	UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
 	UpdateTicker(ctx context.Context, arg UpdateTickerParams) (Token, error)
 }
 

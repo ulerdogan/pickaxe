@@ -46,3 +46,9 @@ Table amms as A {
   router_address varchar [not null]
   algorithm_type varchar [not null, default:""]
 }
+
+Table indexer as I {
+  id int [pk, not null]
+  last_queried bigint [default:0]
+  last_updated timestamptz [default: '0001-01-01']
+}

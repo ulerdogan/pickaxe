@@ -5,6 +5,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -14,6 +15,12 @@ type Amm struct {
 	Fee           string `json:"fee"`
 	RouterAddress string `json:"router_address"`
 	AlgorithmType string `json:"algorithm_type"`
+}
+
+type Indexer struct {
+	ID          int32         `json:"id"`
+	LastQueried sql.NullInt64 `json:"last_queried"`
+	LastUpdated sql.NullTime  `json:"last_updated"`
 }
 
 type Pool struct {

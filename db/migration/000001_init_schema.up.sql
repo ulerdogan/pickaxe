@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-03-07T18:35:24.222Z
+-- Generated at: 2023-04-08T01:01:36.961Z
 
 CREATE TABLE "tokens" (
   "address" varchar PRIMARY KEY NOT NULL,
@@ -31,6 +31,12 @@ CREATE TABLE "amms" (
   "fee" numeric NOT NULL,
   "router_address" varchar NOT NULL,
   "algorithm_type" varchar NOT NULL DEFAULT ''
+);
+
+CREATE TABLE "indexer" (
+  "id" int PRIMARY KEY NOT NULL,
+  "last_queried" bigint DEFAULT 0,
+  "last_updated" timestamptz DEFAULT '0001-01-01'
 );
 
 ALTER TABLE "pools" ADD FOREIGN KEY ("amm_id") REFERENCES "amms" ("amm_id");
