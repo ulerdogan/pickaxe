@@ -3,16 +3,11 @@ package indexer
 import (
 	"database/sql"
 
-	"github.com/gin-gonic/gin"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	"github.com/ulerdogan/pickaxe/db/migration"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	config "github.com/ulerdogan/pickaxe/utils/config"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
-)
-
-var (
-	router = gin.Default()
 )
 
 func Init(environment string) {
@@ -47,6 +42,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	setupJobs(ix)
 	go ix.scheduler.StartBlocking()
 
-	// run gin server
-	router.Run(cnfg.ServerAddress)
+	// setup n run gin server
+	ix.mapUrls()
+	ix.router.Run(cnfg.ServerAddress)
 }

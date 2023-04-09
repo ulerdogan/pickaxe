@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
@@ -16,15 +17,16 @@ import (
 
 type indexer struct {
 	store  db.Store
+	router *gin.Engine
 	client starknet.Client
 	config config.Config
 
-	isIndexing bool
+	isIndexing  bool
 	lastQueried *uint64
 	poolIndexes chan Item
 
-	scheduler  *gocron.Scheduler
-	ixMutex *sync.Mutex
+	scheduler *gocron.Scheduler
+	ixMutex   *sync.Mutex
 }
 
 type Item struct {
@@ -34,12 +36,13 @@ type Item struct {
 func NewIndexer(str db.Store, cli starknet.Client, cnfg config.Config) *indexer {
 	ix := &indexer{
 		store:       str,
+		router:      gin.Default(),
 		client:      cli,
 		config:      cnfg,
 		poolIndexes: make(chan Item),
 
-		scheduler:  gocron.NewScheduler(time.UTC),
-		ixMutex: &sync.Mutex{},
+		scheduler: gocron.NewScheduler(time.UTC),
+		ixMutex:   &sync.Mutex{},
 	}
 
 	ix.syncBlockFromDB()
@@ -49,7 +52,7 @@ func NewIndexer(str db.Store, cli starknet.Client, cnfg config.Config) *indexer 
 func (ix *indexer) syncBlockFromDB() {
 	ix.ixMutex.Lock()
 	defer ix.ixMutex.Unlock()
-	
+
 	// set indexer records in db if not exists
 	ixStatus, err := ix.store.GetIndexerStatus(context.Background())
 	if err == sql.ErrNoRows || ixStatus.LastQueried.Int64 == 0 {
@@ -72,12 +75,12 @@ func (ix *indexer) QueryBlocks() {
 	if ix.isIndexing {
 		return
 	}
-	
+
 	ix.ixMutex.Lock()
 	defer ix.ixMutex.Unlock()
 
 	ix.isIndexing = true
-	
+
 	lastBlock, err := ix.client.LastBlock()
 	if err != nil {
 		logger.Error(err, "cannot get the last block")
