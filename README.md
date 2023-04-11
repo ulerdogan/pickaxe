@@ -45,10 +45,6 @@ pickaxe
 // For testnet envs - run with testnet flag
 pickaxe -t
 pickaxe --testnet
-
-// To initialize the app with the first state - run with init command
-pickaxe init
-
 ```
 
 Notes:
