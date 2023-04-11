@@ -2,14 +2,12 @@ package init_db
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"io"
 	"os"
 	"strconv"
 
 	"github.com/dontpanicdao/caigo/types"
-	_ "github.com/lib/pq"
 	"github.com/shopspring/decimal"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
@@ -48,31 +46,22 @@ var (
 )
 
 func init() {
-	cnfg, _ := config.LoadConfig("app", "../..")
-	conn, err := sql.Open(cnfg.DBDriver, cnfg.DBSource)
-	if err != nil {
-		logger.Error(err, "cannot connect to the db")
-	}
-
-	client := starknet.NewStarknetClient(cnfg)
-	store := db.NewStore(conn)
-
 	// FIXME: fix for to be runned from the init page
-	tokensFile, err := os.Open("./states/tokens.json")
+	tokensFile, err := os.Open("./db/init/states/tokens.json")
 	if err != nil {
 		logger.Error(err, "cannot get tokens json file")
 		return
 	}
 	defer tokensFile.Close()
 
-	ammsFile, err := os.Open("./states/amm.json")
+	ammsFile, err := os.Open("./db/init/states/amm.json")
 	if err != nil {
 		logger.Error(err, "cannot get amms json file")
 		return
 	}
 	defer ammsFile.Close()
 
-	poolsFile, err := os.Open("./states/pools.json")
+	poolsFile, err := os.Open("./db/init/states/pools.json")
 	if err != nil {
 		logger.Error(err, "cannot get pools json file")
 		return
@@ -93,10 +82,6 @@ func init() {
 	tokens = resultTokens["tokens"]
 	amms = resultAmms["amms"]
 	pools = resultPools["pools"]
-
-	initAmmsToDB(store)
-	initTokensToDB(store, client)
-	initPoolsToDB(store)
 }
 
 func initTokensToDB(store db.Store, c starknet.Client) {
@@ -198,7 +183,11 @@ func getTokenDecimal(c starknet.Client, address string) (*int, error) {
 	return &decimal, nil
 }
 
-func Init() {
+func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 	//TODO: add initial reserves logic
 	logger.Info("first state initialization runned")
+
+	initAmmsToDB(store)
+	initTokensToDB(store, client)
+	initPoolsToDB(store)
 }
