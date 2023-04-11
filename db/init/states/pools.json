@@ -4,24 +4,28 @@
             "address": "0x010884171baf1914edc28d7afb619b40a4051cfae78a094a55d230f19e944a28",
             "token_a": "eth",
             "token_b": "usdc",
+            "extra_data": "1",
             "amm_id": 1
         },
         {
             "address": "0x010884171baf1914edc28d7afb619b40a4051cfae78a094a55d230f19e944a28",
             "token_a": "dai",
             "token_b": "eth",
+            "extra_data": "2",
             "amm_id": 1
         },
         {
             "address": "0x010884171baf1914edc28d7afb619b40a4051cfae78a094a55d230f19e944a28",
             "token_a": "wbtc",
             "token_b": "usdc",
+            "extra_data": "3",
             "amm_id": 1
         },
         {
             "address": "0x010884171baf1914edc28d7afb619b40a4051cfae78a094a55d230f19e944a28",
             "token_a": "eth",
             "token_b": "usdt",
+            "extra_data": "4",
             "amm_id": 1
         },
 

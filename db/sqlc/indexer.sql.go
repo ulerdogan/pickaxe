@@ -41,7 +41,7 @@ func (q *Queries) InitIndexer(ctx context.Context, lastQueried sql.NullInt64) (I
 
 const updateIndexerStatus = `-- name: UpdateIndexerStatus :one
 UPDATE indexer
-SET last_queried = $1 AND last_updated = NOW()
+SET last_queried = $1, last_updated = NOW()
 WHERE id = 0
 RETURNING id, last_queried, last_updated
 `

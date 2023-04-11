@@ -31,6 +31,8 @@ type Querier interface {
 	InitIndexer(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
 	UpdateBaseNativeStatus(ctx context.Context, arg UpdateBaseNativeStatusParams) (Token, error)
 	UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
+	UpdatePoolExtraData(ctx context.Context, arg UpdatePoolExtraDataParams) (PoolsV2, error)
+	UpdatePoolReserves(ctx context.Context, arg UpdatePoolReservesParams) (PoolsV2, error)
 	UpdateTicker(ctx context.Context, arg UpdateTickerParams) (Token, error)
 }
 

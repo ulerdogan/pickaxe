@@ -28,6 +28,18 @@ SELECT * FROM pools_v2
 WHERE amm_id = $1
 ORDER BY address;
 
+-- name: UpdatePoolReserves :one
+UPDATE pools_v2
+SET reserve_a = $1, reserve_b = $2, last_updated = NOW()
+WHERE pool_id = $3
+RETURNING *;
+
+-- name: UpdatePoolExtraData :one
+UPDATE pools_v2
+SET extra_data = $2
+WHERE pool_id = $1
+RETURNING *;
+ 
 -- name: DeletePool :exec
 DELETE FROM pools_v2
 WHERE address = $1;

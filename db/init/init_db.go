@@ -2,6 +2,7 @@ package init_db
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"io"
 	"os"
@@ -33,10 +34,11 @@ type amm struct {
 }
 
 type pool struct {
-	Address string `json:"address"`
-	TokenA  string `json:"token_a"`
-	TokenB  string `json:"token_b"`
-	AmmID   int    `json:"amm_id"`
+	Address   string `json:"address"`
+	TokenA    string `json:"token_a"`
+	TokenB    string `json:"token_b"`
+	ExtraData string `json:"extra_data,omitempty"`
+	AmmID     int    `json:"amm_id"`
 }
 
 var (
@@ -149,7 +151,7 @@ func initPoolsToDB(store db.Store) {
 		ta, _ := store.GetTokenBySymbol(context.Background(), p.TokenA)
 		tb, _ := store.GetTokenBySymbol(context.Background(), p.TokenB)
 
-		_, err := store.CreatePool(context.Background(), db.CreatePoolParams{
+		pool, err := store.CreatePool(context.Background(), db.CreatePoolParams{
 			Address: p.Address,
 			TokenA:  ta.Address,
 			TokenB:  tb.Address,
@@ -159,6 +161,13 @@ func initPoolsToDB(store db.Store) {
 		if err != nil {
 			logger.Error(err, "cannot create pool: "+p.Address)
 			continue
+		}
+
+		if p.ExtraData != "" {
+			store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
+				PoolID:    pool.PoolID,
+				ExtraData: sql.NullString{String: p.ExtraData, Valid: true},
+			})
 		}
 
 		succesfulls++

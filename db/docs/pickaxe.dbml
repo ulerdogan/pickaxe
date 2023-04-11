@@ -32,6 +32,7 @@ Table pools_v2 as P2 {
   fee numeric [not null]
   total_value numeric [not null, default:0]
   last_updated timestamptz [not null, default: '0001-01-01']
+  extra_data varchar
 }
 
 Table pools_v3 as P3 {

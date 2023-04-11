@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-04-11T02:11:45.395Z
+-- Generated at: 2023-04-11T21:03:19.095Z
 
 CREATE TABLE "tokens" (
   "address" varchar PRIMARY KEY NOT NULL,
@@ -24,7 +24,8 @@ CREATE TABLE "pools_v2" (
   "reserve_b" numeric NOT NULL DEFAULT 0,
   "fee" numeric NOT NULL,
   "total_value" numeric NOT NULL DEFAULT 0,
-  "last_updated" timestamptz NOT NULL DEFAULT '0001-01-01'
+  "last_updated" timestamptz NOT NULL DEFAULT '0001-01-01',
+  "extra_data" varchar
 );
 
 CREATE TABLE "pools_v3" (

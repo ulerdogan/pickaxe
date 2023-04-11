@@ -13,6 +13,6 @@ WHERE id = 0 LIMIT 1;
 
 -- name: UpdateIndexerStatus :one
 UPDATE indexer
-SET last_queried = $1 AND last_updated = NOW()
+SET last_queried = $1, last_updated = NOW()
 WHERE id = 0
 RETURNING *;

@@ -26,18 +26,21 @@ type Indexer struct {
 }
 
 type PoolsV2 struct {
-	Address     string    `json:"address"`
-	AmmID       int64     `json:"amm_id"`
-	TokenA      string    `json:"token_a"`
-	TokenB      string    `json:"token_b"`
-	ReserveA    string    `json:"reserve_a"`
-	ReserveB    string    `json:"reserve_b"`
-	Fee         string    `json:"fee"`
-	TotalValue  string    `json:"total_value"`
-	LastUpdated time.Time `json:"last_updated"`
+	PoolID      int64          `json:"pool_id"`
+	Address     string         `json:"address"`
+	AmmID       int64          `json:"amm_id"`
+	TokenA      string         `json:"token_a"`
+	TokenB      string         `json:"token_b"`
+	ReserveA    string         `json:"reserve_a"`
+	ReserveB    string         `json:"reserve_b"`
+	Fee         string         `json:"fee"`
+	TotalValue  string         `json:"total_value"`
+	LastUpdated time.Time      `json:"last_updated"`
+	ExtraData   sql.NullString `json:"extra_data"`
 }
 
 type PoolsV3 struct {
+	PoolID  int64  `json:"pool_id"`
 	Address string `json:"address"`
 	AmmID   int64  `json:"amm_id"`
 	TokenA  string `json:"token_a"`

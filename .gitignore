@@ -2,3 +2,4 @@ dbml-error.log
 .DS_Store
 bin/
 notes.md
+api/
