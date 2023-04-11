@@ -11,7 +11,7 @@ import (
 
 type Querier interface {
 	CreateAmm(ctx context.Context, arg CreateAmmParams) (Amm, error)
-	CreatePool(ctx context.Context, arg CreatePoolParams) (Pool, error)
+	CreatePool(ctx context.Context, arg CreatePoolParams) (PoolsV2, error)
 	CreateToken(ctx context.Context, arg CreateTokenParams) (Token, error)
 	DeleteAmm(ctx context.Context, ammID int64) error
 	DeletePool(ctx context.Context, address string) error
@@ -22,11 +22,12 @@ type Querier interface {
 	GetIndexerStatus(ctx context.Context) (Indexer, error)
 	GetKeys(ctx context.Context) ([]string, error)
 	GetNativeTokens(ctx context.Context) ([]Token, error)
-	GetPoolByAddress(ctx context.Context, address string) (Pool, error)
-	GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error)
-	GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) ([]Pool, error)
-	GetPoolsByToken(ctx context.Context, tokenA string) ([]Pool, error)
+	GetPoolByAddress(ctx context.Context, address string) (PoolsV2, error)
+	GetPoolsByAmm(ctx context.Context, ammID int64) ([]PoolsV2, error)
+	GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) ([]PoolsV2, error)
+	GetPoolsByToken(ctx context.Context, tokenA string) ([]PoolsV2, error)
 	GetTokenByAddress(ctx context.Context, address string) (Token, error)
+	GetTokenBySymbol(ctx context.Context, symbol string) (Token, error)
 	InitIndexer(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
 	UpdateBaseNativeStatus(ctx context.Context, arg UpdateBaseNativeStatusParams) (Token, error)
 	UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)

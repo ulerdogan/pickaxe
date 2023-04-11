@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-04-09T11:37:47.631Z
+-- Generated at: 2023-04-11T02:11:45.395Z
 
 CREATE TABLE "tokens" (
   "address" varchar PRIMARY KEY NOT NULL,
@@ -15,7 +15,8 @@ CREATE TABLE "tokens" (
 );
 
 CREATE TABLE "pools_v2" (
-  "address" varchar PRIMARY KEY NOT NULL,
+  "pool_id" bigserial PRIMARY KEY,
+  "address" varchar NOT NULL,
   "amm_id" bigint NOT NULL,
   "token_a" varchar NOT NULL,
   "token_b" varchar NOT NULL,
@@ -27,7 +28,8 @@ CREATE TABLE "pools_v2" (
 );
 
 CREATE TABLE "pools_v3" (
-  "address" varchar PRIMARY KEY NOT NULL,
+  "pool_id" bigserial PRIMARY KEY,
+  "address" varchar NOT NULL,
   "amm_id" bigint NOT NULL,
   "token_a" varchar NOT NULL,
   "token_b" varchar NOT NULL,

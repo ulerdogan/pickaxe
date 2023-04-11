@@ -10,37 +10,34 @@ import (
 )
 
 const createPool = `-- name: CreatePool :one
-INSERT INTO pools (
+INSERT INTO pools_v2 (
   address,
   amm_id,
   token_a,
   token_b,
-  reserve_a,
-  reserve_b
+  fee
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
-) RETURNING address, amm_id, token_a, token_b, reserve_a, reserve_b, total_value, last_updated
+  $1, $2, $3, $4, $5
+) RETURNING address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated
 `
 
 type CreatePoolParams struct {
-	Address  string `json:"address"`
-	AmmID    int64  `json:"amm_id"`
-	TokenA   string `json:"token_a"`
-	TokenB   string `json:"token_b"`
-	ReserveA string `json:"reserve_a"`
-	ReserveB string `json:"reserve_b"`
+	Address string `json:"address"`
+	AmmID   int64  `json:"amm_id"`
+	TokenA  string `json:"token_a"`
+	TokenB  string `json:"token_b"`
+	Fee     string `json:"fee"`
 }
 
-func (q *Queries) CreatePool(ctx context.Context, arg CreatePoolParams) (Pool, error) {
+func (q *Queries) CreatePool(ctx context.Context, arg CreatePoolParams) (PoolsV2, error) {
 	row := q.db.QueryRowContext(ctx, createPool,
 		arg.Address,
 		arg.AmmID,
 		arg.TokenA,
 		arg.TokenB,
-		arg.ReserveA,
-		arg.ReserveB,
+		arg.Fee,
 	)
-	var i Pool
+	var i PoolsV2
 	err := row.Scan(
 		&i.Address,
 		&i.AmmID,
@@ -48,6 +45,7 @@ func (q *Queries) CreatePool(ctx context.Context, arg CreatePoolParams) (Pool, e
 		&i.TokenB,
 		&i.ReserveA,
 		&i.ReserveB,
+		&i.Fee,
 		&i.TotalValue,
 		&i.LastUpdated,
 	)
@@ -55,7 +53,7 @@ func (q *Queries) CreatePool(ctx context.Context, arg CreatePoolParams) (Pool, e
 }
 
 const deletePool = `-- name: DeletePool :exec
-DELETE FROM pools
+DELETE FROM pools_v2
 WHERE address = $1
 `
 
@@ -65,13 +63,13 @@ func (q *Queries) DeletePool(ctx context.Context, address string) error {
 }
 
 const getPoolByAddress = `-- name: GetPoolByAddress :one
-SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, total_value, last_updated FROM pools
+SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated FROM pools_v2
 WHERE address = $1 LIMIT 1
 `
 
-func (q *Queries) GetPoolByAddress(ctx context.Context, address string) (Pool, error) {
+func (q *Queries) GetPoolByAddress(ctx context.Context, address string) (PoolsV2, error) {
 	row := q.db.QueryRowContext(ctx, getPoolByAddress, address)
-	var i Pool
+	var i PoolsV2
 	err := row.Scan(
 		&i.Address,
 		&i.AmmID,
@@ -79,6 +77,7 @@ func (q *Queries) GetPoolByAddress(ctx context.Context, address string) (Pool, e
 		&i.TokenB,
 		&i.ReserveA,
 		&i.ReserveB,
+		&i.Fee,
 		&i.TotalValue,
 		&i.LastUpdated,
 	)
@@ -86,20 +85,20 @@ func (q *Queries) GetPoolByAddress(ctx context.Context, address string) (Pool, e
 }
 
 const getPoolsByAmm = `-- name: GetPoolsByAmm :many
-SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, total_value, last_updated FROM pools
+SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated FROM pools_v2
 WHERE amm_id = $1
 ORDER BY address
 `
 
-func (q *Queries) GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error) {
+func (q *Queries) GetPoolsByAmm(ctx context.Context, ammID int64) ([]PoolsV2, error) {
 	rows, err := q.db.QueryContext(ctx, getPoolsByAmm, ammID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Pool{}
+	items := []PoolsV2{}
 	for rows.Next() {
-		var i Pool
+		var i PoolsV2
 		if err := rows.Scan(
 			&i.Address,
 			&i.AmmID,
@@ -107,6 +106,7 @@ func (q *Queries) GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error
 			&i.TokenB,
 			&i.ReserveA,
 			&i.ReserveB,
+			&i.Fee,
 			&i.TotalValue,
 			&i.LastUpdated,
 		); err != nil {
@@ -124,7 +124,7 @@ func (q *Queries) GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error
 }
 
 const getPoolsByPair = `-- name: GetPoolsByPair :many
-SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, total_value, last_updated FROM pools
+SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated FROM pools_v2
 WHERE token_a = $1 AND token_b = $2
 ORDER BY amm_id
 `
@@ -134,15 +134,15 @@ type GetPoolsByPairParams struct {
 	TokenB string `json:"token_b"`
 }
 
-func (q *Queries) GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) ([]Pool, error) {
+func (q *Queries) GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) ([]PoolsV2, error) {
 	rows, err := q.db.QueryContext(ctx, getPoolsByPair, arg.TokenA, arg.TokenB)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Pool{}
+	items := []PoolsV2{}
 	for rows.Next() {
-		var i Pool
+		var i PoolsV2
 		if err := rows.Scan(
 			&i.Address,
 			&i.AmmID,
@@ -150,6 +150,7 @@ func (q *Queries) GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) 
 			&i.TokenB,
 			&i.ReserveA,
 			&i.ReserveB,
+			&i.Fee,
 			&i.TotalValue,
 			&i.LastUpdated,
 		); err != nil {
@@ -167,20 +168,20 @@ func (q *Queries) GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) 
 }
 
 const getPoolsByToken = `-- name: GetPoolsByToken :many
-SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, total_value, last_updated FROM pools
+SELECT address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated FROM pools_v2
 WHERE token_a = $1 OR token_b = $1
 ORDER BY amm_id
 `
 
-func (q *Queries) GetPoolsByToken(ctx context.Context, tokenA string) ([]Pool, error) {
+func (q *Queries) GetPoolsByToken(ctx context.Context, tokenA string) ([]PoolsV2, error) {
 	rows, err := q.db.QueryContext(ctx, getPoolsByToken, tokenA)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Pool{}
+	items := []PoolsV2{}
 	for rows.Next() {
-		var i Pool
+		var i PoolsV2
 		if err := rows.Scan(
 			&i.Address,
 			&i.AmmID,
@@ -188,6 +189,7 @@ func (q *Queries) GetPoolsByToken(ctx context.Context, tokenA string) ([]Pool, e
 			&i.TokenB,
 			&i.ReserveA,
 			&i.ReserveB,
+			&i.Fee,
 			&i.TotalValue,
 			&i.LastUpdated,
 		); err != nil {

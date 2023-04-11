@@ -1,12 +1,11 @@
 -- name: CreateAmm :one
 INSERT INTO amms (
   dex_name,
-  fee,
   router_address,
   key,
   algorithm_type
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetAmmById :one

@@ -12,10 +12,11 @@ import (
 type Amm struct {
 	AmmID         int64  `json:"amm_id"`
 	DexName       string `json:"dex_name"`
-	Fee           string `json:"fee"`
 	RouterAddress string `json:"router_address"`
 	Key           string `json:"key"`
 	AlgorithmType string `json:"algorithm_type"`
+	// initialized
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Indexer struct {
@@ -24,15 +25,55 @@ type Indexer struct {
 	LastUpdated sql.NullTime  `json:"last_updated"`
 }
 
-type Pool struct {
+type PoolsV2 struct {
 	Address     string    `json:"address"`
 	AmmID       int64     `json:"amm_id"`
 	TokenA      string    `json:"token_a"`
 	TokenB      string    `json:"token_b"`
 	ReserveA    string    `json:"reserve_a"`
 	ReserveB    string    `json:"reserve_b"`
+	Fee         string    `json:"fee"`
 	TotalValue  string    `json:"total_value"`
 	LastUpdated time.Time `json:"last_updated"`
+}
+
+type PoolsV3 struct {
+	Address string `json:"address"`
+	AmmID   int64  `json:"amm_id"`
+	TokenA  string `json:"token_a"`
+	TokenB  string `json:"token_b"`
+	// sqrtPriceX96
+	SqrtPriceX96 string `json:"sqrt_price_X96"`
+	// tick
+	Tick string `json:"tick"`
+	// observationIndex
+	ObservationIndex string `json:"observation_index"`
+	// observationCardinality
+	ObservationCardinality string `json:"observation_cardinality"`
+	// observationCardinalityNext
+	ObservationCardinalityNext string `json:"observation_cardinality_next"`
+	// feeProtocol
+	Fee string `json:"fee"`
+	// unlocked
+	Unlocked bool `json:"unlocked"`
+	// liquidityGross
+	LiquidityGross string `json:"liquidity_gross"`
+	// liquidityNet
+	LiquidityNet string `json:"liquidity_net"`
+	// feeGrowthOutside0X128
+	FeeGrowthOutside0X128 string `json:"fee_growth_outside_0X128"`
+	// feeGrowthOutside1X128
+	FeeGrowthOutside1X128 string `json:"fee_growth_outside_1X128"`
+	// tickCumulativeOutside
+	TickCumulativeOutside string `json:"tick_cumulative_outside"`
+	// secondsPerLiquidityOutsideX128
+	SecondsPerLiquidityOutsideX128 string `json:"seconds_per_liquidity_outside_X128"`
+	// secondsOutside
+	SecondsOutside string `json:"seconds_outside"`
+	// initialized
+	Initialized bool `json:"initialized"`
+	// liquidity
+	Liquidity string `json:"liquidity"`
 }
 
 type Token struct {

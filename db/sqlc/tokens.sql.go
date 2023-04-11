@@ -14,9 +14,10 @@ INSERT INTO tokens (
   address,
   name,
   symbol,
-  decimals
+  decimals,
+  ticker
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 ) RETURNING address, name, symbol, decimals, base, native, ticker, price, created_at
 `
 
@@ -25,6 +26,7 @@ type CreateTokenParams struct {
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
 	Decimals int32  `json:"decimals"`
+	Ticker   string `json:"ticker"`
 }
 
 func (q *Queries) CreateToken(ctx context.Context, arg CreateTokenParams) (Token, error) {
@@ -33,6 +35,7 @@ func (q *Queries) CreateToken(ctx context.Context, arg CreateTokenParams) (Token
 		arg.Name,
 		arg.Symbol,
 		arg.Decimals,
+		arg.Ticker,
 	)
 	var i Token
 	err := row.Scan(
@@ -159,9 +162,31 @@ func (q *Queries) GetTokenByAddress(ctx context.Context, address string) (Token,
 	return i, err
 }
 
+const getTokenBySymbol = `-- name: GetTokenBySymbol :one
+SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
+WHERE symbol = $1 LIMIT 1
+`
+
+func (q *Queries) GetTokenBySymbol(ctx context.Context, symbol string) (Token, error) {
+	row := q.db.QueryRowContext(ctx, getTokenBySymbol, symbol)
+	var i Token
+	err := row.Scan(
+		&i.Address,
+		&i.Name,
+		&i.Symbol,
+		&i.Decimals,
+		&i.Base,
+		&i.Native,
+		&i.Ticker,
+		&i.Price,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const updateBaseNativeStatus = `-- name: UpdateBaseNativeStatus :one
 UPDATE tokens
-SET base = $2 AND native = $3
+SET base = $2, native = $3
 WHERE address = $1
 RETURNING address, name, symbol, decimals, base, native, ticker, price, created_at
 `

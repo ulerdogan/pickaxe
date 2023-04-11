@@ -12,18 +12,16 @@ import (
 const createAmm = `-- name: CreateAmm :one
 INSERT INTO amms (
   dex_name,
-  fee,
   router_address,
   key,
   algorithm_type
 ) VALUES (
-  $1, $2, $3, $4, $5
-) RETURNING amm_id, dex_name, fee, router_address, key, algorithm_type
+  $1, $2, $3, $4
+) RETURNING amm_id, dex_name, router_address, key, algorithm_type, created_at
 `
 
 type CreateAmmParams struct {
 	DexName       string `json:"dex_name"`
-	Fee           string `json:"fee"`
 	RouterAddress string `json:"router_address"`
 	Key           string `json:"key"`
 	AlgorithmType string `json:"algorithm_type"`
@@ -32,7 +30,6 @@ type CreateAmmParams struct {
 func (q *Queries) CreateAmm(ctx context.Context, arg CreateAmmParams) (Amm, error) {
 	row := q.db.QueryRowContext(ctx, createAmm,
 		arg.DexName,
-		arg.Fee,
 		arg.RouterAddress,
 		arg.Key,
 		arg.AlgorithmType,
@@ -41,10 +38,10 @@ func (q *Queries) CreateAmm(ctx context.Context, arg CreateAmmParams) (Amm, erro
 	err := row.Scan(
 		&i.AmmID,
 		&i.DexName,
-		&i.Fee,
 		&i.RouterAddress,
 		&i.Key,
 		&i.AlgorithmType,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -60,7 +57,7 @@ func (q *Queries) DeleteAmm(ctx context.Context, ammID int64) error {
 }
 
 const getAmmByDEX = `-- name: GetAmmByDEX :many
-SELECT amm_id, dex_name, fee, router_address, key, algorithm_type FROM amms
+SELECT amm_id, dex_name, router_address, key, algorithm_type, created_at FROM amms
 WHERE dex_name = $1
 ORDER BY dex_name
 `
@@ -77,10 +74,10 @@ func (q *Queries) GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error
 		if err := rows.Scan(
 			&i.AmmID,
 			&i.DexName,
-			&i.Fee,
 			&i.RouterAddress,
 			&i.Key,
 			&i.AlgorithmType,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -96,7 +93,7 @@ func (q *Queries) GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error
 }
 
 const getAmmById = `-- name: GetAmmById :one
-SELECT amm_id, dex_name, fee, router_address, key, algorithm_type FROM amms
+SELECT amm_id, dex_name, router_address, key, algorithm_type, created_at FROM amms
 WHERE amm_id = $1 LIMIT 1
 `
 
@@ -106,10 +103,10 @@ func (q *Queries) GetAmmById(ctx context.Context, ammID int64) (Amm, error) {
 	err := row.Scan(
 		&i.AmmID,
 		&i.DexName,
-		&i.Fee,
 		&i.RouterAddress,
 		&i.Key,
 		&i.AlgorithmType,
+		&i.CreatedAt,
 	)
 	return i, err
 }
