@@ -2,14 +2,15 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	init_db "github.com/ulerdogan/pickaxe/db/init"
+	
 	"github.com/ulerdogan/pickaxe/indexer"
 )
 
 var testnet bool
 
 func init() {
-	//rootCmd.AddCommand(versionCmd)
-
+	rootCmd.AddCommand(initCmd)
 	rootCmd.Flags().BoolVarP(&testnet, "testnet", "t", false, "use --testnet or -t to run on testnet")
 }
 
@@ -29,14 +30,17 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// var versionCmd = &cobra.Command{
-// 	Use:   "version",
-// 	Short: "Print the version number of Hugo",
-// 	Long:  `All software has versions. This is Hugo's`,
-// 	Run: func(cmd *cobra.Command, args []string) {
-// 		fmt.Println("Hugo Static Site Generator v0.9 -- HEAD")
-// 	},
-// }
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "init token-pool-amm items for the db",
+	Long: `pickaxe is needed to be initialized with the first state
+				  of the amm pools, tokens, and amms
+				  which is in the db\init folder and the architecture is
+				  designed for the allowing first runs efficiently.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		init_db.Init()
+	},
+}
 
 func Execute() (err error) {
 	err = rootCmd.Execute()

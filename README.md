@@ -46,10 +46,16 @@ pickaxe
 pickaxe -t
 pickaxe --testnet
 
+// To initialize the app with the first state - run with init command
+pickaxe init
+
 ```
 
 Notes:
-* You should prepare a initial tokens - pools list for the initial run. The indexer will accept this point as a synced point.
+* You should prepare a initial tokens - pools list for the initial run. The indexer will accept this point as a synced point. Example ones below:
+  * [amms](./db/init/amms.json)
+  * [tokens](./db/init/tokens.json)
+  * [pools](./db/init/pools.json)
 
 <hr/>
 
