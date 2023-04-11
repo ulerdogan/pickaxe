@@ -84,6 +84,8 @@ func (ix *indexer) QueryBlocks() {
 	lastBlock, err := ix.client.LastBlock()
 	if err != nil {
 		logger.Error(err, "cannot get the last block")
+		ix.isIndexing = false
+		return
 	}
 
 	if lastBlock > *ix.lastQueried {
