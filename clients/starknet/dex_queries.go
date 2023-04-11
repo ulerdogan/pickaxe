@@ -10,14 +10,13 @@ import (
 //TODO: add an event data input
 type PoolInfo struct {
 	Address  string
-	TokenA   string
-	TokenB   string
 	ReserveA decimal.Decimal
 	ReserveB decimal.Decimal
+	ExtraData string
 }
 
 type Dex interface {
-	SyncPoolFromFn(pool PoolInfo, store db.Store) error
+	SyncPoolFromFn(pool PoolInfo, store db.Store, client starknetClient) error
 	SyncPoolFromEvent(pool PoolInfo, store db.Store) error
 }
 

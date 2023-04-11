@@ -13,6 +13,10 @@ INSERT INTO pools_v2 (
 SELECT * FROM pools_v2
 WHERE address = $1 LIMIT 1;
 
+-- name: GetPoolByAddressExtra :one
+SELECT * FROM pools_v2
+WHERE address = $1 AND extra_data=$2 LIMIT 1;
+
 -- name: GetPoolsByPair :many
 SELECT * FROM pools_v2
 WHERE token_a = $1 AND token_b = $2

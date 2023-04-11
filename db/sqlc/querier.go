@@ -23,6 +23,7 @@ type Querier interface {
 	GetKeys(ctx context.Context) ([]string, error)
 	GetNativeTokens(ctx context.Context) ([]Token, error)
 	GetPoolByAddress(ctx context.Context, address string) (PoolsV2, error)
+	GetPoolByAddressExtra(ctx context.Context, arg GetPoolByAddressExtraParams) (PoolsV2, error)
 	GetPoolsByAmm(ctx context.Context, ammID int64) ([]PoolsV2, error)
 	GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) ([]PoolsV2, error)
 	GetPoolsByToken(ctx context.Context, tokenA string) ([]PoolsV2, error)

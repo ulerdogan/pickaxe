@@ -89,6 +89,35 @@ func (q *Queries) GetPoolByAddress(ctx context.Context, address string) (PoolsV2
 	return i, err
 }
 
+const getPoolByAddressExtra = `-- name: GetPoolByAddressExtra :one
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated, extra_data FROM pools_v2
+WHERE address = $1 AND extra_data=$2 LIMIT 1
+`
+
+type GetPoolByAddressExtraParams struct {
+	Address   string         `json:"address"`
+	ExtraData sql.NullString `json:"extra_data"`
+}
+
+func (q *Queries) GetPoolByAddressExtra(ctx context.Context, arg GetPoolByAddressExtraParams) (PoolsV2, error) {
+	row := q.db.QueryRowContext(ctx, getPoolByAddressExtra, arg.Address, arg.ExtraData)
+	var i PoolsV2
+	err := row.Scan(
+		&i.PoolID,
+		&i.Address,
+		&i.AmmID,
+		&i.TokenA,
+		&i.TokenB,
+		&i.ReserveA,
+		&i.ReserveB,
+		&i.Fee,
+		&i.TotalValue,
+		&i.LastUpdated,
+		&i.ExtraData,
+	)
+	return i, err
+}
+
 const getPoolsByAmm = `-- name: GetPoolsByAmm :many
 SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated, extra_data FROM pools_v2
 WHERE amm_id = $1
