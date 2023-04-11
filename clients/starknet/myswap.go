@@ -16,7 +16,7 @@ func newMyswap() Dex {
 	return &myswap{}
 }
 
-func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client starknetClient) error {
+func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) error {
 	pl, err := store.GetPoolByAddressExtra(context.Background(), db.GetPoolByAddressExtraParams{
 		Address:   pool.Address,
 		ExtraData: sql.NullString{String: pool.ExtraData, Valid: true},

@@ -32,6 +32,10 @@ SELECT * FROM pools_v2
 WHERE amm_id = $1
 ORDER BY address;
 
+-- name: GetAllPools :many
+SELECT * FROM pools_v2
+ORDER BY address;
+
 -- name: UpdatePoolReserves :one
 UPDATE pools_v2
 SET reserve_a = $1, reserve_b = $2, last_updated = NOW()

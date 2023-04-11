@@ -7,6 +7,8 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"sync"
+	"sync/atomic"
 
 	"github.com/dontpanicdao/caigo/types"
 	"github.com/shopspring/decimal"
@@ -48,7 +50,6 @@ var (
 )
 
 func init() {
-	// FIXME: fix for to be runned from the init page
 	tokensFile, err := os.Open("./db/init/states/tokens.json")
 	if err != nil {
 		logger.Error(err, "cannot get tokens json file")
@@ -193,10 +194,47 @@ func getTokenDecimal(c starknet.Client, address string) (*int, error) {
 }
 
 func Init(cnfg config.Config, store db.Store, client starknet.Client) {
-	//TODO: add initial reserves logic
 	logger.Info("first state initialization runned")
 
 	initAmmsToDB(store)
 	initTokensToDB(store, client)
 	initPoolsToDB(store)
+
+	pools, _ := store.GetAllPools(context.Background())
+
+	var wg sync.WaitGroup
+	var succesfulls uint64
+
+	for _, pool := range pools {
+		wg.Add(1)
+		go syncPoolFromFnConc(&wg, &succesfulls, pool, store, client)
+	}
+
+	wg.Wait()
+	logger.Info("in " + strconv.Itoa(len(pools)) + " pools, " + strconv.Itoa(int(succesfulls)) + " is synced")
+}
+
+func syncPoolFromFnConc(wg *sync.WaitGroup, scs *uint64, pool db.PoolsV2, store db.Store, client starknet.Client) {
+	defer wg.Done()
+
+	dex, _ := client.NewDex(int(pool.AmmID))
+	var err error
+	if pool.ExtraData.Valid {
+		err = dex.SyncPoolFromFn(starknet.PoolInfo{
+			Address:   pool.Address,
+			ExtraData: pool.ExtraData.String,
+		}, store, client)
+		if err != nil {
+			logger.Error(err, "sync pool error: "+pool.Address)
+			return
+		}
+	} else {
+		err = dex.SyncPoolFromFn(starknet.PoolInfo{Address: pool.Address}, store, client)
+		if err != nil {
+			logger.Error(err, "sync pool error: "+pool.Address)
+			return
+		}
+	}
+
+	atomic.AddUint64(scs, 1)
 }

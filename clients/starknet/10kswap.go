@@ -15,7 +15,7 @@ func newSwap10k() Dex {
 	return &swap10k{}
 }
 
-func (d *swap10k) SyncPoolFromFn(pool PoolInfo, store db.Store, client starknetClient) error {
+func (d *swap10k) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) error {
 	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
 	if err != nil {
 		return err

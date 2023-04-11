@@ -15,7 +15,7 @@ func newJediswap() Dex {
 	return &jediswap{}
 }
 
-func (d *jediswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client starknetClient) error {
+func (d *jediswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) error {
 	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
 	if err != nil {
 		return err

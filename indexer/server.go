@@ -48,7 +48,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	}
 	// starting the indexer
 	ix := NewIndexer(store, client, cnfg)
-
+	
 	// setup and run jobs
 	setupJobs(ix)
 	go ix.scheduler.StartBlocking()

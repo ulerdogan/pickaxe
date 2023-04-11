@@ -2,6 +2,7 @@ package starknet_client
 
 import (
 	"context"
+	"errors"
 
 	"github.com/dontpanicdao/caigo/types"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
@@ -43,4 +44,17 @@ func (c *starknetClient) GetEvents(from, to uint64, address string, c_token *str
 
 func (c *starknetClient) LastBlock() (uint64, error) {
 	return c.Rpc.BlockNumber(context.Background())
+}
+
+func (c *starknetClient) NewDex(amm_id int) (Dex, error) {
+	switch amm_id {
+	case 1:
+		return newMyswap(), nil
+	case 2:
+		return newJediswap(), nil
+	case 3:
+		return newSwap10k(), nil
+	}
+
+	return nil, errors.New("cannot find the dex")
 }

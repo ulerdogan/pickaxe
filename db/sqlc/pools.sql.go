@@ -65,6 +65,46 @@ func (q *Queries) DeletePool(ctx context.Context, address string) error {
 	return err
 }
 
+const getAllPools = `-- name: GetAllPools :many
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated, extra_data FROM pools_v2
+ORDER BY address
+`
+
+func (q *Queries) GetAllPools(ctx context.Context) ([]PoolsV2, error) {
+	rows, err := q.db.QueryContext(ctx, getAllPools)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []PoolsV2{}
+	for rows.Next() {
+		var i PoolsV2
+		if err := rows.Scan(
+			&i.PoolID,
+			&i.Address,
+			&i.AmmID,
+			&i.TokenA,
+			&i.TokenB,
+			&i.ReserveA,
+			&i.ReserveB,
+			&i.Fee,
+			&i.TotalValue,
+			&i.LastUpdated,
+			&i.ExtraData,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getPoolByAddress = `-- name: GetPoolByAddress :one
 SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated, extra_data FROM pools_v2
 WHERE address = $1 LIMIT 1
