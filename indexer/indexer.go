@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron"
+	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	config "github.com/ulerdogan/pickaxe/utils/config"
@@ -19,6 +20,7 @@ type indexer struct {
 	store  db.Store
 	router *gin.Engine
 	client starknet.Client
+	rest   rest.Client
 	config config.Config
 
 	isIndexing  bool
@@ -33,11 +35,12 @@ type Item struct {
 	Index string
 }
 
-func NewIndexer(str db.Store, cli starknet.Client, cnfg config.Config) *indexer {
+func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config) *indexer {
 	ix := &indexer{
 		store:       str,
 		router:      gin.Default(),
 		client:      cli,
+		rest:        rs,
 		config:      cnfg,
 		poolIndexes: make(chan Item),
 
