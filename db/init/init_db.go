@@ -7,8 +7,6 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"sync"
-	"sync/atomic"
 
 	"github.com/dontpanicdao/caigo/types"
 	"github.com/shopspring/decimal"
@@ -89,7 +87,6 @@ func init() {
 
 func initTokensToDB(store db.Store, c starknet.Client) {
 	succesfulls := 0
-	bErr := 0
 
 	for _, t := range tokens {
 		decimal, err := getTokenDecimal(c, t.Address)
@@ -116,13 +113,12 @@ func initTokensToDB(store db.Store, c starknet.Client) {
 		})
 		if err != nil {
 			logger.Error(err, "cannot update base native status for: "+t.Symbol)
-			bErr++
 			continue
 		}
 
 		succesfulls++
 	}
-	logger.Info("in " + strconv.Itoa(len(tokens)) + " tokens, " + strconv.Itoa(succesfulls) + " is created and " + strconv.Itoa(bErr) + " is not updated with base and native status")
+	logger.Info("in " + strconv.Itoa(len(tokens)) + " tokens, " + strconv.Itoa(succesfulls) + " is created")
 }
 
 func initAmmsToDB(store db.Store) {
@@ -202,39 +198,54 @@ func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 
 	pools, _ := store.GetAllPools(context.Background())
 
-	var wg sync.WaitGroup
-	var succesfulls uint64
+	const numWorkers = 10
+	jobs := make(chan db.PoolsV2, len(pools))
+	results := make(chan bool, len(pools))
+
+	for w := 0; w < numWorkers; w++ {
+		go func(jobs chan db.PoolsV2, results chan bool) {
+			syncPoolFromFnConc(jobs, results, store, client)
+		}(jobs, results)
+	}
 
 	for _, pool := range pools {
-		wg.Add(1)
-		go syncPoolFromFnConc(&wg, &succesfulls, pool, store, client)
+		jobs <- pool
+	}
+	close(jobs)
+
+	var s int
+	for res := 0; res < len(pools); res++ {
+		if <-results {
+			s++
+		}
 	}
 
-	wg.Wait()
-	logger.Info("in " + strconv.Itoa(len(pools)) + " pools, " + strconv.Itoa(int(succesfulls)) + " is synced")
+	logger.Info("in " + strconv.Itoa(len(pools)) + " pools, " + strconv.Itoa(s) + " is synced")
 }
 
-func syncPoolFromFnConc(wg *sync.WaitGroup, scs *uint64, pool db.PoolsV2, store db.Store, client starknet.Client) {
-	defer wg.Done()
+func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, store db.Store, client starknet.Client) {
+	for pool := range jobs {
+		dex, _ := client.NewDex(int(pool.AmmID))
 
-	dex, _ := client.NewDex(int(pool.AmmID))
-	var err error
-	if pool.ExtraData.Valid {
-		err = dex.SyncPoolFromFn(starknet.PoolInfo{
-			Address:   pool.Address,
-			ExtraData: pool.ExtraData.String,
-		}, store, client)
-		if err != nil {
-			logger.Error(err, "sync pool error: "+pool.Address)
-			return
+		var err error
+		if pool.ExtraData.Valid {
+			err = dex.SyncPoolFromFn(starknet.PoolInfo{
+				Address:   pool.Address,
+				ExtraData: pool.ExtraData.String,
+			}, store, client)
+			if err != nil {
+				logger.Error(err, "sync pool error: "+pool.Address)
+				results <- false
+				continue
+			}
+		} else {
+			err = dex.SyncPoolFromFn(starknet.PoolInfo{Address: pool.Address}, store, client)
+			if err != nil {
+				logger.Error(err, "sync pool error: "+pool.Address)
+				results <- false
+				continue
+			}
 		}
-	} else {
-		err = dex.SyncPoolFromFn(starknet.PoolInfo{Address: pool.Address}, store, client)
-		if err != nil {
-			logger.Error(err, "sync pool error: "+pool.Address)
-			return
-		}
+		results <- true
 	}
-
-	atomic.AddUint64(scs, 1)
 }
