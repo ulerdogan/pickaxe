@@ -63,3 +63,9 @@ Requirements & Tools
 * [caigo](https://github.com/dontpanicdao/caigo)
   * [caigo-rpcv02](https://github.com/ulerdogan/caigo-rpcv02) (customized rpcv02 of caigo for pickaxe)
 * [gocron](https://github.com/go-co-op/gocron)
+
+<hr/>
+
+Check the database tables in [DBDocs](https://dbdocs.io/ulerdogan/Pickaxe).
+
+<img src="./db_tables.png" alt="database tables" width="500">
