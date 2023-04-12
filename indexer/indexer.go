@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron"
+	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	config "github.com/ulerdogan/pickaxe/utils/config"
@@ -19,6 +20,7 @@ type indexer struct {
 	store  db.Store
 	router *gin.Engine
 	client starknet.Client
+	rest   rest.Client
 	config config.Config
 
 	isIndexing  bool
@@ -33,11 +35,12 @@ type Item struct {
 	Index string
 }
 
-func NewIndexer(str db.Store, cli starknet.Client, cnfg config.Config) *indexer {
+func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config) *indexer {
 	ix := &indexer{
 		store:       str,
 		router:      gin.Default(),
 		client:      cli,
+		rest:        rs,
 		config:      cnfg,
 		poolIndexes: make(chan Item),
 
@@ -69,34 +72,4 @@ func (ix *indexer) syncBlockFromDB() {
 		ix.lastQueried = &lq
 		logger.Info("indexer synced from the db: " + fmt.Sprint(lq))
 	}
-}
-
-func (ix *indexer) QueryBlocks() {
-	if ix.isIndexing {
-		return
-	}
-
-	ix.ixMutex.Lock()
-	defer ix.ixMutex.Unlock()
-
-	ix.isIndexing = true
-
-	lastBlock, err := ix.client.LastBlock()
-	if err != nil {
-		logger.Error(err, "cannot get the last block")
-		ix.isIndexing = false
-		return
-	}
-
-	if lastBlock > *ix.lastQueried {
-		// TODO: do sth
-		logger.Info("new block catched: " + fmt.Sprint(lastBlock))
-		ix.lastQueried = &lastBlock
-		ix.store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(lastBlock), Valid: true})
-	} else {
-		// FIXME: remove the part
-		logger.Info("no new block: " + fmt.Sprint(lastBlock))
-	}
-
-	ix.isIndexing = false
 }

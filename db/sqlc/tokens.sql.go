@@ -62,6 +62,45 @@ func (q *Queries) DeleteToken(ctx context.Context, address string) error {
 	return err
 }
 
+const getAllTokensWithTickers = `-- name: GetAllTokensWithTickers :many
+SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
+WHERE price IS NOT NULL
+ORDER BY address
+`
+
+func (q *Queries) GetAllTokensWithTickers(ctx context.Context) ([]Token, error) {
+	rows, err := q.db.QueryContext(ctx, getAllTokensWithTickers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Token{}
+	for rows.Next() {
+		var i Token
+		if err := rows.Scan(
+			&i.Address,
+			&i.Name,
+			&i.Symbol,
+			&i.Decimals,
+			&i.Base,
+			&i.Native,
+			&i.Ticker,
+			&i.Price,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getBaseTokens = `-- name: GetBaseTokens :many
 SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
 WHERE base = true
@@ -140,6 +179,30 @@ func (q *Queries) GetNativeTokens(ctx context.Context) ([]Token, error) {
 	return items, nil
 }
 
+const getTokenAPriceByPool = `-- name: GetTokenAPriceByPool :one
+SELECT price FROM tokens
+WHERE address = (SELECT token_a FROM pools_v2 WHERE pool_id = $1)
+`
+
+func (q *Queries) GetTokenAPriceByPool(ctx context.Context, poolID int64) (string, error) {
+	row := q.db.QueryRowContext(ctx, getTokenAPriceByPool, poolID)
+	var price string
+	err := row.Scan(&price)
+	return price, err
+}
+
+const getTokenBPriceByPool = `-- name: GetTokenBPriceByPool :one
+SELECT price FROM tokens
+WHERE address = (SELECT token_b FROM pools_v2 WHERE pool_id = $1)
+`
+
+func (q *Queries) GetTokenBPriceByPool(ctx context.Context, poolID int64) (string, error) {
+	row := q.db.QueryRowContext(ctx, getTokenBPriceByPool, poolID)
+	var price string
+	err := row.Scan(&price)
+	return price, err
+}
+
 const getTokenByAddress = `-- name: GetTokenByAddress :one
 SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
 WHERE address = $1 LIMIT 1
@@ -199,6 +262,35 @@ type UpdateBaseNativeStatusParams struct {
 
 func (q *Queries) UpdateBaseNativeStatus(ctx context.Context, arg UpdateBaseNativeStatusParams) (Token, error) {
 	row := q.db.QueryRowContext(ctx, updateBaseNativeStatus, arg.Address, arg.Base, arg.Native)
+	var i Token
+	err := row.Scan(
+		&i.Address,
+		&i.Name,
+		&i.Symbol,
+		&i.Decimals,
+		&i.Base,
+		&i.Native,
+		&i.Ticker,
+		&i.Price,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updatePrice = `-- name: UpdatePrice :one
+UPDATE tokens
+SET price = $2
+WHERE address = $1
+RETURNING address, name, symbol, decimals, base, native, ticker, price, created_at
+`
+
+type UpdatePriceParams struct {
+	Address string `json:"address"`
+	Price   string `json:"price"`
+}
+
+func (q *Queries) UpdatePrice(ctx context.Context, arg UpdatePriceParams) (Token, error) {
+	row := q.db.QueryRowContext(ctx, updatePrice, arg.Address, arg.Price)
 	var i Token
 	err := row.Scan(
 		&i.Address,

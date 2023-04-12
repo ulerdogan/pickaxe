@@ -3,6 +3,7 @@ package indexer
 import (
 	"database/sql"
 
+	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	init_db "github.com/ulerdogan/pickaxe/db/init"
 	"github.com/ulerdogan/pickaxe/db/migration"
@@ -42,13 +43,14 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	// setting the indexer
 	store := db.NewStore(conn)
 	client := starknet.NewStarknetClient(cnfg)
+	rest := rest.NewRestClient()
 	// adding the initial state to db
 	if ok {
 		init_db.Init(cnfg, store, client)
 	}
 	// starting the indexer
-	ix := NewIndexer(store, client, cnfg)
-	
+	ix := NewIndexer(store, client, rest, cnfg)
+
 	// setup and run jobs
 	setupJobs(ix)
 	go ix.scheduler.StartBlocking()

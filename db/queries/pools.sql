@@ -42,6 +42,12 @@ SET reserve_a = $1, reserve_b = $2, last_updated = NOW()
 WHERE pool_id = $3
 RETURNING *;
 
+-- name: UpdatePoolTV :one
+UPDATE pools_v2
+SET total_value = $1
+WHERE pool_id = $2
+RETURNING *;
+
 -- name: UpdatePoolExtraData :one
 UPDATE pools_v2
 SET extra_data = $2

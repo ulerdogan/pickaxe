@@ -21,6 +21,12 @@ SET ticker = $2
 WHERE address = $1
 RETURNING *;
 
+-- name: UpdatePrice :one
+UPDATE tokens
+SET price = $2
+WHERE address = $1
+RETURNING *;
+
 -- name: GetTokenByAddress :one
 SELECT * FROM tokens
 WHERE address = $1 LIMIT 1;
@@ -38,6 +44,19 @@ ORDER BY name;
 SELECT * FROM tokens
 WHERE native = true
 ORDER BY name;
+
+-- name: GetAllTokensWithTickers :many
+SELECT * FROM tokens
+WHERE price IS NOT NULL
+ORDER BY address;
+
+-- name: GetTokenAPriceByPool :one
+SELECT price FROM tokens
+WHERE address = (SELECT token_a FROM pools_v2 WHERE pool_id = $1);
+
+-- name: GetTokenBPriceByPool :one
+SELECT price FROM tokens
+WHERE address = (SELECT token_b FROM pools_v2 WHERE pool_id = $1);
 
 -- name: DeleteToken :exec
 DELETE FROM tokens
