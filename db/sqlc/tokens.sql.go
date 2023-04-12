@@ -62,6 +62,45 @@ func (q *Queries) DeleteToken(ctx context.Context, address string) error {
 	return err
 }
 
+const getAllTokensWithTickers = `-- name: GetAllTokensWithTickers :many
+SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
+WHERE price IS NOT NULL
+ORDER BY address
+`
+
+func (q *Queries) GetAllTokensWithTickers(ctx context.Context) ([]Token, error) {
+	rows, err := q.db.QueryContext(ctx, getAllTokensWithTickers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Token{}
+	for rows.Next() {
+		var i Token
+		if err := rows.Scan(
+			&i.Address,
+			&i.Name,
+			&i.Symbol,
+			&i.Decimals,
+			&i.Base,
+			&i.Native,
+			&i.Ticker,
+			&i.Price,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getBaseTokens = `-- name: GetBaseTokens :many
 SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
 WHERE base = true
@@ -199,6 +238,35 @@ type UpdateBaseNativeStatusParams struct {
 
 func (q *Queries) UpdateBaseNativeStatus(ctx context.Context, arg UpdateBaseNativeStatusParams) (Token, error) {
 	row := q.db.QueryRowContext(ctx, updateBaseNativeStatus, arg.Address, arg.Base, arg.Native)
+	var i Token
+	err := row.Scan(
+		&i.Address,
+		&i.Name,
+		&i.Symbol,
+		&i.Decimals,
+		&i.Base,
+		&i.Native,
+		&i.Ticker,
+		&i.Price,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updatePrice = `-- name: UpdatePrice :one
+UPDATE tokens
+SET price = $2
+WHERE address = $1
+RETURNING address, name, symbol, decimals, base, native, ticker, price, created_at
+`
+
+type UpdatePriceParams struct {
+	Address string `json:"address"`
+	Price   string `json:"price"`
+}
+
+func (q *Queries) UpdatePrice(ctx context.Context, arg UpdatePriceParams) (Token, error) {
+	row := q.db.QueryRowContext(ctx, updatePrice, arg.Address, arg.Price)
 	var i Token
 	err := row.Scan(
 		&i.Address,

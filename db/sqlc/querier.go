@@ -17,6 +17,7 @@ type Querier interface {
 	DeletePool(ctx context.Context, address string) error
 	DeleteToken(ctx context.Context, address string) error
 	GetAllPools(ctx context.Context) ([]PoolsV2, error)
+	GetAllTokensWithTickers(ctx context.Context) ([]Token, error)
 	GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error)
 	GetAmmById(ctx context.Context, ammID int64) (Amm, error)
 	GetBaseTokens(ctx context.Context) ([]Token, error)
@@ -35,6 +36,7 @@ type Querier interface {
 	UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
 	UpdatePoolExtraData(ctx context.Context, arg UpdatePoolExtraDataParams) (PoolsV2, error)
 	UpdatePoolReserves(ctx context.Context, arg UpdatePoolReservesParams) (PoolsV2, error)
+	UpdatePrice(ctx context.Context, arg UpdatePriceParams) (Token, error)
 	UpdateTicker(ctx context.Context, arg UpdateTickerParams) (Token, error)
 }
 

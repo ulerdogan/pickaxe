@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type restClient struct{
+type restClient struct {
 	*http.Client
 }
 
@@ -47,4 +47,8 @@ func (c *restClient) Post(url string, body interface{}, headers http.Header) (*h
 	client := http.Client{}
 	return client.Do(request)
 
+}
+
+func (c *restClient) NewPriceAPI() PriceAPI {
+	return &coingecko{}
 }

@@ -73,33 +73,3 @@ func (ix *indexer) syncBlockFromDB() {
 		logger.Info("indexer synced from the db: " + fmt.Sprint(lq))
 	}
 }
-
-func (ix *indexer) QueryBlocks() {
-	if ix.isIndexing {
-		return
-	}
-
-	ix.ixMutex.Lock()
-	defer ix.ixMutex.Unlock()
-
-	ix.isIndexing = true
-
-	lastBlock, err := ix.client.LastBlock()
-	if err != nil {
-		logger.Error(err, "cannot get the last block")
-		ix.isIndexing = false
-		return
-	}
-
-	if lastBlock > *ix.lastQueried {
-		// TODO: do sth
-		logger.Info("new block catched: " + fmt.Sprint(lastBlock))
-		ix.lastQueried = &lastBlock
-		ix.store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(lastBlock), Valid: true})
-	} else {
-		// FIXME: remove the part
-		logger.Info("no new block: " + fmt.Sprint(lastBlock))
-	}
-
-	ix.isIndexing = false
-}
