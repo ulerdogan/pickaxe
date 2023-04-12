@@ -37,10 +37,17 @@ func (ix *indexer) QueryBlocks() {
 	}
 
 	if lastBlock > *ix.lastQueried {
-		// TODO: do sth
 		logger.Info("new block catched: " + fmt.Sprint(lastBlock))
+
+		err := ix.GetEvents(*ix.lastQueried + 1, lastBlock)
+		if err != nil {
+			ix.isIndexing = false
+			logger.Error(err, "cannot get the events")
+			return
+		}
+
 		ix.lastQueried = &lastBlock
-		ix.store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(lastBlock), Valid: true})
+		ix.store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(*ix.lastQueried), Valid: true})
 	} else {
 		// FIXME: remove the part
 		logger.Info("no new block: " + fmt.Sprint(lastBlock))

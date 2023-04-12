@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron"
+	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
@@ -22,6 +23,8 @@ type indexer struct {
 	client starknet.Client
 	rest   rest.Client
 	config config.Config
+
+	Events []rpc.EmittedEvent
 
 	isIndexing  bool
 	lastQueried *uint64
@@ -43,6 +46,8 @@ func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.C
 		rest:        rs,
 		config:      cnfg,
 		poolIndexes: make(chan Item),
+
+		Events: make([]rpc.EmittedEvent, 0),
 
 		scheduler: gocron.NewScheduler(time.UTC),
 		ixMutex:   &sync.Mutex{},

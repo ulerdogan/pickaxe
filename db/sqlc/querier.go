@@ -20,6 +20,7 @@ type Querier interface {
 	GetAllTokensWithTickers(ctx context.Context) ([]Token, error)
 	GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error)
 	GetAmmById(ctx context.Context, ammID int64) (Amm, error)
+	GetAmmKeys(ctx context.Context) ([]string, error)
 	GetBaseTokens(ctx context.Context) ([]Token, error)
 	GetIndexerStatus(ctx context.Context) (Indexer, error)
 	GetKeys(ctx context.Context) ([]string, error)

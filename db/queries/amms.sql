@@ -21,6 +21,10 @@ SELECT * FROM amms
 WHERE dex_name = $1
 ORDER BY dex_name;
 
+-- name: GetAmmKeys :many
+SELECT DISTINCT key FROM amms
+ORDER BY KEY;
+
 -- name: DeleteAmm :exec
 DELETE FROM amms
 WHERE amm_id = $1;

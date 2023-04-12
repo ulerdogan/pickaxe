@@ -92,7 +92,7 @@ func initTokensToDB(store db.Store, c starknet.Client) {
 		decimal, err := getTokenDecimal(c, t.Address)
 		if err != nil {
 			d := 18
-			decimal = &d
+			*decimal = d
 		}
 		_, err = store.CreateToken(context.Background(), db.CreateTokenParams{
 			Address:  t.Address,

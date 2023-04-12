@@ -111,6 +111,34 @@ func (q *Queries) GetAmmById(ctx context.Context, ammID int64) (Amm, error) {
 	return i, err
 }
 
+const getAmmKeys = `-- name: GetAmmKeys :many
+SELECT DISTINCT key FROM amms
+ORDER BY KEY
+`
+
+func (q *Queries) GetAmmKeys(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getAmmKeys)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []string{}
+	for rows.Next() {
+		var key string
+		if err := rows.Scan(&key); err != nil {
+			return nil, err
+		}
+		items = append(items, key)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getKeys = `-- name: GetKeys :many
 SELECT DISTINCT key FROM amms
 ORDER BY key
