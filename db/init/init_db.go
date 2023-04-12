@@ -227,25 +227,16 @@ func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, store db.St
 	for pool := range jobs {
 		dex, _ := client.NewDex(int(pool.AmmID))
 
-		var err error
-		if pool.ExtraData.Valid {
-			err = dex.SyncPoolFromFn(starknet.PoolInfo{
-				Address:   pool.Address,
-				ExtraData: pool.ExtraData.String,
-			}, store, client)
-			if err != nil {
-				logger.Error(err, "sync pool error: "+pool.Address)
-				results <- false
-				continue
-			}
-		} else {
-			err = dex.SyncPoolFromFn(starknet.PoolInfo{Address: pool.Address}, store, client)
-			if err != nil {
-				logger.Error(err, "sync pool error: "+pool.Address)
-				results <- false
-				continue
-			}
+		err := dex.SyncPoolFromFn(starknet.PoolInfo{
+			Address:   pool.Address,
+			ExtraData: pool.ExtraData.String,
+		}, store, client)
+		if err != nil {
+			logger.Error(err, "sync pool error: "+pool.Address)
+			results <- false
+			continue
 		}
+
 		results <- true
 	}
 }

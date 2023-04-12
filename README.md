@@ -1,4 +1,4 @@
-# pickaxe
+# pickaxe (continutes to be developed)
 
 Indexer of the Starknet AMM pools written in Golang - to be used in [Fibrous](https://fibrous.finance)
 
@@ -56,10 +56,10 @@ Notes:
 <hr/>
 
 Requirements & Tools
-* GoLang (https://go.dev/)
+* [Go](https://go.dev/)
 * [dbml](https://dbml-lang.org)
 * [docker](https://docker.com/)
 * [golang-migrate](https://github.com/golang-migrate/migrate)
 * [caigo](https://github.com/dontpanicdao/caigo)
-* [caigo-rpcv02](https://github.com/ulerdogan/caigo-rpcv02) (customized rpcv02 of caigo for pickaxe)
+  * [caigo-rpcv02](https://github.com/ulerdogan/caigo-rpcv02) (customized rpcv02 of caigo for pickaxe)
 * [gocron](https://github.com/go-co-op/gocron)
