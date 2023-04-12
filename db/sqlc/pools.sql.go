@@ -348,3 +348,34 @@ func (q *Queries) UpdatePoolReserves(ctx context.Context, arg UpdatePoolReserves
 	)
 	return i, err
 }
+
+const updatePoolTV = `-- name: UpdatePoolTV :one
+UPDATE pools_v2
+SET total_value = $1
+WHERE pool_id = $2
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, last_updated, extra_data
+`
+
+type UpdatePoolTVParams struct {
+	TotalValue string `json:"total_value"`
+	PoolID     int64  `json:"pool_id"`
+}
+
+func (q *Queries) UpdatePoolTV(ctx context.Context, arg UpdatePoolTVParams) (PoolsV2, error) {
+	row := q.db.QueryRowContext(ctx, updatePoolTV, arg.TotalValue, arg.PoolID)
+	var i PoolsV2
+	err := row.Scan(
+		&i.PoolID,
+		&i.Address,
+		&i.AmmID,
+		&i.TokenA,
+		&i.TokenB,
+		&i.ReserveA,
+		&i.ReserveB,
+		&i.Fee,
+		&i.TotalValue,
+		&i.LastUpdated,
+		&i.ExtraData,
+	)
+	return i, err
+}

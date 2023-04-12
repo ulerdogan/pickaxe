@@ -29,6 +29,8 @@ type Querier interface {
 	GetPoolsByAmm(ctx context.Context, ammID int64) ([]PoolsV2, error)
 	GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) ([]PoolsV2, error)
 	GetPoolsByToken(ctx context.Context, tokenA string) ([]PoolsV2, error)
+	GetTokenAPriceByPool(ctx context.Context, poolID int64) (string, error)
+	GetTokenBPriceByPool(ctx context.Context, poolID int64) (string, error)
 	GetTokenByAddress(ctx context.Context, address string) (Token, error)
 	GetTokenBySymbol(ctx context.Context, symbol string) (Token, error)
 	InitIndexer(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
@@ -36,6 +38,7 @@ type Querier interface {
 	UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
 	UpdatePoolExtraData(ctx context.Context, arg UpdatePoolExtraDataParams) (PoolsV2, error)
 	UpdatePoolReserves(ctx context.Context, arg UpdatePoolReservesParams) (PoolsV2, error)
+	UpdatePoolTV(ctx context.Context, arg UpdatePoolTVParams) (PoolsV2, error)
 	UpdatePrice(ctx context.Context, arg UpdatePriceParams) (Token, error)
 	UpdateTicker(ctx context.Context, arg UpdateTickerParams) (Token, error)
 }

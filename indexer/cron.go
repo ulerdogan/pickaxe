@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/shopspring/decimal"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
@@ -82,6 +83,55 @@ func (ix *indexer) QueryPrices() {
 	}
 
 	logger.Info("in " + strconv.Itoa(len(tokens)) + " tokens, prices of " + strconv.Itoa(s) + " is synced")
+
+	pools, err := ix.store.GetAllPools(context.Background())
+	if err != nil {
+		logger.Error(err, "cannot get the pool list")
+		return
+	}
+
+	s = 0
+	for _, pool := range pools {
+		if pool.ReserveA == "0" || pool.ReserveB == "0" {
+			continue
+		}
+
+		var priceA, priceB decimal.Decimal
+
+		if pA, err := ix.store.GetTokenAPriceByPool(context.Background(), pool.PoolID); err != nil {
+			logger.Error(err, "cannot get the token_a price")
+			continue
+		} else if pA == "0" {
+			continue
+		} else {
+			priceA, _ = decimal.NewFromString(pA)
+		}
+
+		if pB, err := ix.store.GetTokenBPriceByPool(context.Background(), pool.PoolID); err != nil {
+			logger.Error(err, "cannot get the token_b price")
+			continue
+		} else if pB == "0" {
+			continue
+		} else {
+			priceB, _ = decimal.NewFromString(pB)
+		}
+
+		vlA, _ := decimal.NewFromString(pool.ReserveA)
+		vlB, _ := decimal.NewFromString(pool.ReserveA)
+		tvl := vlA.Mul(priceA).Add(vlB.Mul(priceB))
+
+		_, err = ix.store.UpdatePoolTV(context.Background(), db.UpdatePoolTVParams{
+			PoolID:     pool.PoolID,
+			TotalValue: tvl.String(),
+		})
+		if err != nil {
+			logger.Error(err, "cannot get the token_b price")
+			continue
+		}
+		s++
+	}
+
+	logger.Info("in " + strconv.Itoa(len(tokens)) + " pools, total values of " + strconv.Itoa(s) + " is synced")
 }
 
 func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Client) {
