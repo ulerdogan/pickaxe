@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"sync"
+	"sync/atomic"
 
 	"github.com/shopspring/decimal"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
@@ -69,7 +71,7 @@ func (ix *indexer) QueryPrices() {
 	}
 	close(jobs)
 
-	var s int
+	var sct atomic.Uintptr
 	for res := 0; res < len(tokens); res++ {
 		token := <-results
 		if token != nil {
@@ -78,11 +80,11 @@ func (ix *indexer) QueryPrices() {
 				logger.Error(err, "cannot update the price of the token: "+token.Name)
 				continue
 			}
-			s++
+			sct.Add(1)
 		}
 	}
 
-	logger.Info("in " + strconv.Itoa(len(tokens)) + " tokens, prices of " + strconv.Itoa(s) + " is synced")
+	logger.Info("in " + strconv.Itoa(len(tokens)) + " tokens, prices of " + strconv.Itoa(int(sct.Load())) + " is synced")
 
 	pools, err := ix.store.GetAllPools(context.Background())
 	if err != nil {
@@ -90,48 +92,15 @@ func (ix *indexer) QueryPrices() {
 		return
 	}
 
-	s = 0
+	var scp atomic.Uintptr
+	var wg sync.WaitGroup
 	for _, pool := range pools {
-		if pool.ReserveA == "0" || pool.ReserveB == "0" {
-			continue
-		}
-
-		var priceA, priceB decimal.Decimal
-
-		if pA, err := ix.store.GetTokenAPriceByPool(context.Background(), pool.PoolID); err != nil {
-			logger.Error(err, "cannot get the token_a price")
-			continue
-		} else if pA == "0" {
-			continue
-		} else {
-			priceA, _ = decimal.NewFromString(pA)
-		}
-
-		if pB, err := ix.store.GetTokenBPriceByPool(context.Background(), pool.PoolID); err != nil {
-			logger.Error(err, "cannot get the token_b price")
-			continue
-		} else if pB == "0" {
-			continue
-		} else {
-			priceB, _ = decimal.NewFromString(pB)
-		}
-
-		vlA, _ := decimal.NewFromString(pool.ReserveA)
-		vlB, _ := decimal.NewFromString(pool.ReserveA)
-		tvl := vlA.Mul(priceA).Add(vlB.Mul(priceB))
-
-		_, err = ix.store.UpdatePoolTV(context.Background(), db.UpdatePoolTVParams{
-			PoolID:     pool.PoolID,
-			TotalValue: tvl.String(),
-		})
-		if err != nil {
-			logger.Error(err, "cannot get the token_b price")
-			continue
-		}
-		s++
+		wg.Add(1)
+		go updateValueV2(ix.store, pool, scp, wg)
 	}
 
-	logger.Info("in " + strconv.Itoa(len(tokens)) + " pools, total values of " + strconv.Itoa(s) + " is synced")
+	wg.Wait()
+	logger.Info("in " + strconv.Itoa(len(tokens)) + " pools, total values of " + strconv.Itoa(int(scp.Load())) + " is synced")
 }
 
 func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Client) {
@@ -145,4 +114,47 @@ func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Clie
 		}
 		results <- &token
 	}
+}
+
+func updateValueV2(store db.Store, pool db.PoolsV2, scp atomic.Uintptr, wg sync.WaitGroup) error {
+	if pool.ReserveA == "0" || pool.ReserveB == "0" {
+		return nil
+	}
+
+	var priceA, priceB decimal.Decimal
+
+	if pA, err := store.GetTokenAPriceByPool(context.Background(), pool.PoolID); err != nil {
+		logger.Error(err, "cannot get the token_a price")
+		return err
+	} else if pA == "0" {
+		return nil
+	} else {
+		priceA, _ = decimal.NewFromString(pA)
+	}
+
+	if pB, err := store.GetTokenBPriceByPool(context.Background(), pool.PoolID); err != nil {
+		logger.Error(err, "cannot get the token_b price")
+		return err
+	} else if pB == "0" {
+		return nil
+	} else {
+		priceB, _ = decimal.NewFromString(pB)
+	}
+
+	vlA, _ := decimal.NewFromString(pool.ReserveA)
+	vlB, _ := decimal.NewFromString(pool.ReserveA)
+	tvl := vlA.Mul(priceA).Add(vlB.Mul(priceB))
+
+	_, err := store.UpdatePoolTV(context.Background(), db.UpdatePoolTVParams{
+		PoolID:     pool.PoolID,
+		TotalValue: tvl.String(),
+	})
+	if err != nil {
+		logger.Error(err, "cannot get the token_b price")
+		return err
+	}
+
+	scp.Add(1)
+	wg.Done()
+	return nil
 }
