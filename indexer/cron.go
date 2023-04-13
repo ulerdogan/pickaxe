@@ -24,8 +24,8 @@ func (ix *indexer) QueryBlocks() {
 		return
 	}
 
-	ix.ixMutex.Lock()
-	defer ix.ixMutex.Unlock()
+	ix.stMutex.Lock()
+	defer ix.stMutex.Unlock()
 
 	ix.isIndexing = true
 
@@ -99,8 +99,8 @@ func (ix *indexer) QueryPrices() {
 		return
 	}
 
-	var scp atomic.Uintptr
-	var wg *sync.WaitGroup
+	var scp *atomic.Uint64 = &atomic.Uint64{}
+	var wg *sync.WaitGroup = &sync.WaitGroup{}
 	for _, pool := range pools {
 		wg.Add(1)
 		go updateValueV2(ix.store, pool, scp, wg)
@@ -123,7 +123,7 @@ func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Clie
 	}
 }
 
-func updateValueV2(store db.Store, pool db.PoolsV2, scp atomic.Uintptr, wg *sync.WaitGroup) error {
+func updateValueV2(store db.Store, pool db.PoolsV2, scp *atomic.Uint64, wg *sync.WaitGroup) error {
 	if pool.ReserveA == "0" || pool.ReserveB == "0" {
 		return nil
 	}

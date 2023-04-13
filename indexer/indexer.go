@@ -32,6 +32,7 @@ type indexer struct {
 
 	scheduler *gocron.Scheduler
 	ixMutex   *sync.Mutex
+	stMutex   *sync.Mutex
 }
 
 type Item struct {
@@ -51,6 +52,7 @@ func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.C
 
 		scheduler: gocron.NewScheduler(time.UTC),
 		ixMutex:   &sync.Mutex{},
+		stMutex:   &sync.Mutex{},
 	}
 
 	ix.syncBlockFromDB()
