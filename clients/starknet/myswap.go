@@ -7,6 +7,7 @@ import (
 
 	"github.com/dontpanicdao/caigo/types"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
+	logger "github.com/ulerdogan/pickaxe/utils/logger"
 	utils "github.com/ulerdogan/pickaxe/utils/starknet"
 )
 
@@ -36,12 +37,19 @@ func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) er
 		return errors.New("starknet query error")
 	}
 
-	tA, _ := store.GetTokenByAddress(context.Background(), pl.TokenA)
-	tB, _ := store.GetTokenByAddress(context.Background(), pl.TokenA)
+	tA, err := store.GetTokenByAddress(context.Background(), pl.TokenA)
+	if err != nil {
+		logger.Error(err, "cannot get token A: "+pl.TokenA)
+		return err
+	}
+	tB, err := store.GetTokenByAddress(context.Background(), pl.TokenB)
+	if err != nil {
+		logger.Error(err, "cannot get token B: "+pl.TokenB)
+		return err
+	}
 
 	rsA := utils.GetDecimal(call[2], int(tA.Decimals))
 	rsB := utils.GetDecimal(call[5], int(tB.Decimals))
-	pool.ReserveA, pool.ReserveB = rsA, rsB
 
 	_, err = store.UpdatePoolReserves(context.Background(), db.UpdatePoolReservesParams{
 		PoolID:   pl.PoolID,

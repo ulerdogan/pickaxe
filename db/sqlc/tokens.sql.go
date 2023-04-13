@@ -179,6 +179,18 @@ func (q *Queries) GetNativeTokens(ctx context.Context) ([]Token, error) {
 	return items, nil
 }
 
+const getTokenADecimalByPool = `-- name: GetTokenADecimalByPool :one
+SELECT decimals FROM tokens
+WHERE address = (SELECT token_a FROM pools_v2 WHERE pool_id = $1)
+`
+
+func (q *Queries) GetTokenADecimalByPool(ctx context.Context, poolID int64) (int32, error) {
+	row := q.db.QueryRowContext(ctx, getTokenADecimalByPool, poolID)
+	var decimals int32
+	err := row.Scan(&decimals)
+	return decimals, err
+}
+
 const getTokenAPriceByPool = `-- name: GetTokenAPriceByPool :one
 SELECT price FROM tokens
 WHERE address = (SELECT token_a FROM pools_v2 WHERE pool_id = $1)
@@ -189,6 +201,18 @@ func (q *Queries) GetTokenAPriceByPool(ctx context.Context, poolID int64) (strin
 	var price string
 	err := row.Scan(&price)
 	return price, err
+}
+
+const getTokenBDecimalByPool = `-- name: GetTokenBDecimalByPool :one
+SELECT decimals FROM tokens
+WHERE address = (SELECT token_b FROM pools_v2 WHERE pool_id = $1)
+`
+
+func (q *Queries) GetTokenBDecimalByPool(ctx context.Context, poolID int64) (int32, error) {
+	row := q.db.QueryRowContext(ctx, getTokenBDecimalByPool, poolID)
+	var decimals int32
+	err := row.Scan(&decimals)
+	return decimals, err
 }
 
 const getTokenBPriceByPool = `-- name: GetTokenBPriceByPool :one

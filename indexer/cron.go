@@ -100,7 +100,7 @@ func (ix *indexer) QueryPrices() {
 	}
 
 	var scp atomic.Uintptr
-	var wg sync.WaitGroup
+	var wg *sync.WaitGroup
 	for _, pool := range pools {
 		wg.Add(1)
 		go updateValueV2(ix.store, pool, scp, wg)
@@ -123,7 +123,7 @@ func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Clie
 	}
 }
 
-func updateValueV2(store db.Store, pool db.PoolsV2, scp atomic.Uintptr, wg sync.WaitGroup) error {
+func updateValueV2(store db.Store, pool db.PoolsV2, scp atomic.Uintptr, wg *sync.WaitGroup) error {
 	if pool.ReserveA == "0" || pool.ReserveB == "0" {
 		return nil
 	}

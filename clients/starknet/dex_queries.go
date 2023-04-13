@@ -2,6 +2,7 @@ package starknet_client
 
 import (
 	"github.com/shopspring/decimal"
+	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
 
@@ -11,6 +12,7 @@ type PoolInfo struct {
 	ReserveA  decimal.Decimal
 	ReserveB  decimal.Decimal
 	ExtraData string
+	Event rpc.Event
 }
 
 type Dex interface {
