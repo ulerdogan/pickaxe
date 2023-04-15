@@ -50,6 +50,7 @@ func (d *jediswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) 
 		PoolID:   pl.PoolID,
 		ReserveA: rsA.String(),
 		ReserveB: rsB.String(),
+		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {
 		logger.Error(err, "cannot update pool reserves: "+pl.Address)
@@ -75,6 +76,7 @@ func (d *jediswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 		PoolID:   pl.PoolID,
 		ReserveA: rsA.String(),
 		ReserveB: rsB.String(),
+		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {
 		logger.Error(err, "cannot update pool reserves: "+pl.Address)

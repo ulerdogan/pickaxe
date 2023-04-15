@@ -50,6 +50,7 @@ func (d *swap10k) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) e
 		PoolID:   pl.PoolID,
 		ReserveA: rsA.String(),
 		ReserveB: rsB.String(),
+		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {
 		return err
@@ -74,6 +75,7 @@ func (d *swap10k) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 		PoolID:   pl.PoolID,
 		ReserveA: rsA.String(),
 		ReserveB: rsB.String(),
+		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {
 		logger.Error(err, "cannot update pool reserves: "+pl.Address)

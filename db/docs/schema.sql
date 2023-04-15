@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-04-11T21:03:19.095Z
+-- Generated at: 2023-04-15T00:00:06.036Z
 
 CREATE TABLE "tokens" (
   "address" varchar PRIMARY KEY NOT NULL,
@@ -24,8 +24,9 @@ CREATE TABLE "pools_v2" (
   "reserve_b" numeric NOT NULL DEFAULT 0,
   "fee" numeric NOT NULL,
   "total_value" numeric NOT NULL DEFAULT 0,
+  "extra_data" varchar,
   "last_updated" timestamptz NOT NULL DEFAULT '0001-01-01',
-  "extra_data" varchar
+  "last_block" bigint NOT NULL DEFAULT 0
 );
 
 CREATE TABLE "pools_v3" (
@@ -49,7 +50,9 @@ CREATE TABLE "pools_v3" (
   "seconds_per_liquidity_outside_X128" varchar NOT NULL DEFAULT '0',
   "seconds_outside" varchar NOT NULL DEFAULT '0',
   "initialized" bool NOT NULL DEFAULT false,
-  "liquidity" varchar NOT NULL
+  "liquidity" varchar NOT NULL,
+  "last_block" bigint NOT NULL DEFAULT 0,
+  "last_updated" timestamptz NOT NULL DEFAULT '0001-01-01'
 );
 
 CREATE TABLE "amms" (

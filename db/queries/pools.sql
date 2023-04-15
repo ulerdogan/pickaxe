@@ -38,8 +38,8 @@ ORDER BY address;
 
 -- name: UpdatePoolReserves :one
 UPDATE pools_v2
-SET reserve_a = $1, reserve_b = $2, last_updated = NOW()
-WHERE pool_id = $3
+SET reserve_a = $1, reserve_b = $2, last_block = $3, last_updated = NOW()
+WHERE pool_id = $4
 RETURNING *;
 
 -- name: UpdatePoolTV :one

@@ -31,8 +31,9 @@ Table pools_v2 as P2 {
   reserve_b numeric [not null, default:0]
   fee numeric [not null]
   total_value numeric [not null, default:0]
-  last_updated timestamptz [not null, default: '0001-01-01']
   extra_data varchar
+  last_updated timestamptz [not null, default: '0001-01-01']
+  last_block bigint [not null, default:0]
 }
 
 Table pools_v3 as P3 {
@@ -61,6 +62,9 @@ Table pools_v3 as P3 {
   initialized bool [not null, default:false, note:'initialized']
 
   liquidity varchar [not null, note:'liquidity']
+
+  last_block bigint [not null, default:0]
+  last_updated timestamptz [not null, default: '0001-01-01']
 }
 
 Table amms as A {

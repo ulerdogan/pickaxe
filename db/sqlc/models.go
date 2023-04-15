@@ -35,8 +35,9 @@ type PoolsV2 struct {
 	ReserveB    string         `json:"reserve_b"`
 	Fee         string         `json:"fee"`
 	TotalValue  string         `json:"total_value"`
-	LastUpdated time.Time      `json:"last_updated"`
 	ExtraData   sql.NullString `json:"extra_data"`
+	LastUpdated time.Time      `json:"last_updated"`
+	LastBlock   int64          `json:"last_block"`
 }
 
 type PoolsV3 struct {
@@ -76,7 +77,9 @@ type PoolsV3 struct {
 	// initialized
 	Initialized bool `json:"initialized"`
 	// liquidity
-	Liquidity string `json:"liquidity"`
+	Liquidity   string    `json:"liquidity"`
+	LastBlock   int64     `json:"last_block"`
+	LastUpdated time.Time `json:"last_updated"`
 }
 
 type Token struct {

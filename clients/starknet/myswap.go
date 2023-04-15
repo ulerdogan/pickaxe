@@ -55,6 +55,7 @@ func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) er
 		PoolID:   pl.PoolID,
 		ReserveA: rsA.String(),
 		ReserveB: rsB.String(),
+		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {
 		return err
