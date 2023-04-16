@@ -82,7 +82,6 @@ func processEventsConc(jobs <-chan rpc.EmittedEvent, results chan<- bool, store 
 			continue
 		}
 
-		// FIXME: fix duplicate tx's from pool on a block
 		dex, _ := client.NewDex(int(pool.AmmID))
 		err = dex.SyncPoolFromEvent(starknet.PoolInfo{
 			Address: event.Event.FromAddress.String(),
