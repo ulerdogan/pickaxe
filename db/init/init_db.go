@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"io"
+	"math/big"
 	"os"
 	"strconv"
 
@@ -202,9 +203,14 @@ func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 	jobs := make(chan db.PoolsV2, len(pools))
 	results := make(chan bool, len(pools))
 
+	lastBlock, err := client.LastBlock()
+	if err != nil {
+		logger.Error(err, "cannot get the last block")
+	}
+
 	for w := 0; w < numWorkers; w++ {
 		go func(jobs chan db.PoolsV2, results chan bool) {
-			syncPoolFromFnConc(jobs, results, store, client)
+			syncPoolFromFnConc(jobs, results, lastBlock, store, client)
 		}(jobs, results)
 	}
 
@@ -223,13 +229,14 @@ func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 	logger.Info("in " + strconv.Itoa(len(pools)) + " pools, " + strconv.Itoa(s) + " is synced")
 }
 
-func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, store db.Store, client starknet.Client) {
+func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, lastBlock uint64, store db.Store, client starknet.Client) {
 	for pool := range jobs {
 		dex, _ := client.NewDex(int(pool.AmmID))
 
 		err := dex.SyncPoolFromFn(starknet.PoolInfo{
 			Address:   pool.Address,
 			ExtraData: pool.ExtraData.String,
+			Block:     big.NewInt(int64(lastBlock)),
 		}, store, client)
 		if err != nil {
 			logger.Error(err, "sync pool error: "+pool.Address)
