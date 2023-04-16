@@ -28,7 +28,6 @@ type indexer struct {
 
 	isIndexing  bool
 	lastQueried *uint64
-	poolIndexes chan Item
 
 	scheduler *gocron.Scheduler
 	ixMutex   *sync.Mutex
@@ -46,7 +45,6 @@ func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.C
 		client:      cli,
 		rest:        rs,
 		config:      cnfg,
-		poolIndexes: make(chan Item),
 
 		Events: make([]rpc.EmittedEvent, 0),
 
