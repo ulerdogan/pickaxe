@@ -47,6 +47,22 @@ pickaxe -t
 pickaxe --testnet
 ```
 
+Run the app in docker network
+
+``` bash
+// Create the docker network
+make docker-network
+
+// Run the postgres server
+make postgres-network
+
+// Build the app container
+make docker-build
+
+// Create & run the app container
+make docker-container
+```
+
 Notes:
 * You should prepare a initial tokens - pools list for the initial run. The indexer will accept this point as a synced point. Example ones below:
   * [amms](./db/init/amms.json)

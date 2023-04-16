@@ -20,6 +20,7 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 		return err
 	}
 
+	// TODO: use with continuation token
 	events, err := ix.client.GetEvents(from, to, "", nil, keys)
 	if err != nil {
 		logger.Error(err, "cannot query the events")
