@@ -2,9 +2,13 @@ package indexer
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"math/big"
 
 	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
+	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
+	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
@@ -35,7 +39,7 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 	ix.ixMutex.Lock()
 
 	for i := len(ix.Events) - 1; i >= 0; i-- {
-		if ok := processEvents(ix.Events[i]); ok {
+		if ok := processEvents(ix.client, ix.store, ix.Events[i]); ok {
 			ix.Events = ix.Events[:i]
 		}
 	}
@@ -45,7 +49,26 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 	return nil
 }
 
-func processEvents(event rpc.EmittedEvent) bool {
-	_ = event
+func processEvents(client starknet.Client, store db.Store, event rpc.EmittedEvent) bool {
+	pool, err := store.GetPoolByAddress(context.Background(), event.Event.FromAddress.String())
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return true
+		}
+		logger.Error(err, "cannot get the pool by address: "+event.Event.FromAddress.String())
+		return false
+	}
+
+	dex, _ := client.NewDex(int(pool.AmmID))
+	err = dex.SyncPoolFromEvent(starknet.PoolInfo{
+		Address: event.Event.FromAddress.String(),
+		Event:   event.Event,
+		Block: big.NewInt(int64(event.BlockNumber)),
+	}, store)
+	if err != nil {
+		logger.Error(err, "cannot sync pool from event: "+event.Event.FromAddress.String())
+		return false
+	}
+
 	return true
 }
