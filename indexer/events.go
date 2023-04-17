@@ -36,8 +36,6 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 
 	logger.Info("new events queried for blocks: " + fmt.Sprint(from) + " - " + fmt.Sprint(to))
 
-	// TODO: process the events
-
 	ix.ixMutex.Lock()
 
 	const numWorkers = 10

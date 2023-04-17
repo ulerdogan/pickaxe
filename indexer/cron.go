@@ -48,9 +48,6 @@ func (ix *indexer) QueryBlocks() {
 
 		ix.lastQueried = &lastBlock
 		ix.store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(*ix.lastQueried), Valid: true})
-	} else {
-		// FIXME: remove the part
-		logger.Info("no new block: " + fmt.Sprint(lastBlock))
 	}
 
 	ix.isIndexing = false

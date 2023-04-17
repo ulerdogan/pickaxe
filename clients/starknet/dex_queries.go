@@ -8,7 +8,6 @@ import (
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
 
-// TODO: add an event data input
 type PoolInfo struct {
 	Address   string
 	ReserveA  decimal.Decimal
