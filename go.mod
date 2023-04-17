@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/dontpanicdao/caigo v0.4.1
 	github.com/ethereum/go-ethereum v1.11.5
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-co-op/gocron v1.19.0
 	github.com/golang-migrate/migrate/v4 v4.15.2

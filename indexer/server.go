@@ -55,7 +55,9 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	setupJobs(ix)
 	go ix.scheduler.StartBlocking()
 
-	// setup n run gin server
+	// setup and run gin server
 	ix.mapUrls()
+	ix.setMiddlewares()
+
 	ix.router.Run(cnfg.ServerAddress)
 }
