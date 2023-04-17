@@ -10,8 +10,11 @@ WORKDIR /app
 COPY --from=builder /app/main .
 COPY app.env .
 COPY app_test.env .
+COPY start.sh .
+COPY wait-for.sh .
 COPY db/init/states ./db/init/states
 COPY db/migration ./db/migration
 
 EXPOSE 8080
 CMD [ "/app/main" ]
+ENTRYPOINT [ "/app/start.sh" ]

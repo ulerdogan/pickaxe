@@ -17,9 +17,6 @@ make postgres
 // Creates database in the container
 make createdb
 
-// Install migration tool (in macos)
-brew install golang-migrate
-
 // Create database tables
 make migrateup
 
@@ -30,7 +27,7 @@ make install-go
 make build-go
 ```
 
-Run the app
+Run the app directly
 
 ``` bash
 // Run the app (basic version)
@@ -63,6 +60,14 @@ make docker-build
 make docker-container
 ```
 
+Run the app with docker-compose
+
+
+``` bash
+// Create the docker compose network
+make docker-compose
+```
+
 Notes:
 * You should prepare a initial tokens - pools list for the initial run. The indexer will accept this point as a synced point. Example ones below:
   * [amms](./db/init/amms.json)
@@ -79,6 +84,7 @@ Requirements & Tools
 * [caigo](https://github.com/dontpanicdao/caigo)
   * [caigo-rpcv02](https://github.com/ulerdogan/caigo-rpcv02) (customized rpcv02 of caigo for pickaxe)
 * [gocron](https://github.com/go-co-op/gocron)
+* [sqlc](https://sqlc.dev/)
 
 <hr/>
 

@@ -10,7 +10,7 @@ db_schema:
 	dbml2sql --postgres -o db/docs/schema.sql db/docs/pickaxe.dbml
 
 postgres:
-	docker run --name pickaxe -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=pickaxe-db -d postgres:alpine3.14
+	docker run --name pickaxe -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=pickaxe-db -d postgres:15-alpine
 
 docker-network:
 	docker network create pickaxe-network
@@ -44,5 +44,6 @@ docker-build:
 
 docker-container:
 	docker run --name pickaxe_app --network pickaxe-network -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:pickaxe-db@pickaxe:5432/pickaxe_db?sslmode=disable" pickaxe:latest
-
-.PHONY: sqlc db_docs db_schema postgres docker-network postgres-network createdb migrateup migratedown build-go install-go docker-build docker-container
+docker-compose:
+	docker compose up
+.PHONY: sqlc db_docs db_schema postgres docker-network postgres-network createdb migrateup migratedown build-go install-go docker-build docker-container docker-compose
