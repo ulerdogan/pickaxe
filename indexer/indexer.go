@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron"
 	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
@@ -19,7 +18,6 @@ import (
 
 type indexer struct {
 	store  db.Store
-	router *gin.Engine
 	client starknet.Client
 	rest   rest.Client
 	config config.Config
@@ -34,17 +32,12 @@ type indexer struct {
 	stMutex   *sync.Mutex
 }
 
-type Item struct {
-	Index string
-}
-
 func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config) *indexer {
 	ix := &indexer{
-		store:       str,
-		router:      gin.Default(),
-		client:      cli,
-		rest:        rs,
-		config:      cnfg,
+		store:  str,
+		client: cli,
+		rest:   rs,
+		config: cnfg,
 
 		Events: make([]rpc.EmittedEvent, 0),
 

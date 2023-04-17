@@ -17,6 +17,7 @@ type Querier interface {
 	DeletePool(ctx context.Context, address string) error
 	DeleteToken(ctx context.Context, address string) error
 	GetAllPools(ctx context.Context) ([]PoolsV2, error)
+	GetAllTokens(ctx context.Context) ([]Token, error)
 	GetAllTokensWithTickers(ctx context.Context) ([]Token, error)
 	GetAmmByDEX(ctx context.Context, dexName string) ([]Amm, error)
 	GetAmmById(ctx context.Context, ammID int64) (Amm, error)

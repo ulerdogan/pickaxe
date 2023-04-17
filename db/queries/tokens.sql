@@ -50,6 +50,10 @@ SELECT * FROM tokens
 WHERE price IS NOT NULL
 ORDER BY address;
 
+-- name: GetAllTokens :many
+SELECT * FROM tokens
+ORDER BY address;
+
 -- name: GetTokenAPriceByPool :one
 SELECT price FROM tokens
 WHERE address = (SELECT token_a FROM pools_v2 WHERE pool_id = $1);

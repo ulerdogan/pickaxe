@@ -62,6 +62,44 @@ func (q *Queries) DeleteToken(ctx context.Context, address string) error {
 	return err
 }
 
+const getAllTokens = `-- name: GetAllTokens :many
+SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
+ORDER BY address
+`
+
+func (q *Queries) GetAllTokens(ctx context.Context) ([]Token, error) {
+	rows, err := q.db.QueryContext(ctx, getAllTokens)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Token{}
+	for rows.Next() {
+		var i Token
+		if err := rows.Scan(
+			&i.Address,
+			&i.Name,
+			&i.Symbol,
+			&i.Decimals,
+			&i.Base,
+			&i.Native,
+			&i.Ticker,
+			&i.Price,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAllTokensWithTickers = `-- name: GetAllTokensWithTickers :many
 SELECT address, name, symbol, decimals, base, native, ticker, price, created_at FROM tokens
 WHERE price IS NOT NULL
