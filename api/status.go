@@ -8,8 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (r *ginServer) Ping(ctx *gin.Context) {
+func (r *ginServer) Base(ctx *gin.Context) {
 	ctx.String(http.StatusOK, "pickaxe")
+}
+
+func (r *ginServer) Ping(ctx *gin.Context) {
+	ctx.String(http.StatusOK, "pong")
+}
+
+type IndexerStatusResponse struct {
+	LastBlock   int64  `json:"last_block"`
+	LastUpdated string `json:"last_updated"`
 }
 
 func (r *ginServer) GetIndexerStatus(ctx *gin.Context) {
@@ -22,6 +31,16 @@ func (r *ginServer) GetIndexerStatus(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	
-	ctx.JSON(http.StatusOK, status)
+
+	if !status.LastQueried.Valid {
+		ctx.JSON(http.StatusNotFound, err.Error())
+		return
+	}
+
+	rsp := IndexerStatusResponse{
+		LastBlock:   status.LastQueried.Int64,
+		LastUpdated: status.LastUpdated.Time.String(),
+	}
+
+	ctx.JSON(http.StatusOK, rsp)
 }

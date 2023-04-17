@@ -56,6 +56,41 @@ func (q *Queries) DeleteAmm(ctx context.Context, ammID int64) error {
 	return err
 }
 
+const getAllAmms = `-- name: GetAllAmms :many
+SELECT amm_id, dex_name, router_address, key, algorithm_type, created_at FROM amms
+ORDER BY amm_id
+`
+
+func (q *Queries) GetAllAmms(ctx context.Context) ([]Amm, error) {
+	rows, err := q.db.QueryContext(ctx, getAllAmms)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Amm{}
+	for rows.Next() {
+		var i Amm
+		if err := rows.Scan(
+			&i.AmmID,
+			&i.DexName,
+			&i.RouterAddress,
+			&i.Key,
+			&i.AlgorithmType,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAmmByDEX = `-- name: GetAmmByDEX :many
 SELECT amm_id, dex_name, router_address, key, algorithm_type, created_at FROM amms
 WHERE dex_name = $1

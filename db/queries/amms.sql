@@ -12,6 +12,10 @@ INSERT INTO amms (
 SELECT * FROM amms
 WHERE amm_id = $1 LIMIT 1;
 
+-- name: GetAllAmms :many
+SELECT * FROM amms
+ORDER BY amm_id;
+
 -- name: GetKeys :many
 SELECT DISTINCT key FROM amms
 ORDER BY key;
