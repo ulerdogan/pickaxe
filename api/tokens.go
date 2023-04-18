@@ -5,16 +5,11 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/dontpanicdao/caigo/types"
 	"github.com/gin-gonic/gin"
+	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
+	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
-
-type TokenResponse struct {
-	Address  string `json:"address"`
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	Decimals int32  `json:"decimals"`
-	Price    string `json:"price,omitempty"`
-}
 
 func (r *ginServer) GetAllTokens(ctx *gin.Context) {
 	tokens, err := r.store.GetAllTokens(context.Background())
@@ -39,4 +34,55 @@ func (r *ginServer) GetAllTokens(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+func (r *ginServer) AddToken(ctx *gin.Context) {
+	var req AddTokenParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	decimal, err := getTokenDecimal(r.client, req.Address)
+	if err != nil {
+		d := 18
+		*decimal = d
+	}
+
+	token, err := r.store.CreateToken(context.Background(), db.CreateTokenParams{
+		Address:  req.Address,
+		Name:     req.Name,
+		Symbol:   req.Symbol,
+		Ticker:   req.Ticker,
+		Decimals: int32(*decimal),
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	rsp := TokenResponse{
+		Address:  token.Address,
+		Name:     token.Name,
+		Symbol:   token.Symbol,
+		Decimals: token.Decimals,
+	}
+
+	ctx.JSON(http.StatusOK, rsp)
+}
+
+func getTokenDecimal(c starknet.Client, address string) (*int, error) {
+	paHash := types.HexToHash(address)
+	r, err := c.Call(types.FunctionCall{
+		ContractAddress:    paHash,
+		EntryPointSelector: "decimals",
+		Calldata:           []string{},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	decimal := int(types.HexToBN(r[0]).Int64())
+	return &decimal, nil
 }

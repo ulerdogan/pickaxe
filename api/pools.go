@@ -6,19 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
-
-type PoolResponse struct {
-	Address     string `json:"address"`
-	TokenA      string `json:"token_a"`
-	TokenB      string `json:"token_b"`
-	ReserveA    string `json:"reserve_a"`
-	ReserveB    string `json:"reserve_b"`
-	Fee         string `json:"fee"`
-	TotalValue  string `json:"total_value,omitempty"`
-	LastUpdated string `json:"last_updated"`
-	LastBlock   int64  `json:"last_block"`
-}
 
 func (r *ginServer) GetAllPools(ctx *gin.Context) {
 	pools, err := r.store.GetAllPools(context.Background())
@@ -48,6 +37,37 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 			prp.TotalValue = p.TotalValue
 		}
 		rsp[i] = prp
+	}
+
+	ctx.JSON(http.StatusOK, rsp)
+}
+
+func (r *ginServer) AddPool(ctx *gin.Context) {
+	var req AddPoolParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	pool, err := r.store.CreatePool(context.Background(), db.CreatePoolParams{
+		Address: req.Address,
+		TokenA:  req.TokenA,
+		TokenB:  req.TokenB,
+		AmmID:   req.AmmId,
+		Fee:     req.Fee.String(),
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	rsp := PoolResponse{
+		Address:  pool.Address,
+		TokenA:   pool.TokenA,
+		TokenB:   pool.TokenB,
+		ReserveA: pool.ReserveA,
+		ReserveB: pool.ReserveB,
+		Fee:      pool.Fee,
 	}
 
 	ctx.JSON(http.StatusOK, rsp)

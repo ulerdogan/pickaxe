@@ -6,6 +6,6 @@ import (
 )
 
 func (r *ginServer) SetMiddlewares() {
-	r.Router.Use(cors.Default())
-	r.Router.Use(gin.Recovery())
+	r.router.Use(cors.Default())
+	r.router.Use(gin.Recovery())
 }

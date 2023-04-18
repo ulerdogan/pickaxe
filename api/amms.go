@@ -6,12 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
-
-type AmmResponse struct {
-	Name    string `json:"name"`
-	Address string `json:"router_address"`
-}
 
 func (r *ginServer) GetAllAmms(ctx *gin.Context) {
 	amms, err := r.store.GetAllAmms(context.Background())
@@ -30,6 +26,32 @@ func (r *ginServer) GetAllAmms(ctx *gin.Context) {
 			Name:    a.DexName,
 			Address: a.RouterAddress,
 		}
+	}
+
+	ctx.JSON(http.StatusOK, rsp)
+}
+
+func (r *ginServer) AddAmm(ctx *gin.Context) {
+	var req AddAmmParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	amm, err := r.store.CreateAmm(context.Background(), db.CreateAmmParams{
+		DexName:       req.Name,
+		RouterAddress: req.Address,
+		Key:           req.Key,
+		AlgorithmType: req.AlgorithmType,
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	rsp := AmmResponse{
+		Address: amm.RouterAddress,
+		Name:    amm.DexName,
 	}
 
 	ctx.JSON(http.StatusOK, rsp)

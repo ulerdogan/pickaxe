@@ -45,7 +45,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	store := db.NewStore(conn)
 	client := starknet.NewStarknetClient(cnfg)
 	rest := rest.NewRestClient()
-	router := api.NewRouter(store)
+	router := api.NewRouter(store, client)
 
 	// adding the initial state to db
 	if ok {
