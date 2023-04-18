@@ -1,19 +1,20 @@
 package config_utils
 
 import (
+	"time"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
-	DBDriver      string `mapstructure:"DB_DRIVER"`
-	DBUsername    string `mapstructure:"DB_USERNAME"`
-	DBPassword    string `mapstructure:"DB_PASSWORD"`
-	DBName        string `mapstructure:"DB_NAME"`
-	DBPort        string `mapstructure:"DB_PORT"`
-	DBSource      string `mapstructure:"DB_SOURCE"`
-	MigrationURL  string `mapstructure:"MIGRATION_URL"`
-	RPCAddress    string `mapstructure:"RPC_ADDRESS"`
+	ServerAddress       string        `mapstructure:"SERVER_ADDRESS"`
+	DBDriver            string        `mapstructure:"DB_DRIVER"`
+	DBSource            string        `mapstructure:"DB_SOURCE"`
+	AuthPassword        string        `mapstructure:"AUTH_PASSWORD"`
+	SymmetricKey        string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
+	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	RPCAddress          string        `mapstructure:"RPC_ADDRESS"`
+	MigrationURL        string        `mapstructure:"MIGRATION_URL"`
 }
 
 func LoadConfig(name, path string) (config Config, err error) {

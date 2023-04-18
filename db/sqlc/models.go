@@ -20,9 +20,10 @@ type Amm struct {
 }
 
 type Indexer struct {
-	ID          int32         `json:"id"`
-	LastQueried sql.NullInt64 `json:"last_queried"`
-	LastUpdated sql.NullTime  `json:"last_updated"`
+	ID             int32         `json:"id"`
+	HashedPassword string        `json:"hashed_password"`
+	LastQueried    sql.NullInt64 `json:"last_queried"`
+	LastUpdated    sql.NullTime  `json:"last_updated"`
 }
 
 type PoolsV2 struct {
@@ -78,8 +79,8 @@ type PoolsV3 struct {
 	Initialized bool `json:"initialized"`
 	// liquidity
 	Liquidity   string    `json:"liquidity"`
-	LastBlock   int64     `json:"last_block"`
 	LastUpdated time.Time `json:"last_updated"`
+	LastBlock   int64     `json:"last_block"`
 }
 
 type Token struct {

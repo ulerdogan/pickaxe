@@ -7,6 +7,7 @@ import (
 
 	"github.com/dontpanicdao/caigo/types"
 	"github.com/gin-gonic/gin"
+	//auth "github.com/ulerdogan/pickaxe/auth"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
@@ -15,10 +16,10 @@ func (r *ginServer) GetAllTokens(ctx *gin.Context) {
 	tokens, err := r.store.GetAllTokens(context.Background())
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, err.Error())
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -39,14 +40,14 @@ func (r *ginServer) GetAllTokens(ctx *gin.Context) {
 func (r *ginServer) AddToken(ctx *gin.Context) {
 	var req AddTokenParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	decimal, err := getTokenDecimal(r.client, req.Address)
 	if err != nil {
 		d := 18
-		*decimal = d
+		decimal = &d
 	}
 
 	token, err := r.store.CreateToken(context.Background(), db.CreateTokenParams{
@@ -57,7 +58,7 @@ func (r *ginServer) AddToken(ctx *gin.Context) {
 		Decimals: int32(*decimal),
 	})
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 

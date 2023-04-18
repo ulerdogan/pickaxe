@@ -13,10 +13,10 @@ func (r *ginServer) GetAllAmms(ctx *gin.Context) {
 	amms, err := r.store.GetAllAmms(context.Background())
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, err.Error())
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -34,7 +34,7 @@ func (r *ginServer) GetAllAmms(ctx *gin.Context) {
 func (r *ginServer) AddAmm(ctx *gin.Context) {
 	var req AddAmmParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
@@ -45,7 +45,7 @@ func (r *ginServer) AddAmm(ctx *gin.Context) {
 		AlgorithmType: req.AlgorithmType,
 	})
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 

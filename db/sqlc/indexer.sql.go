@@ -10,32 +10,60 @@ import (
 	"database/sql"
 )
 
+const getHashedIndexerPwd = `-- name: GetHashedIndexerPwd :one
+SELECT hashed_password FROM indexer
+WHERE id = 0 LIMIT 1
+`
+
+func (q *Queries) GetHashedIndexerPwd(ctx context.Context) (string, error) {
+	row := q.db.QueryRowContext(ctx, getHashedIndexerPwd)
+	var hashed_password string
+	err := row.Scan(&hashed_password)
+	return hashed_password, err
+}
+
 const getIndexerStatus = `-- name: GetIndexerStatus :one
-SELECT id, last_queried, last_updated FROM indexer
+SELECT id, hashed_password, last_queried, last_updated FROM indexer
 WHERE id = 0 LIMIT 1
 `
 
 func (q *Queries) GetIndexerStatus(ctx context.Context) (Indexer, error) {
 	row := q.db.QueryRowContext(ctx, getIndexerStatus)
 	var i Indexer
-	err := row.Scan(&i.ID, &i.LastQueried, &i.LastUpdated)
+	err := row.Scan(
+		&i.ID,
+		&i.HashedPassword,
+		&i.LastQueried,
+		&i.LastUpdated,
+	)
 	return i, err
 }
 
 const initIndexer = `-- name: InitIndexer :one
 INSERT INTO indexer (
   id,
+  hashed_password,
   last_queried,
   last_updated
 ) VALUES (
-  0, $1, NOW()
-) RETURNING id, last_queried, last_updated
+  0, $1, $2, NOW()
+) RETURNING id, hashed_password, last_queried, last_updated
 `
 
-func (q *Queries) InitIndexer(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error) {
-	row := q.db.QueryRowContext(ctx, initIndexer, lastQueried)
+type InitIndexerParams struct {
+	HashedPassword string        `json:"hashed_password"`
+	LastQueried    sql.NullInt64 `json:"last_queried"`
+}
+
+func (q *Queries) InitIndexer(ctx context.Context, arg InitIndexerParams) (Indexer, error) {
+	row := q.db.QueryRowContext(ctx, initIndexer, arg.HashedPassword, arg.LastQueried)
 	var i Indexer
-	err := row.Scan(&i.ID, &i.LastQueried, &i.LastUpdated)
+	err := row.Scan(
+		&i.ID,
+		&i.HashedPassword,
+		&i.LastQueried,
+		&i.LastUpdated,
+	)
 	return i, err
 }
 
@@ -43,12 +71,17 @@ const updateIndexerStatus = `-- name: UpdateIndexerStatus :one
 UPDATE indexer
 SET last_queried = $1, last_updated = NOW()
 WHERE id = 0
-RETURNING id, last_queried, last_updated
+RETURNING id, hashed_password, last_queried, last_updated
 `
 
 func (q *Queries) UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error) {
 	row := q.db.QueryRowContext(ctx, updateIndexerStatus, lastQueried)
 	var i Indexer
-	err := row.Scan(&i.ID, &i.LastQueried, &i.LastUpdated)
+	err := row.Scan(
+		&i.ID,
+		&i.HashedPassword,
+		&i.LastQueried,
+		&i.LastUpdated,
+	)
 	return i, err
 }

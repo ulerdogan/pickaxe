@@ -13,10 +13,10 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 	pools, err := r.store.GetAllPools(context.Background())
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, err.Error())
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -45,7 +45,7 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 func (r *ginServer) AddPool(ctx *gin.Context) {
 	var req AddPoolParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
@@ -57,7 +57,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		Fee:     req.Fee.String(),
 	})
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 

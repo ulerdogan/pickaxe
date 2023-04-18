@@ -1,14 +1,19 @@
 -- name: InitIndexer :one
 INSERT INTO indexer (
   id,
+  hashed_password,
   last_queried,
   last_updated
 ) VALUES (
-  0, $1, NOW()
+  0, $1, $2, NOW()
 ) RETURNING *;
 
 -- name: GetIndexerStatus :one
 SELECT * FROM indexer
+WHERE id = 0 LIMIT 1;
+
+-- name: GetHashedIndexerPwd :one
+SELECT hashed_password FROM indexer
 WHERE id = 0 LIMIT 1;
 
 -- name: UpdateIndexerStatus :one

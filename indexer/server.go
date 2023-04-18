@@ -3,7 +3,8 @@ package indexer
 import (
 	"database/sql"
 
-	api "github.com/ulerdogan/pickaxe/api"
+	"github.com/ulerdogan/pickaxe/api"
+	auth "github.com/ulerdogan/pickaxe/auth"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	init_db "github.com/ulerdogan/pickaxe/db/init"
@@ -45,7 +46,8 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	store := db.NewStore(conn)
 	client := starknet.NewStarknetClient(cnfg)
 	rest := rest.NewRestClient()
-	router := api.NewRouter(store, client)
+	maker, _ := auth.NewPasetoMaker(cnfg.SymmetricKey)
+	router := api.NewRouter(store, client, maker, cnfg)
 
 	// adding the initial state to db
 	if ok {
@@ -60,6 +62,5 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 
 	// setup and run gin server
 	router.MapUrls()
-	router.SetMiddlewares()
-	router.Run(cnfg.ServerAddress)
+	router.Run()
 }

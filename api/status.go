@@ -25,15 +25,15 @@ func (r *ginServer) GetIndexerStatus(ctx *gin.Context) {
 	status, err := r.store.GetIndexerStatus(context.Background())
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, err.Error())
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	if !status.LastQueried.Valid {
-		ctx.JSON(http.StatusNotFound, err.Error())
+		ctx.JSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 

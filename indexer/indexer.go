@@ -13,6 +13,7 @@ import (
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	config "github.com/ulerdogan/pickaxe/utils/config"
+	hasher "github.com/ulerdogan/pickaxe/utils/hasher"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
@@ -59,7 +60,10 @@ func (ix *indexer) syncBlockFromDB() {
 	if err == sql.ErrNoRows || ixStatus.LastQueried.Int64 == 0 {
 		lb, err := ix.client.LastBlock()
 		ix.lastQueried = &lb
-		ix.store.InitIndexer(context.Background(), sql.NullInt64{Int64: int64(lb), Valid: true})
+		ix.store.InitIndexer(context.Background(), db.InitIndexerParams{
+			HashedPassword: hasher.HashPassword(ix.config.AuthPassword),
+			LastQueried:    sql.NullInt64{Int64: int64(lb), Valid: true},
+		})
 		logger.Info("indexer initialized with the last block in the db: " + fmt.Sprint(lb))
 		if err != nil {
 			logger.Error(err, "cannot get the last block")

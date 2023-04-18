@@ -49,3 +49,13 @@ type AddAmmParams struct {
 	Key           string `json:"key,omitempty"`
 	AlgorithmType string `json:"algorithm_type"`
 }
+
+type AuthRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type AuthResponse struct {
+	AccessToken string `json:"access_token"`
+	ExpiresIn   int64  `json:"expires_in"`
+}
