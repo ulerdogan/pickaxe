@@ -26,20 +26,20 @@ func (c *starknetClient) Call(fc types.FunctionCall) ([]string, error) {
 	return c.Rpc.Call(context.Background(), fc, rpc.WithBlockTag("latest"))
 }
 
-func (c *starknetClient) GetEvents(from, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, error) {
+func (c *starknetClient) GetEvents(from, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error) {
 	output, err := c.Rpc.Events(context.Background(), rpc.EventsInput{
 		FromBlock:         getBlockId(from),
 		ToBlock:           getBlockId(to),
 		Address:           getAddressHash(address),
 		Keys:              keys,
 		ContinuationToken: c_token,
-		ChunkSize:         1024,
+		ChunkSize:         10,
 	})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return output.Events, nil
+	return output.Events, output.ContinuationToken, nil
 }
 
 func (c *starknetClient) LastBlock() (uint64, error) {

@@ -31,7 +31,7 @@ func TestGetEvents(t *testing.T) {
 	cnfg, _ := config.LoadConfig("app", "../..")
 	c := NewStarknetClient(cnfg)
 
-	events, err := c.GetEvents(
+	events, _, err := c.GetEvents(
 		29588,
 		29589,
 		"0x04d0390b777b424e43839cd1e744799f3de6c176c7e32c1812a41dbd9c19db6a",
