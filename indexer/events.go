@@ -20,8 +20,7 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 		return err
 	}
 
-	// TODO: use with continuation token
-	events, err := ix.client.GetEvents(from, to, "", nil, keys)
+	events, err := getEventsLoop(from, to, keys, ix.client.GetEvents)
 	if err != nil {
 		logger.Error(err, "cannot query the events")
 		return err
@@ -95,4 +94,26 @@ func processEventsConc(jobs <-chan rpc.EmittedEvent, results chan<- bool, store 
 
 		results <- true
 	}
+}
+
+func getEventsLoop(from, to uint64, keys []string, getEvents func (from uint64, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error)) ([]rpc.EmittedEvent, error) {
+	eventsArr := make([]rpc.EmittedEvent, 0)
+	
+	events, c_token, err := getEvents(from, to, "", nil, keys)
+	if err != nil {
+		return nil, err
+	}
+
+	eventsArr = append(eventsArr, events...)
+
+	for c_token != nil {
+		events, c_token, err = getEvents(from, to, "", c_token, keys)
+		if err != nil {
+			return nil, err
+		}
+
+		eventsArr = append(eventsArr, events...)
+	}
+
+	return eventsArr, nil
 }
