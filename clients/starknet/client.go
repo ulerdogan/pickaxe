@@ -33,7 +33,7 @@ func (c *starknetClient) GetEvents(from, to uint64, address string, c_token *str
 		Address:           getAddressHash(address),
 		Keys:              keys,
 		ContinuationToken: c_token,
-		ChunkSize:         10,
+		ChunkSize:         256,
 	})
 	if err != nil {
 		return nil, nil, err

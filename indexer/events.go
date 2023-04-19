@@ -20,8 +20,7 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 		return err
 	}
 
-	// TODO: use with continuation token
-	events, err := ix.client.GetEvents(from, to, "", nil, keys)
+	events, c_token, err := ix.client.GetEvents(from, to, "", nil, keys)
 	if err != nil {
 		logger.Error(err, "cannot query the events")
 		return err
@@ -33,6 +32,22 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 	ix.Events = append(ix.Events, events...)
 
 	ix.ixMutex.Unlock()
+
+	for c_token != nil {
+		events, c_token, err = ix.client.GetEvents(from, to, "", c_token, keys)
+		if err != nil {
+			logger.Error(err, "cannot query the events")
+			return err
+		}
+
+		ix.ixMutex.Lock()
+
+		// TODO: use redis / message broker instead of in-memory array
+		ix.Events = append(ix.Events, events...)
+
+		ix.ixMutex.Unlock()
+	}
+
 
 	logger.Info("new events queried for blocks: " + fmt.Sprint(from) + " - " + fmt.Sprint(to))
 
