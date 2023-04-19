@@ -20,7 +20,7 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 		return err
 	}
 
-	events, c_token, err := ix.client.GetEvents(from, to, "", nil, keys)
+	events, err := getEventsLoop(from, to, keys, ix.client.GetEvents)
 	if err != nil {
 		logger.Error(err, "cannot query the events")
 		return err
@@ -32,22 +32,6 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 	ix.Events = append(ix.Events, events...)
 
 	ix.ixMutex.Unlock()
-
-	for c_token != nil {
-		events, c_token, err = ix.client.GetEvents(from, to, "", c_token, keys)
-		if err != nil {
-			logger.Error(err, "cannot query the events")
-			return err
-		}
-
-		ix.ixMutex.Lock()
-
-		// TODO: use redis / message broker instead of in-memory array
-		ix.Events = append(ix.Events, events...)
-
-		ix.ixMutex.Unlock()
-	}
-
 
 	logger.Info("new events queried for blocks: " + fmt.Sprint(from) + " - " + fmt.Sprint(to))
 
@@ -110,4 +94,26 @@ func processEventsConc(jobs <-chan rpc.EmittedEvent, results chan<- bool, store 
 
 		results <- true
 	}
+}
+
+func getEventsLoop(from, to uint64, keys []string, getEvents func (from uint64, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error)) ([]rpc.EmittedEvent, error) {
+	eventsArr := make([]rpc.EmittedEvent, 0)
+	
+	events, c_token, err := getEvents(from, to, "", nil, keys)
+	if err != nil {
+		return nil, err
+	}
+
+	eventsArr = append(eventsArr, events...)
+
+	for c_token != nil {
+		events, c_token, err = getEvents(from, to, "", c_token, keys)
+		if err != nil {
+			return nil, err
+		}
+
+		eventsArr = append(eventsArr, events...)
+	}
+
+	return eventsArr, nil
 }
