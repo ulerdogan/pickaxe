@@ -24,7 +24,7 @@ make migrateup
 make install-go
 
 // To build Go code (optional)
-make build-go
+make build-pickaxe
 ```
 
 Run the app directly

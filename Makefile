@@ -31,10 +31,10 @@ migratedown:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down
 
 make go:
-	go run main.go
+	go run cmd/pickaxe/main.go
 
-build-go:
-	go build -o bin/pickaxe -v .
+build-pickaxe:
+	go build -o bin/pickaxe -v cmd/pickaxe/main.go
 
 install-go:
 	go install

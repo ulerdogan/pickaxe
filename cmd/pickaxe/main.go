@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ulerdogan/pickaxe/cmd"
+	"github.com/ulerdogan/pickaxe/cmd/pickaxe/root"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
