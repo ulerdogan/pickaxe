@@ -37,7 +37,7 @@ func (ix *indexer) GetEvents(from, to uint64) error {
 
 	ix.ixMutex.Lock()
 
-	const numWorkers = 10
+	const numWorkers = 20
 	numJobs := len(ix.Events)
 	jobs := make(chan rpc.EmittedEvent, numJobs)
 	results := make(chan bool, numJobs)
@@ -103,7 +103,6 @@ func getEventsLoop(from, to uint64, keys []string, getEvents func (from uint64, 
 	if err != nil {
 		return nil, err
 	}
-
 	eventsArr = append(eventsArr, events...)
 
 	for c_token != nil {
@@ -111,7 +110,6 @@ func getEventsLoop(from, to uint64, keys []string, getEvents func (from uint64, 
 		if err != nil {
 			return nil, err
 		}
-
 		eventsArr = append(eventsArr, events...)
 	}
 
