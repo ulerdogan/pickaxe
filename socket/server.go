@@ -12,10 +12,10 @@ func Init(environment string) {
 	// load app configs
 	cnfg, err := config.LoadConfig(environment, ".")
 	if err != nil {
-		logger.Error(err, "cannot load config for: "+environment)
+		logger.Error(err, "cannot load config for psocket: "+environment)
 		return
 	}
-	logger.Info("config loaded for: " + environment)
+	logger.Info("config loaded for psocket: " + environment)
 
 	client := starknet.NewStarknetClient(cnfg)
 
@@ -24,12 +24,14 @@ func Init(environment string) {
 		logger.Error(err, "cannot listen to: "+cnfg.SocketAddress)
 		return
 	}
+	
+	logger.Info("socket server will be running at: " + cnfg.SocketAddress)
 
 	sc := NewSocket(ls, client, cnfg)
 
 	// setup and run jobs
 	setupJobs(sc)
-	
+
 	go sc.Sync()
 	sc.scheduler.StartBlocking()
 }

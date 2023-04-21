@@ -18,10 +18,10 @@ func Init(environment string) {
 	// load app configs
 	cnfg, err := config.LoadConfig(environment, ".")
 	if err != nil {
-		logger.Error(err, "cannot load config for: "+environment)
+		logger.Error(err, "cannot load config for pickaxe: "+environment)
 		return
 	}
-	logger.Info("config loaded for: " + environment)
+	logger.Info("config loaded for pickaxe: " + environment)
 
 	// create db connection
 	conn, err := sql.Open(cnfg.DBDriver, cnfg.DBSource)
