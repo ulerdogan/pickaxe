@@ -6,15 +6,19 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"time"
 
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
 func (ix *indexer) ListenBlocks() {
 	// Connect to socket server
-	conn, err := net.Dial("tcp", "localhost:8081")
+	conn, err := net.Dial("tcp", ix.config.SocketAddress)
 	if err != nil {
 		logger.Error(err, "cannot connect to the socket server")
+
+		time.Sleep(3 * time.Second)
+		go ix.ListenBlocks()
 		return
 	}
 	defer conn.Close()
@@ -24,6 +28,8 @@ func (ix *indexer) ListenBlocks() {
 		n, err := conn.Read(buffer)
 		if err != nil {
 			logger.Error(err, "cannot read the socket server")
+
+			time.Sleep(3 * time.Second)
 			continue
 		}
 
