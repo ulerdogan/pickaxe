@@ -6,6 +6,7 @@ import (
 )
 
 func (r *ginServer) MapUrls() {
+	r.router.GET("/", r.Base)
 	r.router.GET("/ping", r.Ping)
 	r.router.GET("/api/status", r.GetIndexerStatus)
 
