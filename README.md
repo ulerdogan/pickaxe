@@ -24,22 +24,31 @@ make migrateup
 make install-go
 
 // To build Go code (optional)
-make build-pickaxe
+make build
 ```
 
 Run the app directly
 
 ``` bash
+// Run the socket block finder (basic version)
+make psocket
+
 // Run the app (basic version)
-make go
+make pickaxe
 
 // Run the app (if the app has been installed)
 pickaxe
 
+// Run the socket (if the app has been installed)
+psocket
+
 // Run the app (if the code has been built)
 ./bin/pickaxe
 
-// For testnet envs - run with testnet flag
+// Run the socket (if the code has been built)
+./bin/psocket
+
+// For testnet envs - run with testnet flag, example:
 pickaxe -t
 pickaxe --testnet
 ```
