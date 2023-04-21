@@ -60,6 +60,9 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	setupJobs(ix)
 	go ix.scheduler.StartBlocking()
 
+	// start listening blocks
+	go ix.ListenBlocks()
+
 	// setup and run gin server
 	router.MapUrls()
 	router.Run()
