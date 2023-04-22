@@ -6,16 +6,12 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=pickaxe-db
       - POSTGRES_DB=pickaxe
-  app:
+    restart: always
+  psocket:
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - DB_SOURCE=postgresql://root:pickaxe-db@postgres:5432/pickaxe?sslmode=disable
-    depends_on:
-      - postgres
+      dockerfile: Dockerfile.psocket
+    restart: unless-stopped
     entrypoint:
       [
         "/app/wait-for.sh",
@@ -23,5 +19,26 @@ services:
         "--",
         "/app/start.sh"
       ]
-    command: [ "/app/main" ]
- 
+    command: [ "/app/psocket" ]
+  pickaxe:
+    build:
+      context: .
+      dockerfile: Dockerfile.pickaxe
+    ports:
+      - "8080:8080"
+    environment:
+      - GIN_MODE=release
+      - DB_SOURCE=postgresql://root:pickaxe-db@postgres:5432/pickaxe?sslmode=disable
+      - SOCKET_ADDRESS=psocket:8081
+    depends_on:
+      - postgres
+      - psocket
+    restart: unless-stopped
+    entrypoint:
+      [
+        "/app/wait-for.sh",
+        "postgres:5432",
+        "--",
+        "/app/start.sh"
+      ]
+    command: [ "/app/pickaxe" ]

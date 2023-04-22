@@ -1,0 +1,18 @@
+# Build stage
+FROM golang:1.20-alpine3.17 AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o psocket cmd/psocket/main.go
+
+# Run stage
+FROM alpine:3.17
+WORKDIR /app
+COPY --from=builder /app/psocket .
+COPY app.env .
+COPY app_test.env .
+COPY start.sh .
+COPY wait-for.sh .
+
+EXPOSE 8081
+CMD [ "/app/psocket" ]
+ENTRYPOINT [ "/app/start.sh" ]

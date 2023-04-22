@@ -43,11 +43,19 @@ build:
 install-go:
 	go install -v ./...
 
-docker-build:
-	docker build -t pickaxe:latest .                                                                
+docker-build-pickaxe:
+	docker build -f Dockerfile.pickaxe -t pickaxe:latest .      
 
-docker-container:
-	docker run --name pickaxe_app --network pickaxe-network -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:pickaxe-db@pickaxe:5432/pickaxe_db?sslmode=disable" pickaxe:latest
+docker-build-psocket:
+	docker build -f Dockerfile.psocket -t psocket:latest .                                                                
+
+docker-container-pickaxe:
+	docker run --name pickaxe_app --network pickaxe-network -p 8080:8080 -e GIN_MODE=release -e SOCKET_ADDRESS=psocket:8081 -e DB_SOURCE="postgresql://root:pickaxe-db@pickaxe:5432/pickaxe_db?sslmode=disable" pickaxe:latest
+
+docker-container-psocket:
+	docker run --name psocket --network pickaxe-network psocket:latest
+
 docker-compose:
 	docker compose up
-.PHONY: sqlc db_docs db_schema postgres docker-network postgres-network createdb migrateup migratedown build install-go docker-build docker-container docker-compose go psocket pickaxe
+
+.PHONY: sqlc db_docs db_schema postgres docker-network postgres-network createdb migrateup migratedown build install-go docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose go psocket pickaxe

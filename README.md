@@ -62,11 +62,13 @@ make docker-network
 // Run the postgres server
 make postgres-network
 
-// Build the app container
-make docker-build
+// Build the app containers
+make docker-build-psocket
+make docker-build-pickaxe
 
-// Create & run the app container
-make docker-container
+// Create & run the app containers
+make docker-container-psocket
+make docker-container-pickaxe
 ```
 
 Run the app with docker-compose
