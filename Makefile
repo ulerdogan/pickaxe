@@ -12,6 +12,9 @@ db_schema:
 postgres:
 	docker run --name pickaxe -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=pickaxe-db -d postgres:15-alpine
 
+rabbitmq:
+	docker run -it --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management-alpine
+
 docker-network:
 	docker network create pickaxe-network
 
@@ -58,4 +61,4 @@ docker-container-psocket:
 docker-compose:
 	docker compose up
 
-.PHONY: sqlc db_docs db_schema postgres docker-network postgres-network createdb migrateup migratedown build install-go docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose go psocket pickaxe
+.PHONY: sqlc db_docs db_schema postgres rabbitmq docker-network postgres-network createdb migrateup migratedown build install-go docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose go psocket pickaxe

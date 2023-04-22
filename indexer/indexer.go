@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron"
+	"github.com/streadway/amqp"
 	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
@@ -23,6 +24,8 @@ type indexer struct {
 	rest   rest.Client
 	config config.Config
 
+	rabbitmq *amqp.Connection
+	// FIXME: remove the array
 	Events []rpc.EmittedEvent
 
 	lastQueried *uint64
@@ -32,13 +35,15 @@ type indexer struct {
 	stMutex   *sync.Mutex
 }
 
-func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config) *indexer {
+func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config, rmq *amqp.Connection) *indexer {
 	ix := &indexer{
 		store:  str,
 		client: cli,
 		rest:   rs,
 		config: cnfg,
 
+		rabbitmq: rmq,
+		// FIXME: remove the array
 		Events: make([]rpc.EmittedEvent, 0),
 
 		scheduler: gocron.NewScheduler(time.UTC),

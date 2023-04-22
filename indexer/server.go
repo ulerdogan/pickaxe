@@ -3,13 +3,14 @@ package indexer
 import (
 	"database/sql"
 
+	"github.com/streadway/amqp"
 	"github.com/ulerdogan/pickaxe/api"
 	auth "github.com/ulerdogan/pickaxe/auth"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
-	init_db "github.com/ulerdogan/pickaxe/init"
 	"github.com/ulerdogan/pickaxe/db/migration"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
+	init_db "github.com/ulerdogan/pickaxe/init"
 	config "github.com/ulerdogan/pickaxe/utils/config"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
@@ -48,13 +49,19 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	rest := rest.NewRestClient()
 	maker, _ := auth.NewPasetoMaker(cnfg.SymmetricKey)
 	router := api.NewRouter(store, client, maker, cnfg)
+	rmqConn, err := amqp.Dial(cnfg.RMQUrl)
+	if err != nil {
+		logger.Error(err, "cannot connect to the rabbitmq")
+		return
+	}
+	defer rmqConn.Close()
 
 	// adding the initial state to db
 	if ok {
 		init_db.Init(cnfg, store, client)
 	}
 	// starting the indexer
-	ix := NewIndexer(store, client, rest, cnfg)
+	ix := NewIndexer(store, client, rest, cnfg, rmqConn)
 
 	// setup and run jobs
 	setupJobs(ix)

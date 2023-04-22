@@ -87,7 +87,7 @@ Notes:
 
 <hr/>
 
-Requirements & Tools
+Used Major Requirements & Tools
 * [Go](https://go.dev/)
 * [dbml](https://dbml-lang.org)
 * [docker](https://docker.com/)
@@ -96,6 +96,7 @@ Requirements & Tools
   * [caigo-rpcv02](https://github.com/ulerdogan/caigo-rpcv02) (customized rpcv02 of caigo for pickaxe)
 * [gocron](https://github.com/go-co-op/gocron)
 * [sqlc](https://sqlc.dev/)
+* [rabbitmq](https://www.rabbitmq.com/)
 
 <hr/>
 
