@@ -40,6 +40,9 @@ func (ix *indexer) ListenBlocks() {
 
 		ubn := uint64(bn)
 
+		// FIXME: temporary solution for the late sync. problem in the issue #14
+		time.Sleep(time.Second)
+
 		if ubn > *ix.lastQueried {
 			logger.Info("new block catched: " + fmt.Sprint(bn))
 
