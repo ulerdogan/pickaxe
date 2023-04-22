@@ -7,7 +7,7 @@ import (
 	auth "github.com/ulerdogan/pickaxe/auth"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
-	init_db "github.com/ulerdogan/pickaxe/db/init"
+	init_db "github.com/ulerdogan/pickaxe/init"
 	"github.com/ulerdogan/pickaxe/db/migration"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	config "github.com/ulerdogan/pickaxe/utils/config"

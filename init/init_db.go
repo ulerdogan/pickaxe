@@ -49,21 +49,21 @@ var (
 )
 
 func init() {
-	tokensFile, err := os.Open("./db/init/states/tokens.json")
+	tokensFile, err := os.Open("./init/states/tokens.json")
 	if err != nil {
 		logger.Error(err, "cannot get tokens json file")
 		return
 	}
 	defer tokensFile.Close()
 
-	ammsFile, err := os.Open("./db/init/states/amm.json")
+	ammsFile, err := os.Open("./init/states/amm.json")
 	if err != nil {
 		logger.Error(err, "cannot get amms json file")
 		return
 	}
 	defer ammsFile.Close()
 
-	poolsFile, err := os.Open("./db/init/states/pools.json")
+	poolsFile, err := os.Open("./init/states/pools.json")
 	if err != nil {
 		logger.Error(err, "cannot get pools json file")
 		return
