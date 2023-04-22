@@ -18,10 +18,10 @@ func Init(environment string) {
 	// load app configs
 	cnfg, err := config.LoadConfig(environment, ".")
 	if err != nil {
-		logger.Error(err, "cannot load config for: "+environment)
+		logger.Error(err, "cannot load config for pickaxe: "+environment)
 		return
 	}
-	logger.Info("config loaded for: " + environment)
+	logger.Info("config loaded for pickaxe: " + environment)
 
 	// create db connection
 	conn, err := sql.Open(cnfg.DBDriver, cnfg.DBSource)
@@ -59,6 +59,9 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	// setup and run jobs
 	setupJobs(ix)
 	go ix.scheduler.StartBlocking()
+
+	// start listening blocks
+	go ix.ListenBlocks()
 
 	// setup and run gin server
 	router.MapUrls()

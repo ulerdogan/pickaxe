@@ -2,8 +2,6 @@ package indexer
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -15,42 +13,7 @@ import (
 )
 
 func setupJobs(ix *indexer) {
-	ix.scheduler.Every(5).Seconds().Do(ix.QueryBlocks)
 	ix.scheduler.Every(5).Minutes().Do(ix.QueryPrices)
-}
-
-func (ix *indexer) QueryBlocks() {
-	if ix.isIndexing {
-		return
-	}
-
-	ix.stMutex.Lock()
-	defer ix.stMutex.Unlock()
-
-	ix.isIndexing = true
-
-	lastBlock, err := ix.client.LastBlock()
-	if err != nil {
-		logger.Error(err, "cannot get the last block")
-		ix.isIndexing = false
-		return
-	}
-
-	if lastBlock > *ix.lastQueried {
-		logger.Info("new block catched: " + fmt.Sprint(lastBlock))
-
-		err := ix.GetEvents(*ix.lastQueried + 1, lastBlock)
-		if err != nil {
-			ix.isIndexing = false
-			logger.Error(err, "cannot get the events")
-			return
-		}
-
-		ix.lastQueried = &lastBlock
-		ix.store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(*ix.lastQueried), Valid: true})
-	}
-
-	ix.isIndexing = false
 }
 
 func (ix *indexer) QueryPrices() {

@@ -25,7 +25,6 @@ type indexer struct {
 
 	Events []rpc.EmittedEvent
 
-	isIndexing  bool
 	lastQueried *uint64
 
 	scheduler *gocron.Scheduler
