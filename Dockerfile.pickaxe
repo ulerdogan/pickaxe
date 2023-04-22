@@ -10,8 +10,8 @@ WORKDIR /app
 COPY --from=builder /app/pickaxe .
 COPY app.env .
 COPY app_test.env .
-COPY start.sh .
-COPY wait-for.sh .
+COPY scripts/start.sh .
+COPY scripts/wait-for.sh .
 COPY init/states ./init/states
 COPY db/migration ./db/migration
 

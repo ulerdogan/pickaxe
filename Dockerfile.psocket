@@ -10,7 +10,7 @@ WORKDIR /app
 COPY --from=builder /app/psocket .
 COPY app.env .
 COPY app_test.env .
-COPY start.sh .
+COPY scripts/start.sh .
 COPY wait-for.sh .
 
 EXPOSE 8081
