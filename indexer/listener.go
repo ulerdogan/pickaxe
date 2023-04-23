@@ -30,7 +30,8 @@ func (ix *Indexer) ListenBlocks() {
 			logger.Error(err, "cannot read the socket server")
 
 			time.Sleep(3 * time.Second)
-			continue
+			go ix.ListenBlocks()
+			return
 		}
 
 		bn, err := strconv.Atoi(string(buffer[:n]))
