@@ -16,7 +16,7 @@ import (
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
-type indexer struct {
+type Indexer struct {
 	Store       db.Store
 	Client      starknet.Client
 	Rest        rest.Client
@@ -26,8 +26,8 @@ type indexer struct {
 	Scheduler   *gocron.Scheduler
 }
 
-func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config, rmq *amqp.Channel) *indexer {
-	ix := &indexer{
+func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config, rmq *amqp.Channel) *Indexer {
+	ix := &Indexer{
 		Store:     str,
 		Client:    cli,
 		Rest:      rs,
@@ -40,7 +40,7 @@ func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.C
 	return ix
 }
 
-func (ix *indexer) syncBlockFromDB() {
+func (ix *Indexer) syncBlockFromDB() {
 	// set indexer records in db if not exists
 	ixStatus, err := ix.Store.GetIndexerStatus(context.Background())
 	if err == sql.ErrNoRows || ixStatus.LastQueried.Int64 == 0 {

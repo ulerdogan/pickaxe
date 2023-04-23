@@ -11,7 +11,7 @@ import (
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
-func (ix *indexer) ListenBlocks() {
+func (ix *Indexer) ListenBlocks() {
 	// Connect to socket server
 	conn, err := net.Dial("tcp", ix.Config.SocketAddress)
 	if err != nil {

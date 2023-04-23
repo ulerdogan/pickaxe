@@ -12,13 +12,13 @@ import (
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
-func setupJobs(ix *indexer) {
+func setupJobs(ix *Indexer) {
 	ix.Scheduler.Every(5).Minutes().Do(ix.QueryPrices)
 
 	go ix.Scheduler.StartBlocking()
 }
 
-func (ix *indexer) QueryPrices() {
+func (ix *Indexer) QueryPrices() {
 	tokens, err := ix.Store.GetAllTokensWithTickers(context.Background())
 	if err != nil {
 		logger.Error(err, "cannot get the token list")

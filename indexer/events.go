@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
-	"strconv"
 	"time"
 
 	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
@@ -14,50 +13,59 @@ import (
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
-func (ix *indexer) GetEvents(from, to uint64) error {
+func (ix *Indexer) GetEvents(from, to uint64) error {
 	keys, err := ix.Store.GetAmmKeys(context.Background())
 	if err != nil {
 		logger.Error(err, "cannot get the amm keys")
 		return err
 	}
 
-	events, err := getEventsLoop(from, to, keys, ix.Client.GetEvents)
+	err = getEventsLoop(from, to, keys, ix)
 	if err != nil {
 		logger.Error(err, "cannot query the events")
 		return err
 	}
 
-	for _, event := range events {
-		msEvent, _ := json.Marshal(event)
-		ix.PublishRmqMsg(msEvent)
-	}
-
-	logger.Info("new events queried for blocks (" + strconv.Itoa(len(events)) + "): " + fmt.Sprint(from) + " <-> " + fmt.Sprint(to))
+	logger.Info("new events queried for blocks (" + fmt.Sprint(from) + " <-> " + fmt.Sprint(to))
 
 	return nil
 }
 
-func getEventsLoop(from, to uint64, keys []string, getEvents func(from uint64, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error)) ([]rpc.EmittedEvent, error) {
-	eventsArr := make([]rpc.EmittedEvent, 0)
-
-	events, c_token, err := getEvents(from, to, "", nil, keys)
+func getEventsLoop(from, to uint64, keys []string, ix *Indexer) error {
+	events, c_token, err := ix.Client.GetEvents(from, to, "", nil, keys)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	eventsArr = append(eventsArr, events...)
+
+	done := make(chan bool)
+	go func(dn chan bool) {
+		for _, event := range events {
+			msEvent, _ := json.Marshal(event)
+			ix.PublishRmqMsg(msEvent)
+		}
+		dn <- true
+	}(done)
 
 	for c_token != nil {
-		events, c_token, err = getEvents(from, to, "", c_token, keys)
+		events, c_token, err = ix.Client.GetEvents(from, to, "", c_token, keys)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		eventsArr = append(eventsArr, events...)
+
+		<-done
+		go func(dn chan bool) {
+			for _, event := range events {
+				msEvent, _ := json.Marshal(event)
+				ix.PublishRmqMsg(msEvent)
+			}
+			dn <- true
+		}(done)
 	}
 
-	return eventsArr, nil
+	return nil
 }
 
-func (ix *indexer) ProcessEvents() {
+func (ix *Indexer) ProcessEvents() {
 	msgs, err := ix.RabbitMQ.Consume(
 		"EventsQueue",
 		"",

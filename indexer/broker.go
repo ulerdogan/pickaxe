@@ -36,7 +36,7 @@ func SetupRabbitMQ(cnfg config.Config) (*amqp.Channel, error) {
 	return ch, nil
 }
 
-func (ix *indexer) PublishRmqMsg(msg []byte) error {
+func (ix *Indexer) PublishRmqMsg(msg []byte) error {
 	err := ix.RabbitMQ.Publish(
 		"",
 		"EventsQueue",
