@@ -21,15 +21,12 @@ func (sc *socket) Sync() {
 	for {
 		if lastSent == 0 || *sc.lastQueried > lastSent {
 			lastSent = *sc.lastQueried
-
-			go func() {
-				str := strconv.Itoa(int(lastSent))
-				_, err = conn.Write([]byte(str))
-				if err != nil {
-					logger.Error(err, "error accepted in the listener")
-					return
-				}
-			}()
+			str := strconv.Itoa(int(lastSent))
+			_, err = conn.Write([]byte(str))
+			if err != nil {
+				logger.Error(err, "error accepted in the listener")
+				break
+			}
 		}
 		time.Sleep(time.Second)
 	}
