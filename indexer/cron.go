@@ -13,11 +13,13 @@ import (
 )
 
 func setupJobs(ix *indexer) {
-	ix.scheduler.Every(5).Minutes().Do(ix.QueryPrices)
+	ix.Scheduler.Every(5).Minutes().Do(ix.QueryPrices)
+
+	go ix.Scheduler.StartBlocking()
 }
 
 func (ix *indexer) QueryPrices() {
-	tokens, err := ix.store.GetAllTokensWithTickers(context.Background())
+	tokens, err := ix.Store.GetAllTokensWithTickers(context.Background())
 	if err != nil {
 		logger.Error(err, "cannot get the token list")
 		return
@@ -29,7 +31,7 @@ func (ix *indexer) QueryPrices() {
 
 	for w := 0; w < numWorkers; w++ {
 		go func(jobs chan db.Token, results chan *db.Token) {
-			getPriceConc(jobs, results, ix.rest)
+			getPriceConc(jobs, results, ix.Rest)
 		}(jobs, results)
 	}
 
@@ -42,7 +44,7 @@ func (ix *indexer) QueryPrices() {
 	for res := 0; res < len(tokens); res++ {
 		token := <-results
 		if token != nil {
-			_, err := ix.store.UpdatePrice(context.Background(), db.UpdatePriceParams{Address: token.Address, Price: token.Price})
+			_, err := ix.Store.UpdatePrice(context.Background(), db.UpdatePriceParams{Address: token.Address, Price: token.Price})
 			if err != nil {
 				logger.Error(err, "cannot update the price of the token: "+token.Name)
 				continue
@@ -53,7 +55,7 @@ func (ix *indexer) QueryPrices() {
 
 	logger.Info("in " + strconv.Itoa(len(tokens)) + " tokens, prices of " + strconv.Itoa(int(sct.Load())) + " is synced")
 
-	pools, err := ix.store.GetAllPools(context.Background())
+	pools, err := ix.Store.GetAllPools(context.Background())
 	if err != nil {
 		logger.Error(err, "cannot get the pool list")
 		return
@@ -63,7 +65,7 @@ func (ix *indexer) QueryPrices() {
 	var wg *sync.WaitGroup = &sync.WaitGroup{}
 	for _, pool := range pools {
 		wg.Add(1)
-		go updateValueV2(ix.store, pool, scp, wg)
+		go updateValueV2(ix.Store, pool, scp, wg)
 	}
 
 	wg.Wait()
@@ -83,6 +85,7 @@ func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Clie
 	}
 }
 
+// FIXME: only compatible with the v2 pools for now, should be improved in the future
 func updateValueV2(store db.Store, pool db.PoolsV2, scp *atomic.Uint64, wg *sync.WaitGroup) error {
 	if pool.ReserveA == "0" || pool.ReserveB == "0" {
 		return nil

@@ -7,6 +7,11 @@ services:
       - POSTGRES_PASSWORD=pickaxe-db
       - POSTGRES_DB=pickaxe
     restart: always
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    ports:
+      - "15672:15672"
+    restart: always
   psocket:
     build:
       context: .

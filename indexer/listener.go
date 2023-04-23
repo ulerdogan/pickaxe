@@ -13,7 +13,7 @@ import (
 
 func (ix *indexer) ListenBlocks() {
 	// Connect to socket server
-	conn, err := net.Dial("tcp", ix.config.SocketAddress)
+	conn, err := net.Dial("tcp", ix.Config.SocketAddress)
 	if err != nil {
 		logger.Error(err, "cannot connect to the socket server")
 
@@ -43,17 +43,17 @@ func (ix *indexer) ListenBlocks() {
 		// FIXME: temporary solution for the late sync. problem in the issue #14
 		time.Sleep(time.Second)
 
-		if ubn > *ix.lastQueried {
+		if ubn > *ix.LastQueried {
 			logger.Info("new block catched: " + fmt.Sprint(bn))
 
-			err := ix.GetEvents(*ix.lastQueried+1, ubn)
+			err := ix.GetEvents(*ix.LastQueried+1, ubn)
 			if err != nil {
 				logger.Error(err, "cannot get the events")
 				return
 			}
 
-			ix.lastQueried = &ubn
-			_, err = ix.store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(*ix.lastQueried), Valid: true})
+			ix.LastQueried = &ubn
+			_, err = ix.Store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(*ix.LastQueried), Valid: true})
 			if err != nil {
 				logger.Error(err, "cannot update the indexer status")
 			}

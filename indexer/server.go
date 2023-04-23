@@ -7,9 +7,9 @@ import (
 	auth "github.com/ulerdogan/pickaxe/auth"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
-	init_db "github.com/ulerdogan/pickaxe/init"
 	"github.com/ulerdogan/pickaxe/db/migration"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
+	init_db "github.com/ulerdogan/pickaxe/init"
 	config "github.com/ulerdogan/pickaxe/utils/config"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
@@ -48,20 +48,26 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	rest := rest.NewRestClient()
 	maker, _ := auth.NewPasetoMaker(cnfg.SymmetricKey)
 	router := api.NewRouter(store, client, maker, cnfg)
+	rmqChan, err := SetupRabbitMQ(cnfg)
+	if err != nil {
+		logger.Error(err, "cannot connect to the rabbitmq")
+		return
+	}
+	defer rmqChan.Close()
 
 	// adding the initial state to db
 	if ok {
 		init_db.Init(cnfg, store, client)
 	}
 	// starting the indexer
-	ix := NewIndexer(store, client, rest, cnfg)
+	ix := NewIndexer(store, client, rest, cnfg, rmqChan)
 
 	// setup and run jobs
 	setupJobs(ix)
-	go ix.scheduler.StartBlocking()
-
 	// start listening blocks
 	go ix.ListenBlocks()
+	// start processing event messages
+	go ix.ProcessEvents()
 
 	// setup and run gin server
 	router.MapUrls()
