@@ -3,9 +3,9 @@ package indexer
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net"
-	"strconv"
 	"time"
 
 	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
@@ -35,26 +35,24 @@ func (ix *Indexer) ListenBlocks() {
 			return
 		}
 
-		bn, err := strconv.Atoi(string(buffer[:n]))
-		if err != nil {
+		var bInfo *rpc.BlockHashAndNumberOutput = &rpc.BlockHashAndNumberOutput{}
+		if err := json.Unmarshal(buffer[:n], bInfo); err != nil {
 			logger.Error(err, "cannot convert event to block number")
 		}
-
-		ubn := uint64(bn)
 
 		// FIXME: temporary solution for the late sync. problem in the issue #14
 		time.Sleep(time.Second)
 
-		if ubn > ix.LastQueried.BlockNumber {
-			logger.Info("new block catched: " + fmt.Sprint(bn))
+		if bInfo.BlockNumber > ix.LastQueried.BlockNumber {
+			logger.Info("new block catched: " + fmt.Sprint(bInfo.BlockNumber))
 
-			err := ix.GetEvents(ix.LastQueried.BlockNumber+1, ubn)
+			err := ix.GetEvents(ix.LastQueried.BlockNumber+1, bInfo.BlockNumber)
 			if err != nil {
 				logger.Error(err, "cannot get the events")
 				return
 			}
 
-			ix.LastQueried = &rpc.BlockHashAndNumberOutput{BlockNumber: ubn}
+			ix.LastQueried = bInfo
 			_, err = ix.Store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(ix.LastQueried.BlockNumber), Valid: true})
 			if err != nil {
 				logger.Error(err, "cannot update the indexer status")
