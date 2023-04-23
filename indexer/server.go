@@ -49,19 +49,19 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	rest := rest.NewRestClient()
 	maker, _ := auth.NewPasetoMaker(cnfg.SymmetricKey)
 	router := api.NewRouter(store, client, maker, cnfg)
-	rmqConn, err := amqp.Dial(cnfg.RMQUrl)
+	rmqChan, err := setupRabbitMQ(cnfg)
 	if err != nil {
 		logger.Error(err, "cannot connect to the rabbitmq")
 		return
 	}
-	defer rmqConn.Close()
+	defer rmqChan.Close()
 
 	// adding the initial state to db
 	if ok {
 		init_db.Init(cnfg, store, client)
 	}
 	// starting the indexer
-	ix := NewIndexer(store, client, rest, cnfg, rmqConn)
+	ix := NewIndexer(store, client, rest, cnfg, rmqChan)
 
 	// setup and run jobs
 	setupJobs(ix)
@@ -70,7 +70,40 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	// start listening blocks
 	go ix.ListenBlocks()
 
+	// start processing event messages
+	go ix.processEvents()
+
 	// setup and run gin server
 	router.MapUrls()
 	router.Run()
+}
+
+func setupRabbitMQ(cnfg config.Config) (*amqp.Channel, error) {
+	conn, err := amqp.Dial(cnfg.RMQUrl)
+	if err != nil {
+		logger.Error(err, "cannot connect to the rabbitmq")
+		return nil, err
+	}
+
+	ch, err := conn.Channel()
+	if err != nil {
+		logger.Error(err, "cannot create the rabbitmq channel")
+		return nil, err
+	}
+
+	_, err = ch.QueueDeclare(
+		"EventsQueue",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		logger.Error(err, "cannot declare the rabbitmq queue")
+		return nil, err
+	}
+
+	logger.Info("rabbitmq succesfully initialized")
+	return ch, nil
 }

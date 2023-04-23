@@ -46,7 +46,7 @@ func (ix *indexer) ListenBlocks() {
 		if ubn > *ix.lastQueried {
 			logger.Info("new block catched: " + fmt.Sprint(bn))
 
-			err := ix.GetEvents(*ix.lastQueried+1, ubn)
+			err := ix.getEvents(*ix.lastQueried+1, ubn)
 			if err != nil {
 				logger.Error(err, "cannot get the events")
 				return
