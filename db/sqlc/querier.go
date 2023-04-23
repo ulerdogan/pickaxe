@@ -6,7 +6,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 type Querier interface {
@@ -39,7 +38,7 @@ type Querier interface {
 	GetTokenBySymbol(ctx context.Context, symbol string) (Token, error)
 	InitIndexer(ctx context.Context, arg InitIndexerParams) (Indexer, error)
 	UpdateBaseNativeStatus(ctx context.Context, arg UpdateBaseNativeStatusParams) (Token, error)
-	UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error)
+	UpdateIndexerStatus(ctx context.Context, arg UpdateIndexerStatusParams) (Indexer, error)
 	UpdatePoolExtraData(ctx context.Context, arg UpdatePoolExtraDataParams) (PoolsV2, error)
 	UpdatePoolReserves(ctx context.Context, arg UpdatePoolReservesParams) (PoolsV2, error)
 	UpdatePoolTV(ctx context.Context, arg UpdatePoolTVParams) (PoolsV2, error)

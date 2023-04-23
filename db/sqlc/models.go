@@ -20,10 +20,11 @@ type Amm struct {
 }
 
 type Indexer struct {
-	ID             int32         `json:"id"`
-	HashedPassword string        `json:"hashed_password"`
-	LastQueried    sql.NullInt64 `json:"last_queried"`
-	LastUpdated    sql.NullTime  `json:"last_updated"`
+	ID               int32          `json:"id"`
+	HashedPassword   string         `json:"hashed_password"`
+	LastQueriedBlock sql.NullInt64  `json:"last_queried_block"`
+	LastQueriedHash  sql.NullString `json:"last_queried_hash"`
+	LastUpdated      sql.NullTime   `json:"last_updated"`
 }
 
 type PoolsV2 struct {

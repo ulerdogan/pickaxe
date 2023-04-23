@@ -23,7 +23,7 @@ func (q *Queries) GetHashedIndexerPwd(ctx context.Context) (string, error) {
 }
 
 const getIndexerStatus = `-- name: GetIndexerStatus :one
-SELECT id, hashed_password, last_queried, last_updated FROM indexer
+SELECT id, hashed_password, last_queried_block, last_queried_hash, last_updated FROM indexer
 WHERE id = 0 LIMIT 1
 `
 
@@ -33,7 +33,8 @@ func (q *Queries) GetIndexerStatus(ctx context.Context) (Indexer, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.HashedPassword,
-		&i.LastQueried,
+		&i.LastQueriedBlock,
+		&i.LastQueriedHash,
 		&i.LastUpdated,
 	)
 	return i, err
@@ -43,25 +44,28 @@ const initIndexer = `-- name: InitIndexer :one
 INSERT INTO indexer (
   id,
   hashed_password,
-  last_queried,
+  last_queried_block,
+  last_queried_hash,
   last_updated
 ) VALUES (
-  0, $1, $2, NOW()
-) RETURNING id, hashed_password, last_queried, last_updated
+  0, $1, $2, $3, NOW()
+) RETURNING id, hashed_password, last_queried_block, last_queried_hash, last_updated
 `
 
 type InitIndexerParams struct {
-	HashedPassword string        `json:"hashed_password"`
-	LastQueried    sql.NullInt64 `json:"last_queried"`
+	HashedPassword   string         `json:"hashed_password"`
+	LastQueriedBlock sql.NullInt64  `json:"last_queried_block"`
+	LastQueriedHash  sql.NullString `json:"last_queried_hash"`
 }
 
 func (q *Queries) InitIndexer(ctx context.Context, arg InitIndexerParams) (Indexer, error) {
-	row := q.db.QueryRowContext(ctx, initIndexer, arg.HashedPassword, arg.LastQueried)
+	row := q.db.QueryRowContext(ctx, initIndexer, arg.HashedPassword, arg.LastQueriedBlock, arg.LastQueriedHash)
 	var i Indexer
 	err := row.Scan(
 		&i.ID,
 		&i.HashedPassword,
-		&i.LastQueried,
+		&i.LastQueriedBlock,
+		&i.LastQueriedHash,
 		&i.LastUpdated,
 	)
 	return i, err
@@ -69,18 +73,24 @@ func (q *Queries) InitIndexer(ctx context.Context, arg InitIndexerParams) (Index
 
 const updateIndexerStatus = `-- name: UpdateIndexerStatus :one
 UPDATE indexer
-SET last_queried = $1, last_updated = NOW()
+SET last_queried_block = $1, last_queried_hash = $2, last_updated = NOW()
 WHERE id = 0
-RETURNING id, hashed_password, last_queried, last_updated
+RETURNING id, hashed_password, last_queried_block, last_queried_hash, last_updated
 `
 
-func (q *Queries) UpdateIndexerStatus(ctx context.Context, lastQueried sql.NullInt64) (Indexer, error) {
-	row := q.db.QueryRowContext(ctx, updateIndexerStatus, lastQueried)
+type UpdateIndexerStatusParams struct {
+	LastQueriedBlock sql.NullInt64  `json:"last_queried_block"`
+	LastQueriedHash  sql.NullString `json:"last_queried_hash"`
+}
+
+func (q *Queries) UpdateIndexerStatus(ctx context.Context, arg UpdateIndexerStatusParams) (Indexer, error) {
+	row := q.db.QueryRowContext(ctx, updateIndexerStatus, arg.LastQueriedBlock, arg.LastQueriedHash)
 	var i Indexer
 	err := row.Scan(
 		&i.ID,
 		&i.HashedPassword,
-		&i.LastQueried,
+		&i.LastQueriedBlock,
+		&i.LastQueriedHash,
 		&i.LastUpdated,
 	)
 	return i, err

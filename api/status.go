@@ -17,7 +17,8 @@ func (r *ginServer) Ping(ctx *gin.Context) {
 }
 
 type IndexerStatusResponse struct {
-	LastBlock   int64  `json:"last_block"`
+	LastBlock   int64  `json:"last_block_number"`
+	LastHash    string `json:"last_block_hash"`
 	LastUpdated string `json:"last_updated"`
 }
 
@@ -32,13 +33,14 @@ func (r *ginServer) GetIndexerStatus(ctx *gin.Context) {
 		return
 	}
 
-	if !status.LastQueried.Valid {
+	if !status.LastQueriedBlock.Valid {
 		ctx.JSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 
 	rsp := IndexerStatusResponse{
-		LastBlock:   status.LastQueried.Int64,
+		LastBlock:   status.LastQueriedBlock.Int64,
+		LastHash:    status.LastQueriedHash.String,
 		LastUpdated: status.LastUpdated.Time.String(),
 	}
 

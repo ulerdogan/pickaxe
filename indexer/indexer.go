@@ -45,7 +45,7 @@ func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.C
 func (ix *Indexer) syncBlockFromDB() {
 	// set indexer records in db if not exists
 	ixStatus, err := ix.Store.GetIndexerStatus(context.Background())
-	if err == sql.ErrNoRows || ixStatus.LastQueried.Int64 == 0 {
+	if err == sql.ErrNoRows || ixStatus.LastQueriedBlock.Int64 == 0 {
 		lb, err := ix.Client.LastBlock()
 		if err != nil{
 			logger.Error(err, "cannot get the last block")
@@ -54,7 +54,8 @@ func (ix *Indexer) syncBlockFromDB() {
 		ix.LastQueried = lb
 		ix.Store.InitIndexer(context.Background(), db.InitIndexerParams{
 			HashedPassword: hasher.HashPassword(ix.Config.AuthPassword),
-			LastQueried:    sql.NullInt64{Int64: int64(lb.BlockNumber), Valid: true},
+			LastQueriedBlock:    sql.NullInt64{Int64: int64(lb.BlockNumber), Valid: true},
+			LastQueriedHash:    sql.NullString{String: lb.BlockHash, Valid: true},
 		})
 		logger.Info("indexer initialized with the last block: " + fmt.Sprint(lb.BlockNumber))
 		if err != nil {
@@ -62,7 +63,7 @@ func (ix *Indexer) syncBlockFromDB() {
 			return
 		}
 	} else {
-		lq := uint64(ixStatus.LastQueried.Int64)
+		lq := uint64(ixStatus.LastQueriedBlock.Int64)
 		ix.LastQueried = &rpc.BlockHashAndNumberOutput{BlockNumber: lq}
 		logger.Info("indexer synced from the db: " + fmt.Sprint(lq))
 	}
