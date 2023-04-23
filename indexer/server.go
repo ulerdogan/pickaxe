@@ -3,7 +3,6 @@ package indexer
 import (
 	"database/sql"
 
-	"github.com/streadway/amqp"
 	"github.com/ulerdogan/pickaxe/api"
 	auth "github.com/ulerdogan/pickaxe/auth"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
@@ -49,7 +48,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	rest := rest.NewRestClient()
 	maker, _ := auth.NewPasetoMaker(cnfg.SymmetricKey)
 	router := api.NewRouter(store, client, maker, cnfg)
-	rmqChan, err := setupRabbitMQ(cnfg)
+	rmqChan, err := SetupRabbitMQ(cnfg)
 	if err != nil {
 		logger.Error(err, "cannot connect to the rabbitmq")
 		return
@@ -65,45 +64,12 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 
 	// setup and run jobs
 	setupJobs(ix)
-	go ix.scheduler.StartBlocking()
-
 	// start listening blocks
 	go ix.ListenBlocks()
-
 	// start processing event messages
-	go ix.processEvents()
+	go ix.ProcessEvents()
 
 	// setup and run gin server
 	router.MapUrls()
 	router.Run()
-}
-
-func setupRabbitMQ(cnfg config.Config) (*amqp.Channel, error) {
-	conn, err := amqp.Dial(cnfg.RMQUrl)
-	if err != nil {
-		logger.Error(err, "cannot connect to the rabbitmq")
-		return nil, err
-	}
-
-	ch, err := conn.Channel()
-	if err != nil {
-		logger.Error(err, "cannot create the rabbitmq channel")
-		return nil, err
-	}
-
-	_, err = ch.QueueDeclare(
-		"EventsQueue",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		logger.Error(err, "cannot declare the rabbitmq queue")
-		return nil, err
-	}
-
-	logger.Info("rabbitmq succesfully initialized")
-	return ch, nil
 }

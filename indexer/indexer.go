@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/go-co-op/gocron"
@@ -18,32 +17,23 @@ import (
 )
 
 type indexer struct {
-	store  db.Store
-	client starknet.Client
-	rest   rest.Client
-	config config.Config
-
-	rabbitmq *amqp.Channel
-
-	lastQueried *uint64
-
-	scheduler *gocron.Scheduler
-	ixMutex   *sync.Mutex
-	stMutex   *sync.Mutex
+	Store       db.Store
+	Client      starknet.Client
+	Rest        rest.Client
+	Config      config.Config
+	RabbitMQ    *amqp.Channel
+	LastQueried *uint64
+	Scheduler   *gocron.Scheduler
 }
 
 func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config, rmq *amqp.Channel) *indexer {
 	ix := &indexer{
-		store:  str,
-		client: cli,
-		rest:   rs,
-		config: cnfg,
-
-		rabbitmq: rmq,
-
-		scheduler: gocron.NewScheduler(time.UTC),
-		ixMutex:   &sync.Mutex{},
-		stMutex:   &sync.Mutex{},
+		Store:     str,
+		Client:    cli,
+		Rest:      rs,
+		Config:    cnfg,
+		RabbitMQ:  rmq,
+		Scheduler: gocron.NewScheduler(time.UTC),
 	}
 
 	ix.syncBlockFromDB()
@@ -51,16 +41,13 @@ func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.C
 }
 
 func (ix *indexer) syncBlockFromDB() {
-	ix.ixMutex.Lock()
-	defer ix.ixMutex.Unlock()
-
 	// set indexer records in db if not exists
-	ixStatus, err := ix.store.GetIndexerStatus(context.Background())
+	ixStatus, err := ix.Store.GetIndexerStatus(context.Background())
 	if err == sql.ErrNoRows || ixStatus.LastQueried.Int64 == 0 {
-		lb, err := ix.client.LastBlock()
-		ix.lastQueried = &lb
-		ix.store.InitIndexer(context.Background(), db.InitIndexerParams{
-			HashedPassword: hasher.HashPassword(ix.config.AuthPassword),
+		lb, err := ix.Client.LastBlock()
+		ix.LastQueried = &lb
+		ix.Store.InitIndexer(context.Background(), db.InitIndexerParams{
+			HashedPassword: hasher.HashPassword(ix.Config.AuthPassword),
 			LastQueried:    sql.NullInt64{Int64: int64(lb), Valid: true},
 		})
 		logger.Info("indexer initialized with the last block in the db: " + fmt.Sprint(lb))
@@ -70,22 +57,7 @@ func (ix *indexer) syncBlockFromDB() {
 		}
 	} else {
 		lq := uint64(ixStatus.LastQueried.Int64)
-		ix.lastQueried = &lq
+		ix.LastQueried = &lq
 		logger.Info("indexer synced from the db: " + fmt.Sprint(lq))
 	}
-}
-
-func (ix *indexer) publishRmqMsg(msg []byte) error {
-	err := ix.rabbitmq.Publish(
-		"",
-		"EventsQueue",
-		false,
-		false,
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        msg,
-		},
-	)
-
-	return err
 }
