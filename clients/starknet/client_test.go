@@ -49,5 +49,6 @@ func TestLastBlock(t *testing.T) {
 
 	block, err := c.LastBlock()
 	assert.Nil(t, err)
-	fmt.Printf("Block number: %v\n", block)
+	fmt.Printf("Block number: %v\n", block.BlockNumber)
+	fmt.Printf("Block hash: %v\n", block.BlockHash)
 }

@@ -42,8 +42,8 @@ func (c *starknetClient) GetEvents(from, to uint64, address string, c_token *str
 	return output.Events, output.ContinuationToken, nil
 }
 
-func (c *starknetClient) LastBlock() (uint64, error) {
-	return c.Rpc.BlockNumber(context.Background())
+func (c *starknetClient) LastBlock() (*rpc.BlockHashAndNumberOutput, error) {
+	return c.Rpc.BlockHashAndNumber(context.Background())
 }
 
 func (c *starknetClient) NewDex(amm_id int) (Dex, error) {

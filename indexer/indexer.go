@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-co-op/gocron"
 	"github.com/streadway/amqp"
+	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
@@ -22,7 +23,7 @@ type Indexer struct {
 	Rest        rest.Client
 	Config      config.Config
 	RabbitMQ    *amqp.Channel
-	LastQueried *uint64
+	LastQueried *rpc.BlockHashAndNumberOutput
 	Scheduler   *gocron.Scheduler
 }
 
@@ -33,6 +34,7 @@ func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.C
 		Rest:      rs,
 		Config:    cnfg,
 		RabbitMQ:  rmq,
+		LastQueried: nil,
 		Scheduler: gocron.NewScheduler(time.UTC),
 	}
 
@@ -45,19 +47,23 @@ func (ix *Indexer) syncBlockFromDB() {
 	ixStatus, err := ix.Store.GetIndexerStatus(context.Background())
 	if err == sql.ErrNoRows || ixStatus.LastQueried.Int64 == 0 {
 		lb, err := ix.Client.LastBlock()
-		ix.LastQueried = &lb
+		if err != nil{
+			logger.Error(err, "cannot get the last block")
+			return
+		}
+		ix.LastQueried = lb
 		ix.Store.InitIndexer(context.Background(), db.InitIndexerParams{
 			HashedPassword: hasher.HashPassword(ix.Config.AuthPassword),
-			LastQueried:    sql.NullInt64{Int64: int64(lb), Valid: true},
+			LastQueried:    sql.NullInt64{Int64: int64(lb.BlockNumber), Valid: true},
 		})
-		logger.Info("indexer initialized with the last block in the db: " + fmt.Sprint(lb))
+		logger.Info("indexer initialized with the last block: " + fmt.Sprint(lb.BlockNumber))
 		if err != nil {
 			logger.Error(err, "cannot get the last block")
 			return
 		}
 	} else {
 		lq := uint64(ixStatus.LastQueried.Int64)
-		ix.LastQueried = &lq
+		ix.LastQueried = &rpc.BlockHashAndNumberOutput{BlockNumber: lq}
 		logger.Info("indexer synced from the db: " + fmt.Sprint(lq))
 	}
 }

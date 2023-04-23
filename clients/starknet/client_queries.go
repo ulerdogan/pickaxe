@@ -8,6 +8,6 @@ import (
 type Client interface {
 	Call(fc types.FunctionCall) ([]string, error)
 	GetEvents(from, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error)
-	LastBlock() (uint64, error)
+	LastBlock() (*rpc.BlockHashAndNumberOutput, error)
 	NewDex(amm_id int) (Dex, error)
 }

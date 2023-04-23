@@ -19,8 +19,8 @@ func (sc *socket) Sync() {
 	var lastSent uint64 = 0
 
 	for {
-		if lastSent == 0 || *sc.lastQueried > lastSent {
-			lastSent = *sc.lastQueried
+		if lastSent == 0 || sc.blockInfo.BlockNumber > lastSent {
+			lastSent = sc.blockInfo.BlockNumber
 			str := strconv.Itoa(int(lastSent))
 			_, err = conn.Write([]byte(str))
 			if err != nil {

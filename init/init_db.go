@@ -203,14 +203,14 @@ func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 	jobs := make(chan db.PoolsV2, len(pools))
 	results := make(chan bool, len(pools))
 
-	lastBlock, err := client.LastBlock()
+	block, err := client.LastBlock()
 	if err != nil {
 		logger.Error(err, "cannot get the last block")
 	}
 
 	for w := 0; w < numWorkers; w++ {
 		go func(jobs chan db.PoolsV2, results chan bool) {
-			syncPoolFromFnConc(jobs, results, lastBlock, store, client)
+			syncPoolFromFnConc(jobs, results, block.BlockNumber, store, client)
 		}(jobs, results)
 	}
 
