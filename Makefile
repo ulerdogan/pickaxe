@@ -9,23 +9,20 @@ db_docs:
 db_schema:
 	dbml2sql --postgres -o db/docs/schema.sql db/docs/pickaxe.dbml
 
-postgres:
-	docker run --name pickaxe -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=pickaxe-db -d postgres:15-alpine
-
 rabbitmq:
-	docker run -it --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management-alpine
+	docker run -it --name pickaxe-rabbitmq --network pickaxe-network -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management-alpine
 
 docker-network:
 	docker network create pickaxe-network
 
-postgres-network:
-	docker run --name pickaxe --network pickaxe-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=pickaxe-db -d postgres:alpine3.14
+postgres:
+	docker run --name pickaxe_postgres --network pickaxe-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=pickaxe-db -d postgres:15-alpine
 
 createdb:
-	docker exec -it pickaxe createdb --username=root --owner=root pickaxe_db
+	docker exec -it pickaxe_postgres createdb --username=root --owner=root pickaxe_db
 
 dropdb:
-	docker exec -it pickaxe dropdb pickaxe_db
+	docker exec -it pickaxe_postgres dropdb pickaxe_db
 
 migrateup:
 	migrate -path db/migration -database "$(DB_URL)" -verbose up
@@ -53,7 +50,7 @@ docker-build-psocket:
 	docker build -f Dockerfile.psocket -t psocket:latest .                                                                
 
 docker-container-pickaxe:
-	docker run --name pickaxe_app --network pickaxe-network -p 8080:8080 -e GIN_MODE=release -e SOCKET_ADDRESS=psocket:8081 -e DB_SOURCE="postgresql://root:pickaxe-db@pickaxe:5432/pickaxe_db?sslmode=disable" pickaxe:latest
+	docker run --name pickaxe --network pickaxe-network -p 8080:8080 -e GIN_MODE=release -e SOCKET_ADDRESS=psocket:8081 -e RMQ_PORT=pickaxe-rabbitmq:5672 -e DB_SOURCE="postgresql://root:pickaxe-db@pickaxe_postgres:5432/pickaxe_db?sslmode=disable" pickaxe:latest
 
 docker-container-psocket:
 	docker run --name psocket --network pickaxe-network psocket:latest

@@ -26,7 +26,7 @@ func (ix *Indexer) GetEvents(from, to uint64) error {
 		return err
 	}
 
-	logger.Info("new events queried for blocks (" + fmt.Sprint(from) + " <-> " + fmt.Sprint(to))
+	logger.Info("new events queried for blocks: " + fmt.Sprint(from) + " <-> " + fmt.Sprint(to))
 
 	return nil
 }

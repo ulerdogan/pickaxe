@@ -11,7 +11,7 @@ COPY --from=builder /app/psocket .
 COPY app.env .
 COPY app_test.env .
 COPY scripts/start.sh .
-COPY wait-for.sh .
+COPY scripts/wait-for.sh .
 
 EXPOSE 8081
 CMD [ "/app/psocket" ]

@@ -59,8 +59,12 @@ Run the app in docker network
 // Create the docker network
 make docker-network
 
-// Run the postgres server
-make postgres-network
+// Run the postgres server in the network and create the db
+make postgres
+make createdb
+
+// run the rabbitmq server in the network
+make rabbitmq
 
 // Build the app containers
 make docker-build-psocket

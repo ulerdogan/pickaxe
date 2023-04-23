@@ -39,6 +39,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	// run db migrations if needed
 	ok, err := migration.RunDBMigration(cnfg.MigrationURL, cnfg.DBSource)
 	if err != nil {
+		logger.Error(err, "cannot run db migration")
 		return
 	}
 
@@ -57,6 +58,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 
 	// adding the initial state to db
 	if ok {
+		logger.Info("db migration is completed")
 		init_db.Init(cnfg, store, client)
 	}
 	// starting the indexer

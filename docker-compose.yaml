@@ -1,16 +1,18 @@
 version: "3.9"
 services:
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    ports:
+      - "15672:15672"
+    restart: always
   postgres:
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=pickaxe-db
-      - POSTGRES_DB=pickaxe
-    restart: always
-  rabbitmq:
-    image: rabbitmq:3.11-management-alpine
+      - POSTGRES_DB=pickaxe_db
     ports:
-      - "15672:15672"
+      - "5432:5432"
     restart: always
   psocket:
     build:
@@ -30,16 +32,21 @@ services:
       - "8080:8080"
     environment:
       - GIN_MODE=release
-      - DB_SOURCE=postgresql://root:pickaxe-db@postgres:5432/pickaxe?sslmode=disable
+      - DB_SOURCE=postgresql://root:pickaxe-db@postgres:5432/pickaxe_db?sslmode=disable
       - SOCKET_ADDRESS=psocket:8081
+      - RMQ_PORT=rabbitmq:5672
     depends_on:
       - postgres
       - psocket
+      - rabbitmq
     restart: unless-stopped
     entrypoint:
       [
         "/app/wait-for.sh",
         "postgres:5432",
+        "--",
+        "/app/wait-for.sh",
+        "rabbitmq:5672",
         "--",
         "/app/start.sh"
       ]
