@@ -6,14 +6,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
+	"github.com/dontpanicdao/caigo/types"
 	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
-func (ix *Indexer) GetEvents(from, to uint64) error {
+func (ix *Indexer) GetEvents(from uint64, to rpc.BlockHashAndNumberOutput) error {
 	keys, err := ix.Store.GetAmmKeys(context.Background())
 	if err != nil {
 		logger.Error(err, "cannot get the amm keys")
@@ -26,15 +28,35 @@ func (ix *Indexer) GetEvents(from, to uint64) error {
 		return err
 	}
 
-	logger.Info("new events queried for blocks: " + fmt.Sprint(from) + " <-> " + fmt.Sprint(to))
+	logger.Info("new events queried for blocks: " + fmt.Sprint(from) + " <-> " + fmt.Sprint(to.BlockNumber))
 
 	return nil
 }
 
-func getEventsLoop(from, to uint64, keys []string, ix *Indexer) error {
-	events, c_token, err := ix.Client.GetEvents(from, to, "", nil, keys)
-	if err != nil {
-		return err
+func getEventsLoop(from uint64, to rpc.BlockHashAndNumberOutput, keys []string, ix *Indexer) error {
+	var events []rpc.EmittedEvent
+	var c_token *string
+	var err error
+	th := types.HexToHash(to.BlockHash)
+
+	for i := 0; i < 4; i++ {
+		events, c_token, err = ix.Client.GetEventsWithID(
+			rpc.BlockID{Number: &from},
+			rpc.BlockID{Hash: &th},
+			"", nil, keys)
+		if err != nil {
+			if strings.Compare(err.Error(), "Block not found") == 0 {
+				if i == 3 {
+					return err
+				}
+				logger.Info("requerying to wait block sync. block hash: " + to.BlockHash)
+				time.Sleep(5 * time.Second)
+			} else {
+				return err
+			}
+		} else {
+			break
+		}
 	}
 
 	done := make(chan bool)
@@ -47,9 +69,24 @@ func getEventsLoop(from, to uint64, keys []string, ix *Indexer) error {
 	}(done)
 
 	for c_token != nil {
-		events, c_token, err = ix.Client.GetEvents(from, to, "", c_token, keys)
-		if err != nil {
-			return err
+		for i := 0; i < 4; i++ {
+			events, c_token, err = ix.Client.GetEventsWithID(
+				rpc.BlockID{Number: &from},
+				rpc.BlockID{Hash: &th},
+				"", nil, keys)
+			if err != nil {
+				if strings.Compare(err.Error(), "Block not found") == 0 {
+					if i == 3 {
+						return err
+					}
+					logger.Info("requerying to wait block sync. block hash: " + to.BlockHash)
+					time.Sleep(5 * time.Second)
+				} else {
+					return err
+				}
+			} else {
+				break
+			}
 		}
 
 		<-done

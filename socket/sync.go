@@ -1,7 +1,7 @@
 package socket
 
 import (
-	"strconv"
+	"encoding/json"
 	"time"
 
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
@@ -19,13 +19,13 @@ func (sc *socket) Sync() {
 	var lastSent uint64 = 0
 
 	for {
-		if lastSent == 0 || *sc.lastQueried > lastSent {
-			lastSent = *sc.lastQueried
-			str := strconv.Itoa(int(lastSent))
-			_, err = conn.Write([]byte(str))
+		if lastSent == 0 || sc.blockInfo.BlockNumber > lastSent {
+			lastSent = sc.blockInfo.BlockNumber
+			msBlock, _ := json.Marshal(sc.blockInfo)
+			_, err = conn.Write([]byte(msBlock))
 			if err != nil {
-				logger.Error(err, "error accepted in the listener")
-				break
+				logger.Error(err, "error writing on the listener")
+				return
 			}
 		}
 		time.Sleep(time.Second)

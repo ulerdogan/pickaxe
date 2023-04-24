@@ -3,11 +3,13 @@ package indexer
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net"
-	"strconv"
 	"time"
 
+	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
+	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
@@ -34,27 +36,26 @@ func (ix *Indexer) ListenBlocks() {
 			return
 		}
 
-		bn, err := strconv.Atoi(string(buffer[:n]))
-		if err != nil {
+		var bInfo *rpc.BlockHashAndNumberOutput = &rpc.BlockHashAndNumberOutput{}
+		if err := json.Unmarshal(buffer[:n], bInfo); err != nil {
 			logger.Error(err, "cannot convert event to block number")
 		}
 
-		ubn := uint64(bn)
+		if bInfo.BlockNumber > ix.LastQueried.BlockNumber {
+			logger.Info("new block catched: " + fmt.Sprint(bInfo.BlockNumber))
 
-		// FIXME: temporary solution for the late sync. problem in the issue #14
-		time.Sleep(time.Second)
-
-		if ubn > *ix.LastQueried {
-			logger.Info("new block catched: " + fmt.Sprint(bn))
-
-			err := ix.GetEvents(*ix.LastQueried+1, ubn)
+			err := ix.GetEvents(ix.LastQueried.BlockNumber+1, *bInfo)
 			if err != nil {
 				logger.Error(err, "cannot get the events")
-				return
+				continue
 			}
 
-			ix.LastQueried = &ubn
-			_, err = ix.Store.UpdateIndexerStatus(context.Background(), sql.NullInt64{Int64: int64(*ix.LastQueried), Valid: true})
+			ix.LastQueried = bInfo
+			_, err = ix.Store.UpdateIndexerStatus(
+				context.Background(), db.UpdateIndexerStatusParams{
+					LastQueriedBlock: sql.NullInt64{Int64: int64(ix.LastQueried.BlockNumber), Valid: true},
+					LastQueriedHash: sql.NullString{String: ix.LastQueried.BlockHash, Valid: true},
+				})
 			if err != nil {
 				logger.Error(err, "cannot update the indexer status")
 			}

@@ -11,20 +11,14 @@ Indexer of the Starknet AMM pools written in Golang - to be used in [Fibrous](ht
 Preperation to build
 
 ``` bash
-// Create Docker container for Postgres
+// Creates Docker container for Postgres
 make postgres
 
 // Creates database in the container
 make createdb
 
-// Create database tables
-make migrateup
-
-// To install the app (preferred)
-make install-go
-
-// To build Go code (optional)
-make build
+// Creates Rabbitmq container in Docker
+make createdb
 ```
 
 Run the app directly

@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-04-18T14:03:48.140Z
+-- Generated at: 2023-04-23T21:23:08.581Z
 
 CREATE TABLE "tokens" (
   "address" varchar PRIMARY KEY NOT NULL,
@@ -67,7 +67,8 @@ CREATE TABLE "amms" (
 CREATE TABLE "indexer" (
   "id" int PRIMARY KEY NOT NULL,
   "hashed_password" varchar NOT NULL,
-  "last_queried" bigint DEFAULT 0,
+  "last_queried_block" bigint DEFAULT 0,
+  "last_queried_hash" varchar DEFAULT '',
   "last_updated" timestamptz DEFAULT '0001-01-01'
 );
 

@@ -14,14 +14,16 @@ func (sc *socket) QueryBlocks() {
 	sc.scMutex.Lock()
 	defer sc.scMutex.Unlock()
 
-	bn, err := sc.client.LastBlock()
+	block, err := sc.client.LastBlock()
 	if err != nil {
 		logger.Error(err, "cannot get the last block")
 		return
 	}
 
-	if sc.lastQueried == nil || bn > *sc.lastQueried {
-		sc.lastQueried = &bn
+	bn := block.BlockNumber
+
+	if sc.blockInfo == nil || bn > sc.blockInfo.BlockNumber {
+		sc.blockInfo = block
 		logger.Info("new block cathed: " + strconv.Itoa(int(bn)))
 	}
 }
