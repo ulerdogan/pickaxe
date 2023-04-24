@@ -108,4 +108,4 @@ Used Major Requirements & Tools
 
 Check the database tables in [DBDocs](https://dbdocs.io/ulerdogan/Pickaxe).
 
-<img src="./db_tables.png" alt="database tables" width="500">
+<img src="./db/docs/db_schemas.png" alt="database tables" width="500">
