@@ -41,16 +41,13 @@ func (ix *Indexer) ListenBlocks() {
 			logger.Error(err, "cannot convert event to block number")
 		}
 
-		// FIXME: temporary solution for the late sync. problem in the issue #14
-		time.Sleep(time.Second)
-
 		if bInfo.BlockNumber > ix.LastQueried.BlockNumber {
 			logger.Info("new block catched: " + fmt.Sprint(bInfo.BlockNumber))
 
-			err := ix.GetEvents(ix.LastQueried.BlockNumber+1, bInfo.BlockNumber)
+			err := ix.GetEvents(ix.LastQueried.BlockNumber+1, *bInfo)
 			if err != nil {
 				logger.Error(err, "cannot get the events")
-				return
+				continue
 			}
 
 			ix.LastQueried = bInfo
