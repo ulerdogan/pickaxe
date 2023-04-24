@@ -1,4 +1,4 @@
-# pickaxe (continutes to be developed)
+# pickaxe
 
 Indexer of the Starknet AMM pools written in Golang - to be used in [Fibrous](https://fibrous.finance)
 
@@ -6,6 +6,15 @@ Indexer of the Starknet AMM pools written in Golang - to be used in [Fibrous](ht
 
 *sister of [Shovel](https://github.com/tahos81/shovel) NFT Indexer*
 
+<hr/>
+
+The app:
+
+  - follows the Starknet blocks and emits events for the new blocks
+  - when new blocks are emitted, it fetches the recorded pools' `sync` events in order to update the pool reserves
+  - updates recorded tokens' prices and total pool values periodically
+  - will also track the new pools and tokens when the amm contracts become more mature
+  
 <hr/>
 
 (1) Preperation to build
