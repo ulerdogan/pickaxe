@@ -24,8 +24,8 @@ func (sc *socket) Sync() {
 			msBlock, _ := json.Marshal(sc.blockInfo)
 			_, err = conn.Write([]byte(msBlock))
 			if err != nil {
-				logger.Error(err, "error accepted in the listener")
-				break
+				logger.Error(err, "error writing on the listener")
+				return
 			}
 		}
 		time.Sleep(time.Second)
