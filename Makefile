@@ -40,7 +40,7 @@ build:
 	go build -o bin/pickaxe -v cmd/pickaxe/main.go
 	go build -o bin/psocket -v cmd/psocket/main.go
 
-install-go:
+install:
 	go install -v ./...
 
 docker-build-pickaxe:
@@ -58,4 +58,4 @@ docker-container-psocket:
 docker-compose:
 	docker compose up
 
-.PHONY: sqlc db_docs db_schema postgres rabbitmq docker-network postgres-network createdb migrateup migratedown build install-go docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose go psocket pickaxe
+.PHONY: sqlc db_docs db_schema postgres rabbitmq docker-network createdb migrateup migratedown build install docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose psocket pickaxe

@@ -8,9 +8,12 @@ Indexer of the Starknet AMM pools written in Golang - to be used in [Fibrous](ht
 
 <hr/>
 
-Preperation to build
+(1) Preperation to build
 
-``` bash
+``` sh
+// Prepare the docker network
+make docker-network
+
 // Creates Docker container for Postgres
 make postgres
 
@@ -21,45 +24,49 @@ make createdb
 make createdb
 ```
 
+(2) Build or install the apps: pickaxe & psocket (optional, changes by the running preferences)
+
+``` sh
+// Build the apps: psocket & pickaxe
+make build
+
+// Install the apps: psocket & pickaxe
+make install
+```
+
 Run the app directly
 
-``` bash
-// Run the socket block finder (basic version)
+``` sh
+// Run the socket block finder (basic version - after step-1)
 make psocket
 
-// Run the app (basic version)
+// Run the app (basic version - after step-1)
 make pickaxe
 
-// Run the app (if the app has been installed)
+// Run the app (if the app has been installed - after `install` in step-2)
 pickaxe
 
-// Run the socket (if the app has been installed)
+// Run the socket (if the app has been installed - after `install` step-2)
 psocket
 
-// Run the app (if the code has been built)
+// Run the app (if the code has been built - after `build` in step-2)
 ./bin/pickaxe
 
-// Run the socket (if the code has been built)
+// Run the socket (if the code has been built - after `build` in step-2)
 ./bin/psocket
 
+
+// Custom app running preferences 
+
+``` sh
 // For testnet envs - run with testnet flag, example:
 pickaxe -t
 pickaxe --testnet
 ```
 
-Run the app in docker network
+Run the app in docker network (after step-1)
 
-``` bash
-// Create the docker network
-make docker-network
-
-// Run the postgres server in the network and create the db
-make postgres
-make createdb
-
-// run the rabbitmq server in the network
-make rabbitmq
-
+``` sh
 // Build the app containers
 make docker-build-psocket
 make docker-build-pickaxe
@@ -69,19 +76,20 @@ make docker-container-psocket
 make docker-container-pickaxe
 ```
 
-Run the app with docker-compose
+Run the app with docker-compose **(Recommended to run the app - run directly)**
 
 
-``` bash
+``` sh
 // Create the docker compose network
 make docker-compose
 ```
 
 Notes:
-* You should prepare a initial tokens - pools list for the initial run. The indexer will accept this point as a synced point. Example ones below:
-  * [amms](./db/init/amms.json)
-  * [tokens](./db/init/tokens.json)
-  * [pools](./db/init/pools.json)
+* You should prepare a initial amms - tokens - pools list for the initial run. The indexer will accept this point as a synced point. Example ones belo for the mainnet configurations:
+  * [amms](./init/states/amm.json)
+  * [tokens](./init/states/tokens.json)
+  * [pools](./init/states/pools.json)
+  * go to [this folder](./init/states_test) to set up testnet configurations
 
 <hr/>
 
