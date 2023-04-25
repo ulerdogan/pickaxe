@@ -1,6 +1,5 @@
 package hasher_utils
 
-
 import "golang.org/x/crypto/bcrypt"
 
 func HashPassword(pwd string) string {

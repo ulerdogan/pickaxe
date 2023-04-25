@@ -54,7 +54,7 @@ func (c *starknetClient) GetEventsWithID(from, to rpc.BlockID, address string, c
 	if err != nil {
 		return nil, nil, err
 	}
-	
+
 	return output.Events, output.ContinuationToken, nil
 }
 

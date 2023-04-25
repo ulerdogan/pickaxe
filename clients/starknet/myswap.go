@@ -52,9 +52,9 @@ func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) er
 	rsB := utils.GetDecimal(call[5], int(tB.Decimals))
 
 	_, err = store.UpdatePoolReserves(context.Background(), db.UpdatePoolReservesParams{
-		PoolID:   pl.PoolID,
-		ReserveA: rsA.String(),
-		ReserveB: rsB.String(),
+		PoolID:    pl.PoolID,
+		ReserveA:  rsA.String(),
+		ReserveB:  rsB.String(),
 		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {

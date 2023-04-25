@@ -24,7 +24,7 @@ func Init(environment string) {
 		logger.Error(err, "cannot listen to: "+cnfg.SocketAddress)
 		return
 	}
-	
+
 	logger.Info("socket server will be running at: " + cnfg.SocketAddress)
 
 	sc := NewSocket(ls, client, cnfg)

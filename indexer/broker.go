@@ -32,7 +32,7 @@ func SetupRabbitMQ(cnfg config.Config) (*amqp.Channel, error) {
 		return nil, err
 	}
 
-	logger.Info("rabbitmq succesfully initialized")
+	logger.Info("rabbitmq successfully initialized")
 	return ch, nil
 }
 

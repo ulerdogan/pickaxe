@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
 	Use:   "pickaxe",
 	Short: "sister of shovel",
 	Long: `pickaxe is AMM pool indexer for starknet defi ecosystem.
-				  it indexes choosen starknet dexes amm pools to prepare
+				  it indexes chosen starknet dexes amm pools to prepare
 				  data flow for https://fibrous.finance.`,
 	Version: "v0(dev)",
 	Run: func(cmd *cobra.Command, args []string) {

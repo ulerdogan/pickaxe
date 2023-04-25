@@ -54,7 +54,7 @@ func (ix *Indexer) ListenBlocks() {
 			_, err = ix.Store.UpdateIndexerStatus(
 				context.Background(), db.UpdateIndexerStatusParams{
 					LastQueriedBlock: sql.NullInt64{Int64: int64(ix.LastQueried.BlockNumber), Valid: true},
-					LastQueriedHash: sql.NullString{String: ix.LastQueried.BlockHash, Valid: true},
+					LastQueriedHash:  sql.NullString{String: ix.LastQueried.BlockHash, Valid: true},
 				})
 			if err != nil {
 				logger.Error(err, "cannot update the indexer status")

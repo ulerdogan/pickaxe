@@ -47,9 +47,9 @@ func (d *jediswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) 
 	rsB := utils.GetDecimal(call[2], int(tB.Decimals))
 
 	_, err = store.UpdatePoolReserves(context.Background(), db.UpdatePoolReservesParams{
-		PoolID:   pl.PoolID,
-		ReserveA: rsA.String(),
-		ReserveB: rsB.String(),
+		PoolID:    pl.PoolID,
+		ReserveA:  rsA.String(),
+		ReserveB:  rsB.String(),
 		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {
@@ -77,9 +77,9 @@ func (d *jediswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 	rsB := utils.GetDecimal(types.HexToBN(pool.Event.Data[2]).String(), int(tB.Decimals))
 
 	_, err = store.UpdatePoolReserves(context.Background(), db.UpdatePoolReservesParams{
-		PoolID:   pl.PoolID,
-		ReserveA: rsA.String(),
-		ReserveB: rsB.String(),
+		PoolID:    pl.PoolID,
+		ReserveA:  rsA.String(),
+		ReserveB:  rsB.String(),
 		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {

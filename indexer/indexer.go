@@ -29,13 +29,13 @@ type Indexer struct {
 
 func NewIndexer(str db.Store, cli starknet.Client, rs rest.Client, cnfg config.Config, rmq *amqp.Channel) *Indexer {
 	ix := &Indexer{
-		Store:     str,
-		Client:    cli,
-		Rest:      rs,
-		Config:    cnfg,
-		RabbitMQ:  rmq,
+		Store:       str,
+		Client:      cli,
+		Rest:        rs,
+		Config:      cnfg,
+		RabbitMQ:    rmq,
 		LastQueried: nil,
-		Scheduler: gocron.NewScheduler(time.UTC),
+		Scheduler:   gocron.NewScheduler(time.UTC),
 	}
 
 	ix.syncBlockFromDB()
@@ -47,15 +47,15 @@ func (ix *Indexer) syncBlockFromDB() {
 	ixStatus, err := ix.Store.GetIndexerStatus(context.Background())
 	if err == sql.ErrNoRows || ixStatus.LastQueriedBlock.Int64 == 0 {
 		lb, err := ix.Client.LastBlock()
-		if err != nil{
+		if err != nil {
 			logger.Error(err, "cannot get the last block")
 			return
 		}
 		ix.LastQueried = lb
 		ix.Store.InitIndexer(context.Background(), db.InitIndexerParams{
-			HashedPassword: hasher.HashPassword(ix.Config.AuthPassword),
-			LastQueriedBlock:    sql.NullInt64{Int64: int64(lb.BlockNumber), Valid: true},
-			LastQueriedHash:    sql.NullString{String: lb.BlockHash, Valid: true},
+			HashedPassword:   hasher.HashPassword(ix.Config.AuthPassword),
+			LastQueriedBlock: sql.NullInt64{Int64: int64(lb.BlockNumber), Valid: true},
+			LastQueriedHash:  sql.NullString{String: lb.BlockHash, Valid: true},
 		})
 		logger.Info("indexer initialized with the last block: " + fmt.Sprint(lb.BlockNumber))
 		if err != nil {

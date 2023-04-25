@@ -6,6 +6,8 @@ Indexer of the Starknet AMM pools written in Golang - to be used in [Fibrous](ht
 
 *sister of [Shovel](https://github.com/tahos81/shovel) NFT Indexer*
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/ulerdogan/pickaxe)](https://goreportcard.com/report/github.com/ulerdogan/pickaxe)
+
 <hr/>
 
 The app:

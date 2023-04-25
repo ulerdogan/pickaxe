@@ -16,7 +16,7 @@ type Config struct {
 	RPCAddress          string        `mapstructure:"RPC_ADDRESS"`
 	MigrationURL        string        `mapstructure:"MIGRATION_URL"`
 	SocketAddress       string        `mapstructure:"SOCKET_ADDRESS"`
-	RMQUrl              string		  `mapstructure:"RMQ_URL"`
+	RMQUrl              string        `mapstructure:"RMQ_URL"`
 }
 
 func LoadConfig(name, path string) (config Config, err error) {
