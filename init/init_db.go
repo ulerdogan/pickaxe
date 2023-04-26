@@ -56,7 +56,7 @@ func init() {
 	}
 	defer tokensFile.Close()
 
-	ammsFile, err := os.Open("./init/states/amm.json")
+	ammsFile, err := os.Open("./init/states/amms.json")
 	if err != nil {
 		logger.Error(err, "cannot get amms json file")
 		return

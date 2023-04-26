@@ -97,7 +97,7 @@ make docker-compose
 
 Notes:
 * You should prepare a initial amms - tokens - pools list for the initial run. The indexer will accept this point as a synced point. Example ones belo for the mainnet configurations:
-  * [amms](./init/states/amm.json)
+  * [amms](./init/states/amms.json)
   * [tokens](./init/states/tokens.json)
   * [pools](./init/states/pools.json)
   * go to [this folder](./init/states_test) to set up testnet configurations

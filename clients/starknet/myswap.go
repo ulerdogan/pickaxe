@@ -65,5 +65,5 @@ func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) er
 }
 
 func (d *myswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
-	return nil
+	return errors.New("myswap sync from even is not implemented")
 }

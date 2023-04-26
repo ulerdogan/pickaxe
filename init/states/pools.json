@@ -143,6 +143,70 @@
             "token_a": "dai",
             "token_b": "wbtc",
             "amm_id": 3
+        },
+
+        {
+            "address": "0x0032ebb8e68553620b97b308684babf606d9556d5c0a652450c32e85f40d000d",
+            "token_a": "dai",
+            "token_b": "eth",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x030615bec9c1506bfac97d9dbd3c546307987d467a7f95d5533c2e861eb81f3f",
+            "token_a": "eth",
+            "token_b": "usdc",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x015e9cd2d4d6b4bb9f1124688b1e6bc19b4ff877a01011d28c25c9ee918e83e5",
+            "token_a": "dai",
+            "token_b": "usdc",
+            "extra_data": "1",
+            "amm_id": 4
+        },
+        {
+            "address": "0x02aab581754064a87ade1b680fd9756dc3a17440a87aaf496dcfb39fd163d1dd",
+            "token_a": "dai",
+            "token_b": "eth",
+            "extra_data": "1",
+            "amm_id": 4
+        },
+        {
+            "address": "0x0601f72228f73704e827de5bcd8dadaad52c652bb1e42bf492d90bbe22df2cec",
+            "token_a": "usdc",
+            "token_b": "usdt",
+            "extra_data": "1",
+            "amm_id": 4
+        },
+        {
+            "address": "0x06e1ed57b7e9fed35364ca419340c47479e93206a2dcda5e50530ae198d872ea",
+            "token_a": "eth",
+            "token_b": "usdc",
+            "extra_data": "1",
+            "amm_id": 4
+        },
+        {
+            "address": "0x00691fa7f66d63dc8c89ff4e77732fff5133f282e7dbd41813273692cc595516",
+            "token_a": "eth",
+            "token_b": "usdt",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x05e86d570376e8dc917d241288150a3286c8ad7151638c152d787eca2b96aec3",
+            "token_a": "eth",
+            "token_b": "usdt",
+            "extra_data": "1",
+            "amm_id": 4
+        },
+        {
+            "address": "0x00a144ef99419e4dbb3ef99bc2db894fbe7b4532ebed9592a407908727321fcf",
+            "token_a": "dai",
+            "token_b": "usdc",
+            "extra_data": "0",
+            "amm_id": 4
         }
     ]
 }
