@@ -44,6 +44,10 @@ func (ix *Indexer) ListenBlocks() {
 		if bInfo.BlockNumber > ix.LastQueried.BlockNumber {
 			logger.Info("new block catched: " + fmt.Sprint(bInfo.BlockNumber))
 
+			// Update the pools that not emit events
+			go ix.UpdateByFns(bInfo.BlockNumber)
+
+			// Update the pools whose events are caugh
 			err := ix.GetEvents(ix.LastQueried.BlockNumber+1, *bInfo)
 			if err != nil {
 				logger.Error(err, "cannot get the events")
