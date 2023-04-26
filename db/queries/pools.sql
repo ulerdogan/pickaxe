@@ -36,6 +36,13 @@ ORDER BY address;
 SELECT * FROM pools_v2
 ORDER BY address;
 
+-- name: GetAllPoolsWithoutKeys :many
+SELECT * FROM pools_v2
+WHERE amm_id IN 
+(SELECT amm_id FROM amms WHERE key = '')
+ORDER BY address;
+
+
 -- name: UpdatePoolReserves :one
 UPDATE pools_v2
 SET reserve_a = $1, reserve_b = $2, last_block = $3, last_updated = NOW()
