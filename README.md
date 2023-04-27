@@ -65,6 +65,7 @@ psocket
 
 // Run the socket (if the code has been built - after `build` in step-2)
 ./bin/psocket
+```
 
 
 // Custom app running preferences 
