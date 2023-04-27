@@ -9,6 +9,25 @@ import (
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
+func (ix *Indexer) UpdateByFnsAll(block uint64) {
+	pools, err := ix.Store.GetAllPools(context.Background())
+	if err != nil {
+		logger.Error(err, "cannot get the pools")
+		return
+	}
+
+	if block == 0 {
+		lb, err := ix.Client.LastBlock()
+		if err != nil {
+			logger.Error(err, "cannot get the last block")
+			return
+		}
+		block = lb.BlockNumber
+	}
+
+	processByFns(pools, block, ix.Store, ix.Client)
+}
+
 func (ix *Indexer) UpdateByFns(block uint64) {
 	pools, err := ix.Store.GetAllPoolsWithoutKeys(context.Background())
 	if err != nil {
@@ -16,13 +35,17 @@ func (ix *Indexer) UpdateByFns(block uint64) {
 		return
 	}
 
+	processByFns(pools, block, ix.Store, ix.Client)
+}
+
+func processByFns(pools []db.PoolsV2, block uint64, store db.Store, client starknet.Client) {
 	const numWorkers = 10
 	jobs := make(chan db.PoolsV2, len(pools))
 	results := make(chan bool, len(pools))
 
 	for w := 0; w < numWorkers; w++ {
 		go func(jobs chan db.PoolsV2, results chan bool) {
-			syncPoolFromFnConc(jobs, results, block, ix.Store, ix.Client)
+			syncPoolFromFnConc(jobs, results, block, store, client)
 		}(jobs, results)
 	}
 

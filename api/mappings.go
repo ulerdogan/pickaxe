@@ -20,6 +20,7 @@ func (r *ginServer) MapUrls() {
 	authRoutes.POST("/api/tokens/add", r.AddToken)
 	authRoutes.POST("/api/pools/add", r.AddPool)
 	authRoutes.POST("/api/amm/add", r.AddAmm)
+	authRoutes.POST("/api/status/sync", r.UpdateState)
 
 	r.router.Use(cors.Default())
 	r.router.Use(gin.Recovery())
