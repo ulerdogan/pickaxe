@@ -46,3 +46,8 @@ func (r *ginServer) GetIndexerStatus(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, rsp)
 }
+
+func (r *ginServer) UpdateState(ctx *gin.Context) {
+	r.update(0)
+	ctx.JSON(http.StatusOK, gin.H{"status": "sync request sent"})
+}

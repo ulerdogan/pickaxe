@@ -19,15 +19,17 @@ type ginServer struct {
 	client starknet.Client
 	token  auth.Maker
 	config config.Config
+	update func(block uint64)
 }
 
-func NewRouter(store db.Store, client starknet.Client, maker auth.Maker, cnfg config.Config) Api {
+func NewRouter(store db.Store, client starknet.Client, maker auth.Maker, cnfg config.Config, updateFn func(block uint64)) Api {
 	return &ginServer{
 		router: gin.Default(),
 		store:  store,
 		client: client,
 		token:  maker,
 		config: cnfg,
+		update: updateFn,
 	}
 }
 

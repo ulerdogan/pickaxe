@@ -48,14 +48,13 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	client := starknet.NewStarknetClient(cnfg)
 	rest := rest.NewRestClient()
 	maker, _ := auth.NewPasetoMaker(cnfg.SymmetricKey)
-	router := api.NewRouter(store, client, maker, cnfg)
 	rmqChan, err := SetupRabbitMQ(cnfg)
 	if err != nil {
 		logger.Error(err, "cannot connect to the rabbitmq")
 		return
 	}
 	defer rmqChan.Close()
-
+	
 	// adding the initial state to db
 	if ok {
 		logger.Info("db migration is completed")
@@ -63,6 +62,9 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	}
 	// starting the indexer
 	ix := NewIndexer(store, client, rest, cnfg, rmqChan)
+	
+	// setting the router
+	router := api.NewRouter(store, client, maker, cnfg, ix.UpdateByFnsAll)
 
 	// setup and run jobs
 	setupJobs(ix)

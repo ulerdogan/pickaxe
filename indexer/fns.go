@@ -10,10 +10,19 @@ import (
 )
 
 func (ix *Indexer) UpdateByFnsAll(block uint64) {
-	pools, err := ix.Store.GetAllPoolsWithoutKeys(context.Background())
+	pools, err := ix.Store.GetAllPools(context.Background())
 	if err != nil {
 		logger.Error(err, "cannot get the pools")
 		return
+	}
+
+	if block == 0 {
+		lb, err := ix.Client.LastBlock()
+		if err != nil {
+			logger.Error(err, "cannot get the last block")
+			return
+		}
+		block = lb.BlockNumber
 	}
 
 	processByFns(pools, block, ix.Store, ix.Client)
