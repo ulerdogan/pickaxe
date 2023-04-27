@@ -54,7 +54,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 		return
 	}
 	defer rmqChan.Close()
-	
+
 	// adding the initial state to db
 	if ok {
 		logger.Info("db migration is completed")
@@ -62,7 +62,7 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	}
 	// starting the indexer
 	ix := NewIndexer(store, client, rest, cnfg, rmqChan)
-	
+
 	// setting the router
 	router := api.NewRouter(store, client, maker, cnfg, ix.UpdateByFnsAll)
 

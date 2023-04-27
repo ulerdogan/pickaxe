@@ -41,6 +41,17 @@ func (ix *Indexer) ListenBlocks() {
 			logger.Error(err, "cannot convert event to block number")
 		}
 
+		// reorg data prevention hard sync
+		if ix.LastQueried.Timestamp.Add(time.Hour).Before(time.Now().UTC()) {
+			logger.Info("hard sync at: " + fmt.Sprint(bInfo.BlockNumber))
+
+			go ix.UpdateByFnsAll(bInfo.BlockNumber)
+
+			if err := updateIxStatusDB(ix.LastQueried, *bInfo, ix.Store); err != nil {
+				logger.Error(err, "cannot update the indexer status")
+			}
+		}
+
 		if bInfo.BlockNumber > ix.LastQueried.BlockNumber {
 			logger.Info("new block catched: " + fmt.Sprint(bInfo.BlockNumber))
 
@@ -54,15 +65,22 @@ func (ix *Indexer) ListenBlocks() {
 				continue
 			}
 
-			ix.LastQueried = bInfo
-			_, err = ix.Store.UpdateIndexerStatus(
-				context.Background(), db.UpdateIndexerStatusParams{
-					LastQueriedBlock: sql.NullInt64{Int64: int64(ix.LastQueried.BlockNumber), Valid: true},
-					LastQueriedHash:  sql.NullString{String: ix.LastQueried.BlockHash, Valid: true},
-				})
-			if err != nil {
+			if err := updateIxStatusDB(ix.LastQueried, *bInfo, ix.Store); err != nil {
 				logger.Error(err, "cannot update the indexer status")
 			}
 		}
 	}
+}
+
+func updateIxStatusDB(lqs *status, bi rpc.BlockHashAndNumberOutput, store db.Store) error {
+	lqs.BlockHash, lqs.BlockNumber = bi.BlockHash, bi.BlockNumber
+	lqs.Timestamp = time.Now().UTC()
+
+	_, err := store.UpdateIndexerStatus(
+		context.Background(), db.UpdateIndexerStatusParams{
+			LastQueriedBlock: sql.NullInt64{Int64: int64(lqs.BlockNumber), Valid: true},
+			LastQueriedHash:  sql.NullString{String: lqs.BlockHash, Valid: true},
+		})
+
+	return err
 }
