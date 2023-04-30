@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,13 +24,33 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 
 	rsp := make([]PoolResponse, len(pools))
 	for i, p := range pools {
-		prp := PoolResponse{
-			Address:    p.Address,
-			TokenA:     p.TokenA,
-			TokenB:     p.TokenB,
-			ReserveA:   p.ReserveA,
-			ReserveB:   p.ReserveB,
-			TotalValue: p.TotalValue,
+
+		var prp PoolResponse
+
+		sf := struct {
+			Fee0 string `json:"fee_0"`
+			Fee1 string `json:"fee_1"`
+		}{}
+
+		err = json.Unmarshal([]byte(p.Fee), &sf)
+		if err != nil {
+			prp = PoolResponse{
+				Address:  p.Address,
+				TokenA:   p.TokenA,
+				TokenB:   p.TokenB,
+				ReserveA: p.ReserveA,
+				ReserveB: p.ReserveB,
+				Fee:      p.Fee,
+			}
+		} else {
+			prp = PoolResponse{
+				Address:  p.Address,
+				TokenA:   p.TokenA,
+				TokenB:   p.TokenB,
+				ReserveA: p.ReserveA,
+				ReserveB: p.ReserveB,
+				Fee:      sf,
+			}
 		}
 		prp.LastUpdated = p.LastUpdated.String()
 		prp.LastBlock = p.LastBlock
@@ -66,12 +87,32 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		ExtraData: pool.ExtraData.String,
 	}, r.store, r.client)
 
-	rsp := PoolResponse{
-		Address:  pool.Address,
-		TokenA:   pool.TokenA,
-		TokenB:   pool.TokenB,
-		ReserveA: pool.ReserveA,
-		ReserveB: pool.ReserveB,
+	var rsp PoolResponse
+
+	sf := struct {
+		Fee0 string `json:"fee_0"`
+		Fee1 string `json:"fee_1"`
+	}{}
+
+	err = json.Unmarshal([]byte(pool.Fee), &sf)
+	if err != nil {
+		rsp = PoolResponse{
+			Address:  pool.Address,
+			TokenA:   pool.TokenA,
+			TokenB:   pool.TokenB,
+			ReserveA: pool.ReserveA,
+			ReserveB: pool.ReserveB,
+			Fee:      pool.Fee,
+		}
+	} else {
+		rsp = PoolResponse{
+			Address:  pool.Address,
+			TokenA:   pool.TokenA,
+			TokenB:   pool.TokenB,
+			ReserveA: pool.ReserveA,
+			ReserveB: pool.ReserveB,
+			Fee:      sf,
+		}
 	}
 
 	ctx.JSON(http.StatusOK, rsp)

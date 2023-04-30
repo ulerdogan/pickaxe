@@ -16,14 +16,15 @@ type AddTokenParams struct {
 }
 
 type PoolResponse struct {
-	Address     string `json:"address"`
-	TokenA      string `json:"token_a"`
-	TokenB      string `json:"token_b"`
-	ReserveA    string `json:"reserve_a"`
-	ReserveB    string `json:"reserve_b"`
-	TotalValue  string `json:"total_value,omitempty"`
-	LastUpdated string `json:"last_updated"`
-	LastBlock   int64  `json:"last_block"`
+	Address     string      `json:"address"`
+	TokenA      string      `json:"token_a"`
+	TokenB      string      `json:"token_b"`
+	ReserveA    string      `json:"reserve_a"`
+	ReserveB    string      `json:"reserve_b"`
+	TotalValue  string      `json:"total_value,omitempty"`
+	Fee         interface{} `json:"fee,omitempty"`
+	LastUpdated string      `json:"last_updated"`
+	LastBlock   int64       `json:"last_block"`
 }
 
 type AddPoolParams struct {
