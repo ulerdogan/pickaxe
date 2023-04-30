@@ -20,5 +20,5 @@ type PoolInfo struct {
 type Dex interface {
 	SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) error
 	SyncPoolFromEvent(pool PoolInfo, store db.Store) error
-	SyncFee(pool PoolInfo, store db.Store) error
+	SyncFee(pool PoolInfo, store db.Store, client Client) error
 }

@@ -64,7 +64,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	go dex.SyncFee(starknet.PoolInfo{
 		Address:   pool.Address,
 		ExtraData: pool.ExtraData.String,
-	}, r.store)
+	}, r.store, r.client)
 
 	rsp := PoolResponse{
 		Address:  pool.Address,
