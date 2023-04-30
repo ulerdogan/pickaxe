@@ -58,4 +58,8 @@ docker-container-psocket:
 docker-compose:
 	docker compose up
 
-.PHONY: sqlc db_docs db_schema postgres rabbitmq docker-network createdb migrateup migratedown build install docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose psocket pickaxe
+fmt:
+	go fmt ./...
+	gofmt -s -w .
+
+.PHONY: sqlc db_docs db_schema postgres rabbitmq docker-network createdb migrateup migratedown build install docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose psocket pickaxe fmt

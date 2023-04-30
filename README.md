@@ -68,7 +68,7 @@ psocket
 ```
 
 
-// Custom app running preferences 
+Custom app running preferences 
 
 ``` sh
 // For testnet envs - run with testnet flag, example:
