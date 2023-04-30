@@ -15,10 +15,9 @@ INSERT INTO pools_v2 (
   address,
   amm_id,
   token_a,
-  token_b,
-  fee
+  token_b
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4
 ) RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, last_updated, last_block
 `
 
@@ -27,7 +26,6 @@ type CreatePoolParams struct {
 	AmmID   int64  `json:"amm_id"`
 	TokenA  string `json:"token_a"`
 	TokenB  string `json:"token_b"`
-	Fee     string `json:"fee"`
 }
 
 func (q *Queries) CreatePool(ctx context.Context, arg CreatePoolParams) (PoolsV2, error) {
@@ -36,7 +34,6 @@ func (q *Queries) CreatePool(ctx context.Context, arg CreatePoolParams) (PoolsV2
 		arg.AmmID,
 		arg.TokenA,
 		arg.TokenB,
-		arg.Fee,
 	)
 	var i PoolsV2
 	err := row.Scan(
@@ -350,6 +347,38 @@ type UpdatePoolExtraDataParams struct {
 
 func (q *Queries) UpdatePoolExtraData(ctx context.Context, arg UpdatePoolExtraDataParams) (PoolsV2, error) {
 	row := q.db.QueryRowContext(ctx, updatePoolExtraData, arg.PoolID, arg.ExtraData)
+	var i PoolsV2
+	err := row.Scan(
+		&i.PoolID,
+		&i.Address,
+		&i.AmmID,
+		&i.TokenA,
+		&i.TokenB,
+		&i.ReserveA,
+		&i.ReserveB,
+		&i.Fee,
+		&i.TotalValue,
+		&i.ExtraData,
+		&i.LastUpdated,
+		&i.LastBlock,
+	)
+	return i, err
+}
+
+const updatePoolFee = `-- name: UpdatePoolFee :one
+UPDATE pools_v2
+SET fee = $2
+WHERE pool_id = $1
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, last_updated, last_block
+`
+
+type UpdatePoolFeeParams struct {
+	PoolID int64  `json:"pool_id"`
+	Fee    string `json:"fee"`
+}
+
+func (q *Queries) UpdatePoolFee(ctx context.Context, arg UpdatePoolFeeParams) (PoolsV2, error) {
+	row := q.db.QueryRowContext(ctx, updatePoolFee, arg.PoolID, arg.Fee)
 	var i PoolsV2
 	err := row.Scan(
 		&i.PoolID,

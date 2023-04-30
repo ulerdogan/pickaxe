@@ -1,7 +1,5 @@
 package api
 
-import "github.com/shopspring/decimal"
-
 type TokenResponse struct {
 	Address  string `json:"address"`
 	Name     string `json:"name"`
@@ -23,19 +21,17 @@ type PoolResponse struct {
 	TokenB      string `json:"token_b"`
 	ReserveA    string `json:"reserve_a"`
 	ReserveB    string `json:"reserve_b"`
-	Fee         string `json:"fee"`
 	TotalValue  string `json:"total_value,omitempty"`
 	LastUpdated string `json:"last_updated"`
 	LastBlock   int64  `json:"last_block"`
 }
 
 type AddPoolParams struct {
-	Address   string          `json:"address"`
-	TokenA    string          `json:"token_a"`
-	TokenB    string          `json:"token_b"`
-	AmmId     int64           `json:"amm_id"`
-	Fee       decimal.Decimal `json:"fee"`
-	ExtraData string          `json:"extra_data,omitempty"`
+	Address   string `json:"address"`
+	TokenA    string `json:"token_a"`
+	TokenB    string `json:"token_b"`
+	AmmId     int64  `json:"amm_id"`
+	ExtraData string `json:"extra_data,omitempty"`
 }
 
 type AmmResponse struct {

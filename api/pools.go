@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
 
@@ -28,7 +29,6 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 			TokenB:     p.TokenB,
 			ReserveA:   p.ReserveA,
 			ReserveB:   p.ReserveB,
-			Fee:        p.Fee,
 			TotalValue: p.TotalValue,
 		}
 		prp.LastUpdated = p.LastUpdated.String()
@@ -54,12 +54,17 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		TokenA:  req.TokenA,
 		TokenB:  req.TokenB,
 		AmmID:   req.AmmId,
-		Fee:     req.Fee.String(),
 	})
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	dex, _ := r.client.NewDex(int(pool.AmmID))
+	go dex.SyncFee(starknet.PoolInfo{
+		Address:   pool.Address,
+		ExtraData: pool.ExtraData.String,
+	}, r.store)
 
 	rsp := PoolResponse{
 		Address:  pool.Address,
@@ -67,7 +72,6 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		TokenB:   pool.TokenB,
 		ReserveA: pool.ReserveA,
 		ReserveB: pool.ReserveB,
-		Fee:      pool.Fee,
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
