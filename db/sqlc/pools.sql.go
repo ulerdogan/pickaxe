@@ -399,24 +399,24 @@ func (q *Queries) UpdatePoolFee(ctx context.Context, arg UpdatePoolFeeParams) (P
 
 const updatePoolReserves = `-- name: UpdatePoolReserves :one
 UPDATE pools_v2
-SET reserve_a = $1, reserve_b = $2, last_block = $3, last_updated = NOW()
-WHERE pool_id = $4
+SET reserve_a = $2, reserve_b = $3, last_block = $4, last_updated = NOW()
+WHERE pool_id = $1
 RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, last_updated, last_block
 `
 
 type UpdatePoolReservesParams struct {
+	PoolID    int64  `json:"pool_id"`
 	ReserveA  string `json:"reserve_a"`
 	ReserveB  string `json:"reserve_b"`
 	LastBlock int64  `json:"last_block"`
-	PoolID    int64  `json:"pool_id"`
 }
 
 func (q *Queries) UpdatePoolReserves(ctx context.Context, arg UpdatePoolReservesParams) (PoolsV2, error) {
 	row := q.db.QueryRowContext(ctx, updatePoolReserves,
+		arg.PoolID,
 		arg.ReserveA,
 		arg.ReserveB,
 		arg.LastBlock,
-		arg.PoolID,
 	)
 	var i PoolsV2
 	err := row.Scan(
@@ -438,18 +438,18 @@ func (q *Queries) UpdatePoolReserves(ctx context.Context, arg UpdatePoolReserves
 
 const updatePoolTV = `-- name: UpdatePoolTV :one
 UPDATE pools_v2
-SET total_value = $1
-WHERE pool_id = $2
+SET total_value = $2
+WHERE pool_id = $1
 RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, last_updated, last_block
 `
 
 type UpdatePoolTVParams struct {
-	TotalValue string `json:"total_value"`
 	PoolID     int64  `json:"pool_id"`
+	TotalValue string `json:"total_value"`
 }
 
 func (q *Queries) UpdatePoolTV(ctx context.Context, arg UpdatePoolTVParams) (PoolsV2, error) {
-	row := q.db.QueryRowContext(ctx, updatePoolTV, arg.TotalValue, arg.PoolID)
+	row := q.db.QueryRowContext(ctx, updatePoolTV, arg.PoolID, arg.TotalValue)
 	var i PoolsV2
 	err := row.Scan(
 		&i.PoolID,
