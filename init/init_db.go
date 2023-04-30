@@ -244,9 +244,7 @@ func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, lastBlock u
 		err = dex.SyncFee(starknet.PoolInfo{
 			Address:   pool.Address,
 			ExtraData: pool.ExtraData.String,
-			Block:     big.NewInt(int64(lastBlock)),
 		}, store, client)
-
 		if err != nil {
 			logger.Error(err, "sync fee error: "+pool.Address)
 			results <- false
