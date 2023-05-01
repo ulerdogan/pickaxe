@@ -35,6 +35,7 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 		err = json.Unmarshal([]byte(p.Fee), &sf)
 		if err != nil {
 			prp = PoolResponse{
+				AmmID:    p.AmmID,
 				Address:  p.Address,
 				TokenA:   p.TokenA,
 				TokenB:   p.TokenB,
@@ -44,6 +45,7 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 			}
 		} else {
 			prp = PoolResponse{
+				AmmID:    p.AmmID,
 				Address:  p.Address,
 				TokenA:   p.TokenA,
 				TokenB:   p.TokenB,
@@ -97,6 +99,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	err = json.Unmarshal([]byte(pool.Fee), &sf)
 	if err != nil {
 		rsp = PoolResponse{
+			AmmID:    pool.AmmID,
 			Address:  pool.Address,
 			TokenA:   pool.TokenA,
 			TokenB:   pool.TokenB,
@@ -106,6 +109,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		}
 	} else {
 		rsp = PoolResponse{
+			AmmID:    pool.AmmID,
 			Address:  pool.Address,
 			TokenA:   pool.TokenA,
 			TokenB:   pool.TokenB,
