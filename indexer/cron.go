@@ -156,18 +156,24 @@ func updateValueV2(store db.Store, pool db.PoolsV2, scp *atomic.Uint64, wg *sync
 	return nil
 }
 
-func updateFees(store db.Store, client starknet.Client, pool db.PoolsV2, scp *atomic.Uint64, wg *sync.WaitGroup) {
+func updateFees(store db.Store, client starknet.Client, pool db.PoolsV2, scp *atomic.Uint64, wg *sync.WaitGroup) error {
 	dex, err := client.NewDex(int(pool.AmmID))
 	if err != nil {
 		logger.Error(err, "cannot get the dex "+strconv.Itoa(int(pool.AmmID))+" to update fees")
-		return
+		return err
 	}
 
-	dex.SyncFee(starknet.PoolInfo{
+	err = dex.SyncFee(starknet.PoolInfo{
 		Address:   pool.Address,
 		ExtraData: pool.ExtraData.String,
 	}, store, client)
+	if err != nil {
+		logger.Error(err, "cannot get the fee")
+		return err
+	}
 
 	scp.Add(1)
 	wg.Done()
+
+	return nil
 }
