@@ -8,14 +8,41 @@ import (
 
 	"github.com/shopspring/decimal"
 	rest "github.com/ulerdogan/pickaxe/clients/rest"
+	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
 
 func setupJobs(ix *Indexer) {
 	ix.Scheduler.Every(5).Minutes().Do(ix.QueryPrices)
+	ix.Scheduler.Every(1).Days().Do(ix.CheckFees)
 
 	go ix.Scheduler.StartBlocking()
+}
+
+var feesToCheck = []int{4}
+
+func (ix *Indexer) CheckFees() {
+	var pools []db.PoolsV2
+
+	for i := range feesToCheck {
+		pls, err := ix.Store.GetPoolsByAmm(context.Background(), int64(feesToCheck[i]))
+		if err != nil {
+			logger.Error(err, "cannot get the pools by amm: "+strconv.Itoa(feesToCheck[i]))
+			return
+		}
+		pools = append(pools, pls...)
+	}
+
+	var scp *atomic.Uint64 = &atomic.Uint64{}
+	var wg *sync.WaitGroup = &sync.WaitGroup{}
+	for _, pool := range pools {
+		wg.Add(1)
+		go updateFees(ix.Store, ix.Client, pool, scp, wg)
+	}
+
+	wg.Wait()
+	logger.Info("in " + strconv.Itoa(len(pools)) + ", fees of " + strconv.Itoa(int(scp.Load())) + " pools are updated")
 }
 
 func (ix *Indexer) QueryPrices() {
@@ -127,4 +154,20 @@ func updateValueV2(store db.Store, pool db.PoolsV2, scp *atomic.Uint64, wg *sync
 	scp.Add(1)
 	wg.Done()
 	return nil
+}
+
+func updateFees(store db.Store, client starknet.Client, pool db.PoolsV2, scp *atomic.Uint64, wg *sync.WaitGroup) {
+	dex, err := client.NewDex(int(pool.AmmID))
+	if err != nil {
+		logger.Error(err, "cannot get the dex "+strconv.Itoa(int(pool.AmmID))+" to update fees")
+		return
+	}
+
+	dex.SyncFee(starknet.PoolInfo{
+		Address:   pool.Address,
+		ExtraData: pool.ExtraData.String,
+	}, store, client)
+
+	scp.Add(1)
+	wg.Done()
 }
