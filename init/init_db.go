@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/dontpanicdao/caigo/types"
-	"github.com/shopspring/decimal"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	config "github.com/ulerdogan/pickaxe/utils/config"
@@ -143,7 +142,6 @@ func initAmmsToDB(store db.Store) {
 
 func initPoolsToDB(store db.Store) {
 	succesfulls := 0
-	dc03, _ := decimal.NewFromString("0.3")
 
 	for _, p := range pools {
 		ta, _ := store.GetTokenBySymbol(context.Background(), p.TokenA)
@@ -154,7 +152,6 @@ func initPoolsToDB(store db.Store) {
 			TokenA:  ta.Address,
 			TokenB:  tb.Address,
 			AmmID:   int64(p.AmmID),
-			Fee:     dc03.String(),
 		})
 		if err != nil {
 			logger.Error(err, "cannot create pool: "+p.Address)
@@ -240,6 +237,16 @@ func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, lastBlock u
 		}, store, client)
 		if err != nil {
 			logger.Error(err, "sync pool error: "+pool.Address)
+			results <- false
+			continue
+		}
+
+		err = dex.SyncFee(starknet.PoolInfo{
+			Address:   pool.Address,
+			ExtraData: pool.ExtraData.String,
+		}, store, client)
+		if err != nil {
+			logger.Error(err, "sync fee error: "+pool.Address)
 			results <- false
 			continue
 		}

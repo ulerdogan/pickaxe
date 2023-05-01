@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/dontpanicdao/caigo/types"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	config "github.com/ulerdogan/pickaxe/utils/config"
@@ -14,18 +15,20 @@ func TestCall(t *testing.T) {
 	cnfg, _ := config.LoadConfig("app", "../..")
 	c := NewStarknetClient(cnfg)
 
-	paHash := types.HexToHash("0x010884171baf1914edc28d7afb619b40a4051cfae78a094a55d230f19e944a28")
+	paHash := types.HexToHash("0x00a144ef99419e4dbb3ef99bc2db894fbe7b4532ebed9592a407908727321fcf")
 	r, err := c.Call(types.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "get_pool",
-		Calldata:           []string{"1"},
+		EntryPointSelector: "getFee0",
+		//Calldata:           []string{"1"},
 	})
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(r)
+	dc := decimal.NewFromInt(types.HexToBN(r[0]).Int64()).Div(decimal.NewFromInt(10000)).String()
+	fmt.Println(dc)
+
 }
 
 func TestGetEvents(t *testing.T) {

@@ -67,3 +67,23 @@ func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) er
 func (d *myswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 	return errors.New("myswap sync from even is not implemented")
 }
+
+func (d *myswap) SyncFee(pool PoolInfo, store db.Store, client Client) error {
+	pl, err := store.GetPoolByAddressExtra(context.Background(), db.GetPoolByAddressExtraParams{
+		Address:   pool.Address,
+		ExtraData: sql.NullString{String: pool.ExtraData, Valid: true},
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
+		PoolID: pl.PoolID,
+		Fee:    "0.3",
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

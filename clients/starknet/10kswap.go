@@ -88,3 +88,17 @@ func (d *swap10k) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 
 	return nil
 }
+
+func (d *swap10k) SyncFee(pool PoolInfo, store db.Store, client Client) error {
+	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	if err != nil {
+		return err
+	}
+
+	store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
+		PoolID: pl.PoolID,
+		Fee:    "0.3",
+	})
+
+	return nil
+}

@@ -29,7 +29,7 @@ Table pools_v2 as P2 {
   token_b varchar [not null, ref: > T.address]
   reserve_a numeric [not null, default:0]
   reserve_b numeric [not null, default:0]
-  fee numeric [not null]
+  fee varchar [not null, default:""]
   total_value numeric [not null, default:0]
   extra_data varchar
   last_updated timestamptz [not null, default: '0001-01-01']

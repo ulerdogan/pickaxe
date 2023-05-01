@@ -2,13 +2,20 @@ package starknet_client
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/dontpanicdao/caigo/types"
+	"github.com/shopspring/decimal"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 	utils "github.com/ulerdogan/pickaxe/utils/starknet"
 )
+
+type sithFees struct {
+	Fee0 string `json:"fee_0"`
+	Fee1 string `json:"fee_1"`
+}
 
 type sithswap struct{}
 
@@ -86,6 +93,43 @@ func (d *sithswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 		logger.Error(err, "cannot update pool reserves: "+pl.Address)
 		return err
 	}
+
+	return nil
+}
+
+func (d *sithswap) SyncFee(pool PoolInfo, store db.Store, client Client) error {
+	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	if err != nil {
+		return err
+	}
+
+	paHash := types.HexToHash(pool.Address)
+
+	call0, err := client.Call(types.FunctionCall{
+		ContractAddress:    paHash,
+		EntryPointSelector: "getFee0",
+	})
+	if err != nil {
+		return errors.New("starknet query error")
+	}
+	call1, err := client.Call(types.FunctionCall{
+		ContractAddress:    paHash,
+		EntryPointSelector: "getFee1",
+	})
+	if err != nil {
+		return errors.New("starknet query error")
+	}
+
+	fees := sithFees{
+		Fee0: decimal.NewFromInt(types.HexToBN(call0[0]).Int64()).Div(decimal.NewFromInt(10000)).String(),
+		Fee1: decimal.NewFromInt(types.HexToBN(call1[0]).Int64()).Div(decimal.NewFromInt(10000)).String(),
+	}
+	jsonBytes, _ := json.Marshal(fees)
+
+	store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
+		PoolID: pl.PoolID,
+		Fee:    string(jsonBytes),
+	})
 
 	return nil
 }

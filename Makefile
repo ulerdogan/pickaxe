@@ -8,6 +8,7 @@ db_docs:
 
 db_schema:
 	dbml2sql --postgres -o db/docs/schema.sql db/docs/pickaxe.dbml
+	dbml2sql --postgres -o db/migration/000001_init_schema.up.sql db/docs/pickaxe.dbml
 
 rabbitmq:
 	docker run -it --name pickaxe-rabbitmq --network pickaxe-network -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management-alpine
@@ -58,4 +59,8 @@ docker-container-psocket:
 docker-compose:
 	docker compose up
 
-.PHONY: sqlc db_docs db_schema postgres rabbitmq docker-network createdb migrateup migratedown build install docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose psocket pickaxe
+fmt:
+	go fmt ./...
+	gofmt -s -w .
+
+.PHONY: sqlc db_docs db_schema postgres rabbitmq docker-network createdb migrateup migratedown build install docker-build-pickaxe docker-build-psocket docker-container-pickaxe docker-container-psocket docker-compose psocket pickaxe fmt

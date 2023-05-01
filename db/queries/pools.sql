@@ -3,10 +3,9 @@ INSERT INTO pools_v2 (
   address,
   amm_id,
   token_a,
-  token_b,
-  fee
+  token_b
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetPoolByAddress :one
@@ -45,14 +44,20 @@ ORDER BY address;
 
 -- name: UpdatePoolReserves :one
 UPDATE pools_v2
-SET reserve_a = $1, reserve_b = $2, last_block = $3, last_updated = NOW()
-WHERE pool_id = $4
+SET reserve_a = $2, reserve_b = $3, last_block = $4, last_updated = NOW()
+WHERE pool_id = $1
 RETURNING *;
 
 -- name: UpdatePoolTV :one
 UPDATE pools_v2
-SET total_value = $1
-WHERE pool_id = $2
+SET total_value = $2
+WHERE pool_id = $1
+RETURNING *;
+
+-- name: UpdatePoolFee :one
+UPDATE pools_v2
+SET fee = $2
+WHERE pool_id = $1
 RETURNING *;
 
 -- name: UpdatePoolExtraData :one
