@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math/big"
 	"os"
@@ -47,25 +48,27 @@ var (
 	pools  []pool
 )
 
-func init() {
-	tokensFile, err := os.Open("./init/states/tokens.json")
+func initStates(initPath string) error {
+
+	//tokensFile, err := os.Open("./init/states/tokens.json")
+	tokensFile, err := os.Open(fmt.Sprintf("%s/%s.json", initPath, "tokens"))
 	if err != nil {
 		logger.Error(err, "cannot get tokens json file")
-		return
+		return err
 	}
 	defer tokensFile.Close()
 
-	ammsFile, err := os.Open("./init/states/amms.json")
+	ammsFile, err := os.Open(fmt.Sprintf("%s/%s.json", initPath, "amms"))
 	if err != nil {
 		logger.Error(err, "cannot get amms json file")
-		return
+		return err
 	}
 	defer ammsFile.Close()
 
-	poolsFile, err := os.Open("./init/states/pools.json")
+	poolsFile, err := os.Open(fmt.Sprintf("%s/%s.json", initPath, "pools"))
 	if err != nil {
 		logger.Error(err, "cannot get pools json file")
-		return
+		return err
 	}
 	defer ammsFile.Close()
 
@@ -83,6 +86,8 @@ func init() {
 	tokens = resultTokens["tokens"]
 	amms = resultAmms["amms"]
 	pools = resultPools["pools"]
+
+	return nil
 }
 
 func initTokensToDB(store db.Store, c starknet.Client) {
@@ -188,6 +193,11 @@ func getTokenDecimal(c starknet.Client, address string) (*int, error) {
 }
 
 func Init(cnfg config.Config, store db.Store, client starknet.Client) {
+	if err := initStates(cnfg.InitPath); err != nil {
+		logger.Error(err, "cannot init states")
+		return
+	}
+
 	logger.Info("first state initialization runned")
 
 	initAmmsToDB(store)
