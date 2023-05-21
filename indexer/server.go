@@ -48,12 +48,13 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 	client := starknet.NewStarknetClient(cnfg)
 	rest := rest.NewRestClient()
 	maker, _ := auth.NewPasetoMaker(cnfg.SymmetricKey)
-	rmqChan, err := SetupRabbitMQ(cnfg)
-	if err != nil {
-		logger.Error(err, "cannot connect to the rabbitmq")
-		return
-	}
-	defer rmqChan.Close()
+	// FIXME: removed for now
+	// rmqChan, err := SetupRabbitMQ(cnfg)
+	// if err != nil {
+	// 	logger.Error(err, "cannot connect to the rabbitmq")
+	// 	return
+	// }
+	// defer rmqChan.Close()
 
 	// adding the initial state to db
 	if ok {
@@ -61,17 +62,18 @@ func initServer(conn *sql.DB, cnfg config.Config) {
 		init_db.Init(cnfg, store, client)
 	}
 	// starting the indexer
-	ix := NewIndexer(store, client, rest, cnfg, rmqChan)
+	// ix := NewIndexer(store, client, rest, cnfg, rmqChan) // FIXME: changed for now
+	ix := NewIndexer(store, client, rest, cnfg, nil)
 
 	// setting the router
 	router := api.NewRouter(store, client, maker, cnfg, ix.UpdateByFnsAll)
 
 	// setup and run jobs
 	setupJobs(ix)
-	// start listening blocks
-	go ix.ListenBlocks()
-	// start processing event messages
-	go ix.ProcessEvents()
+	// // start listening blocks // FIXME: removed for now
+	// go ix.ListenBlocks() // FIXME: removed for now
+	// // start processing event messages // FIXME: removed for now
+	// go ix.ProcessEvents() // FIXME: removed for now
 
 	// setup and run gin server
 	router.MapUrls()
