@@ -16,6 +16,7 @@ import (
 func setupJobs(ix *Indexer) {
 	ix.Scheduler.Every(5).Minutes().Do(ix.QueryPrices)
 	ix.Scheduler.Every(1).Days().Do(ix.CheckFees)
+	ix.Scheduler.Every(25).Seconds().Do(ix.UpdateByFnsAll, uint64(0)) // FIXME: this is for testing
 
 	go ix.Scheduler.StartBlocking()
 }
