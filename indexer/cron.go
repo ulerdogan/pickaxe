@@ -16,7 +16,7 @@ import (
 func setupJobs(ix *Indexer) {
 	ix.Scheduler.Every(5).Minutes().Do(ix.QueryPrices)
 	ix.Scheduler.Every(1).Days().Do(ix.CheckFees)
-	ix.Scheduler.Every(25).Seconds().Do(ix.UpdateByFnsAll, uint64(0)) // FIXME: this is for testing
+	ix.Scheduler.Every(25).Seconds().Do(ix.UpdateAllCron) // FIXME: this is for testing
 
 	go ix.Scheduler.StartBlocking()
 }
@@ -177,4 +177,20 @@ func updateFees(store db.Store, client starknet.Client, pool db.PoolsV2, scp *at
 	wg.Done()
 
 	return nil
+}
+
+// FIXME: used for the cron
+func (ix *Indexer) UpdateAllCron() {
+	ix.UpdateByFnsAll(0)
+
+	lb, err := ix.Client.LastBlock()
+	if err != nil {
+		logger.Error(err, "cannot get the last block")
+		return
+	}
+
+	err = updateIxStatusDB(ix.LastQueried, *lb, ix.Store)
+	if err != nil {
+		logger.Error(err, "cannot update the indexer status")
+	}
 }
