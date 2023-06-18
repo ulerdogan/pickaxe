@@ -59,6 +59,9 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 		if p.TotalValue != "" {
 			prp.TotalValue = p.TotalValue
 		}
+		if p.ExtraData.String != "" {
+			prp.ExtraData = p.ExtraData.String
+		}
 		rsp[i] = prp
 	}
 
@@ -81,6 +84,13 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
+	}
+
+	if req.ExtraData != "" {
+		r.store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
+			PoolID:    pool.PoolID,
+			ExtraData: sql.NullString{String: req.ExtraData, Valid: true},
+		})
 	}
 
 	dex, _ := r.client.NewDex(int(pool.AmmID))
