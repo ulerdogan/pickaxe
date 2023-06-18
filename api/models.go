@@ -26,7 +26,7 @@ type PoolResponse struct {
 	Fee         interface{} `json:"fee,omitempty"`
 	LastUpdated string      `json:"last_updated"`
 	LastBlock   int64       `json:"last_block"`
-	ExtraData 	string 		`json:"extra_data,omitempty"`
+	ExtraData   string      `json:"extra_data,omitempty"`
 }
 
 type AddPoolParams struct {

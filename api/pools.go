@@ -75,6 +75,11 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		return
 	}
 
+	// sort tokens in pools standard
+	if req.TokenA > req.TokenB {
+		req.TokenA, req.TokenB = req.TokenB, req.TokenA
+	}
+
 	pool, err := r.store.CreatePool(context.Background(), db.CreatePoolParams{
 		Address: req.Address,
 		TokenA:  req.TokenA,
