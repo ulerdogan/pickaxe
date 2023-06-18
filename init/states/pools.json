@@ -221,6 +221,48 @@
             "token_b": "usdc",
             "extra_data": "0",
             "amm_id": 4
+        },
+        {
+            "address": "0x034b7f1c71726cd75e3b1664371beec65890e46f110f2c175d465163638c691a",
+            "token_a": "usdc",
+            "token_b": "usdt",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x04d15040581b20b7682ad69db3c57fd0513fdc55639b8b406da3ddcd5ba39b8a",
+            "token_a": "dai",
+            "token_b": "usdt",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x0106ff0f48fba1274b1f4f65e6d847fa58ac455e95318754fec20eb221b660ed",
+            "token_a": "wbtc",
+            "token_b": "eth",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x024bd1600bbe18593e983f858f2e7a69148e6b973f43b6304b2b8cf110059595",
+            "token_a": "wbtc",
+            "token_b": "usdc",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x03b65c0d9664f7d186c457f6678044485fa3dc4e9bb921c9491bd229287351c8",
+            "token_a": "wbtc",
+            "token_b": "eth",
+            "extra_data": "1",
+            "amm_id": 4
+        },
+        {
+            "address": "0x07500d8ba71b0a0c587fa431753dbb01a4595a434f27b296358c2c4cb7f83585",
+            "token_a": "dai",
+            "token_b": "usdt",
+            "extra_data": "1",
+            "amm_id": 4
         }
     ]
 }

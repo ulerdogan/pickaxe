@@ -152,6 +152,11 @@ func initPoolsToDB(store db.Store) {
 		ta, _ := store.GetTokenBySymbol(context.Background(), p.TokenA)
 		tb, _ := store.GetTokenBySymbol(context.Background(), p.TokenB)
 
+		// sort pools
+		if ta.Address > tb.Address {
+			ta, tb = tb, ta
+		}
+
 		pool, err := store.CreatePool(context.Background(), db.CreatePoolParams{
 			Address: p.Address,
 			TokenA:  ta.Address,
