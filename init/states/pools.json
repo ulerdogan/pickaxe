@@ -42,6 +42,13 @@
             "extra_data": "6",
             "amm_id": 1
         },
+        {
+            "address": "0x010884171baf1914edc28d7afb619b40a4051cfae78a094a55d230f19e944a28",
+            "token_a": "wsteth",
+            "token_b": "eth",
+            "extra_data": "7",
+            "amm_id": 1
+        },
 
         {
             "address": "0x04d0390b777b424e43839cd1e744799f3de6c176c7e32c1812a41dbd9c19db6a",
@@ -95,6 +102,12 @@
             "address": "0x044d13ad98a46fd2322ef2637e5e4c292ce8822f47b7cb9a1d581176a801c1a0",
             "token_a": "wbtc",
             "token_b": "usdt",
+            "amm_id": 2
+        },
+        {
+            "address": "0x070cda8400d7b1ee9e21f7194d320b9ad9c7a2b27e0d15a5a9967b9fefe10c76",
+            "token_a": "wsteth",
+            "token_b": "eth",
             "amm_id": 2
         },
         
