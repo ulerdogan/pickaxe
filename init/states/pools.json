@@ -110,6 +110,12 @@
             "token_b": "eth",
             "amm_id": 2
         },
+        {
+            "address": "0x02b3030c04e9c920bd66c6a8dc209717bbefa1ea5f8bc8ebabd639e5a4766502",
+            "token_a": "lords",
+            "token_b": "eth",
+            "amm_id": 2
+        },
         
         {
             "address": "0x000023c72abdf49dffc85ae3ede714f2168ad384cc67d08524732acea90df325",
@@ -275,6 +281,13 @@
             "token_a": "dai",
             "token_b": "usdt",
             "extra_data": "1",
+            "amm_id": 4
+        },
+        {
+            "address": "0x02718bbc0176cff083b5c95ac22691bd1c16d55d37ae153d3ba347ce2292417e",
+            "token_a": "lords",
+            "token_b": "eth",
+            "extra_data": "0",
             "amm_id": 4
         }
     ]
