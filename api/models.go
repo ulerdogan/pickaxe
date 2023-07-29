@@ -17,6 +17,7 @@ type AddTokenParams struct {
 
 type PoolResponse struct {
 	AmmID       int64       `json:"amm_id"`
+	PoolID      int64       `json:"pool_id"`
 	Address     string      `json:"address"`
 	TokenA      string      `json:"token_a"`
 	TokenB      string      `json:"token_b"`
@@ -35,6 +36,10 @@ type AddPoolParams struct {
 	TokenB    string `json:"token_b"`
 	AmmId     int64  `json:"amm_id"`
 	ExtraData string `json:"extra_data,omitempty"`
+}
+
+type RemovePoolParams struct {
+	PoolID int64 `json:"pool_id"`
 }
 
 type AmmResponse struct {
