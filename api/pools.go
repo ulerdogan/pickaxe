@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
@@ -12,14 +14,30 @@ import (
 )
 
 func (r *ginServer) GetAllPools(ctx *gin.Context) {
-	pools, err := r.store.GetAllPools(context.Background())
+	ammID, err := strconv.Atoi(strings.TrimSpace(ctx.Query("amm")))
+
+	var pools []db.PoolsV2
+
 	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
+		pools, err = r.store.GetAllPools(context.Background())
+		if err != nil {
+			if err == sql.ErrNoRows {
+				ctx.JSON(http.StatusNotFound, errorResponse(err))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
+	} else {
+		pools, err = r.store.GetPoolsByAmm(context.Background(), int64(ammID))
+		if err != nil {
+			if err == sql.ErrNoRows {
+				ctx.JSON(http.StatusNotFound, errorResponse(err))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
 	}
 
 	rsp := make([]PoolResponse, len(pools))
@@ -36,6 +54,7 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 		if err != nil {
 			prp = PoolResponse{
 				AmmID:    p.AmmID,
+				PoolID:   p.PoolID,
 				Address:  p.Address,
 				TokenA:   p.TokenA,
 				TokenB:   p.TokenB,
@@ -46,6 +65,7 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 		} else {
 			prp = PoolResponse{
 				AmmID:    p.AmmID,
+				PoolID:   p.PoolID,
 				Address:  p.Address,
 				TokenA:   p.TokenA,
 				TokenB:   p.TokenB,
@@ -114,6 +134,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	err = json.Unmarshal([]byte(pool.Fee), &sf)
 	if err != nil {
 		rsp = PoolResponse{
+			PoolID:   pool.PoolID,
 			AmmID:    pool.AmmID,
 			Address:  pool.Address,
 			TokenA:   pool.TokenA,
@@ -124,6 +145,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		}
 	} else {
 		rsp = PoolResponse{
+			PoolID:   pool.PoolID,
 			AmmID:    pool.AmmID,
 			Address:  pool.Address,
 			TokenA:   pool.TokenA,
@@ -135,4 +157,20 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+func (r *ginServer) RemovePool(ctx *gin.Context) {
+	var req RemovePoolParams
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	err := r.store.DeletePool(context.Background(), req.PoolID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "pool deleted"})
 }
