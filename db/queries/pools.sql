@@ -68,4 +68,4 @@ RETURNING *;
  
 -- name: DeletePool :exec
 DELETE FROM pools_v2
-WHERE address = $1;
+WHERE pool_id = $1;
