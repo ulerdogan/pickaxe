@@ -112,17 +112,25 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	}
 
 	if req.ExtraData != "" {
-		r.store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
+		pool, err = r.store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
 			PoolID:    pool.PoolID,
 			ExtraData: sql.NullString{String: req.ExtraData, Valid: true},
 		})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
 	}
 
 	dex, _ := r.client.NewDex(int(pool.AmmID))
-	go dex.SyncFee(starknet.PoolInfo{
+	err = dex.SyncFee(starknet.PoolInfo{
 		Address:   pool.Address,
 		ExtraData: pool.ExtraData.String,
 	}, r.store, r.client)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
 
 	var rsp PoolResponse
 

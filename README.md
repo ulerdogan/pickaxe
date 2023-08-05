@@ -32,7 +32,7 @@ make postgres
 make createdb
 
 // Creates Rabbitmq container in Docker
-make createdb
+make rabbitmq
 ```
 
 (2) Build or install the apps: pickaxe & psocket (optional, changes by the running preferences)
