@@ -123,6 +123,18 @@
             "token_b": "eth",
             "amm_id": 2
         },
+        {
+            "address": "0x039c183c8e5a2df130eefa6fbaa3b8aad89b29891f6272cb0c90deaa93ec6315",
+            "token_a": "dai",
+            "token_b": "wbtc",
+            "amm_id": 2
+        },
+        {
+            "address": "0x7f409bd2e266e00486566dd3cb72bacc6996f49c0b19f04c0a8b5bd7bf991d1",
+            "token_a": "lords",
+            "token_b": "usdc",
+            "amm_id": 2
+        },
         
         {
             "address": "0x000023c72abdf49dffc85ae3ede714f2168ad384cc67d08524732acea90df325",
@@ -293,6 +305,20 @@
         {
             "address": "0x02718bbc0176cff083b5c95ac22691bd1c16d55d37ae153d3ba347ce2292417e",
             "token_a": "lords",
+            "token_b": "eth",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x00a20410b97dcbfb44f370b67f877c669d859ff85c536d5e8e8336b6d565e1f8",
+            "token_a": "wsteth",
+            "token_b": "eth",
+            "extra_data": "0",
+            "amm_id": 4
+        },
+        {
+            "address": "0x04244758dc89add83255ee9268e041117dc3249efeb29652ac0916c0e3a55c59",
+            "token_a": "reth",
             "token_b": "eth",
             "extra_data": "0",
             "amm_id": 4
