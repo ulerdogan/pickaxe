@@ -72,6 +72,8 @@ func (c *starknetClient) NewDex(amm_id int) (Dex, error) {
 		return newSwap10k(), nil
 	case 4:
 		return newSithswap(), nil
+	case 5:
+		return newEkubo(), nil
 	}
 
 	return nil, errors.New("cannot find the dex")
