@@ -42,6 +42,7 @@ type Querier interface {
 	UpdateIndexerStatus(ctx context.Context, arg UpdateIndexerStatusParams) (Indexer, error)
 	UpdatePoolExtraData(ctx context.Context, arg UpdatePoolExtraDataParams) (Pool, error)
 	UpdatePoolFee(ctx context.Context, arg UpdatePoolFeeParams) (Pool, error)
+	UpdatePoolGeneralExtraData(ctx context.Context, arg UpdatePoolGeneralExtraDataParams) (Pool, error)
 	UpdatePoolReserves(ctx context.Context, arg UpdatePoolReservesParams) (Pool, error)
 	UpdatePoolReservesWithExtraData(ctx context.Context, arg UpdatePoolReservesWithExtraDataParams) (Pool, error)
 	UpdatePoolTV(ctx context.Context, arg UpdatePoolTVParams) (Pool, error)

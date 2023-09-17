@@ -407,6 +407,39 @@ func (q *Queries) UpdatePoolFee(ctx context.Context, arg UpdatePoolFeeParams) (P
 	return i, err
 }
 
+const updatePoolGeneralExtraData = `-- name: UpdatePoolGeneralExtraData :one
+UPDATE pools
+SET extra_data_general = $2
+WHERE pool_id = $1
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+`
+
+type UpdatePoolGeneralExtraDataParams struct {
+	PoolID           int64          `json:"pool_id"`
+	ExtraDataGeneral sql.NullString `json:"extra_data_general"`
+}
+
+func (q *Queries) UpdatePoolGeneralExtraData(ctx context.Context, arg UpdatePoolGeneralExtraDataParams) (Pool, error) {
+	row := q.db.QueryRowContext(ctx, updatePoolGeneralExtraData, arg.PoolID, arg.ExtraDataGeneral)
+	var i Pool
+	err := row.Scan(
+		&i.PoolID,
+		&i.Address,
+		&i.AmmID,
+		&i.TokenA,
+		&i.TokenB,
+		&i.ReserveA,
+		&i.ReserveB,
+		&i.Fee,
+		&i.TotalValue,
+		&i.ExtraData,
+		&i.ExtraDataGeneral,
+		&i.LastUpdated,
+		&i.LastBlock,
+	)
+	return i, err
+}
+
 const updatePoolReserves = `-- name: UpdatePoolReserves :one
 UPDATE pools
 SET reserve_a = $2, reserve_b = $3, last_block = $4, last_updated = NOW()

@@ -65,6 +65,12 @@ UPDATE pools
 SET extra_data = $2
 WHERE pool_id = $1
 RETURNING *;
+
+-- name: UpdatePoolGeneralExtraData :one
+UPDATE pools
+SET extra_data_general = $2
+WHERE pool_id = $1
+RETURNING *;
  
 -- name: UpdatePoolReservesWithExtraData :one
 UPDATE pools
