@@ -12,13 +12,13 @@ import (
 
 type ekubo struct{}
 
-type ekuboData struct {
+type EkuboData struct {
 	TickSpacing   string `json:"tick_spacing"`
-	SqrtPriceLow  string `json:"sqrt_price_low"`
-	SqrtPriceHigh string `json:"sqrt_price_high"`
-	CurrentTick   string `json:"current_tick"`
-	TickSign      string `json:"tick_sign"`
-	Liqudity      string `json:"liqudity"`
+	SqrtPriceLow  string `json:"sqrt_price_low,omitempty"`
+	SqrtPriceHigh string `json:"sqrt_price_high,omitempty"`
+	CurrentTick   string `json:"current_tick,omitempty"`
+	TickSign      string `json:"tick_sign,omitempty"`
+	Liqudity      string `json:"liqudity,omitempty"`
 	KeyExtension  string `json:"key_extension"`
 }
 
@@ -37,13 +37,15 @@ func (d *ekubo) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) err
 
 	paHash := types.HexToHash(pool.Address)
 
-	var data ekuboData
+	var data EkuboData
 	json.Unmarshal([]byte(pool.ExtraDataGeneral), &pl.ExtraDataGeneral)
+
+	calldata := []string{pl.TokenA, pl.TokenB, pl.Fee, data.TickSpacing, data.KeyExtension}
 
 	call, err := client.Call(types.FunctionCall{
 		ContractAddress:    paHash,
 		EntryPointSelector: "get_pool_price",
-		Calldata:           []string{pl.TokenA, pl.TokenB, pl.Fee, data.TickSpacing, data.KeyExtension},
+		Calldata:           calldata,
 	})
 	if err != nil {
 		return errors.New("starknet query error")
@@ -51,6 +53,17 @@ func (d *ekubo) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) err
 
 	data.SqrtPriceLow, data.SqrtPriceHigh = call[0], call[1]
 	data.CurrentTick, data.TickSign = call[2], call[3]
+
+	call, err = client.Call(types.FunctionCall{
+		ContractAddress:    paHash,
+		EntryPointSelector: "get_pool_liquidity",
+		Calldata:           calldata,
+	})
+	if err != nil {
+		return errors.New("starknet query error")
+	}
+
+	data.Liqudity = call[0]
 
 	jsonBytes, _ := json.Marshal(data)
 
