@@ -56,11 +56,11 @@ ORDER BY address;
 
 -- name: GetTokenAPriceByPool :one
 SELECT price FROM tokens
-WHERE address = (SELECT token_a FROM pools_v2 WHERE pool_id = $1);
+WHERE address = (SELECT token_a FROM pools WHERE pool_id = $1);
 
 -- name: GetTokenBPriceByPool :one
 SELECT price FROM tokens
-WHERE address = (SELECT token_b FROM pools_v2 WHERE pool_id = $1);
+WHERE address = (SELECT token_b FROM pools WHERE pool_id = $1);
 
 -- name: DeleteToken :exec
 DELETE FROM tokens

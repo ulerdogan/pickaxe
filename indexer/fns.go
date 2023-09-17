@@ -38,13 +38,13 @@ func (ix *Indexer) UpdateByFns(block uint64) {
 	processByFns(pools, block, ix.Store, ix.Client)
 }
 
-func processByFns(pools []db.PoolsV2, block uint64, store db.Store, client starknet.Client) {
+func processByFns(pools []db.Pool, block uint64, store db.Store, client starknet.Client) {
 	const numWorkers = 10
-	jobs := make(chan db.PoolsV2, len(pools))
+	jobs := make(chan db.Pool, len(pools))
 	results := make(chan bool, len(pools))
 
 	for w := 0; w < numWorkers; w++ {
-		go func(jobs chan db.PoolsV2, results chan bool) {
+		go func(jobs chan db.Pool, results chan bool) {
 			syncPoolFromFnConc(jobs, results, block, store, client)
 		}(jobs, results)
 	}
@@ -62,7 +62,7 @@ func processByFns(pools []db.PoolsV2, block uint64, store db.Store, client stark
 	}
 }
 
-func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, lastBlock uint64, store db.Store, client starknet.Client) {
+func syncPoolFromFnConc(jobs <-chan db.Pool, results chan<- bool, lastBlock uint64, store db.Store, client starknet.Client) {
 	for pool := range jobs {
 		dex, _ := client.NewDex(int(pool.AmmID))
 

@@ -212,7 +212,7 @@ func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 	pools, _ := store.GetAllPools(context.Background())
 
 	const numWorkers = 10
-	jobs := make(chan db.PoolsV2, len(pools))
+	jobs := make(chan db.Pool, len(pools))
 	results := make(chan bool, len(pools))
 
 	block, err := client.LastBlock()
@@ -221,7 +221,7 @@ func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 	}
 
 	for w := 0; w < numWorkers; w++ {
-		go func(jobs chan db.PoolsV2, results chan bool) {
+		go func(jobs chan db.Pool, results chan bool) {
 			syncPoolFromFnConc(jobs, results, block.BlockNumber, store, client)
 		}(jobs, results)
 	}
@@ -241,7 +241,7 @@ func Init(cnfg config.Config, store db.Store, client starknet.Client) {
 	logger.Info("in " + strconv.Itoa(len(pools)) + " pools, " + strconv.Itoa(s) + " is synced")
 }
 
-func syncPoolFromFnConc(jobs <-chan db.PoolsV2, results chan<- bool, lastBlock uint64, store db.Store, client starknet.Client) {
+func syncPoolFromFnConc(jobs <-chan db.Pool, results chan<- bool, lastBlock uint64, store db.Store, client starknet.Client) {
 	for pool := range jobs {
 		dex, _ := client.NewDex(int(pool.AmmID))
 

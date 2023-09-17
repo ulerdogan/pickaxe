@@ -16,7 +16,7 @@ import (
 func (r *ginServer) GetAllPools(ctx *gin.Context) {
 	ammID, err := strconv.Atoi(strings.TrimSpace(ctx.Query("amm")))
 
-	var pools []db.PoolsV2
+	var pools []db.Pool
 
 	if err != nil {
 		pools, err = r.store.GetAllPools(context.Background())

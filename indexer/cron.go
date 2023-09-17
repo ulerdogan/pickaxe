@@ -24,7 +24,7 @@ func setupJobs(ix *Indexer) {
 var feesToCheck = []int{4}
 
 func (ix *Indexer) CheckFees() {
-	var pools []db.PoolsV2
+	var pools []db.Pool
 
 	for i := range feesToCheck {
 		pls, err := ix.Store.GetPoolsByAmm(context.Background(), int64(feesToCheck[i]))
@@ -114,7 +114,7 @@ func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Clie
 }
 
 // FIXME: only compatible with the v2 pools for now, should be improved in the future
-func updateValueV2(store db.Store, pool db.PoolsV2, scp *atomic.Uint64, wg *sync.WaitGroup) error {
+func updateValueV2(store db.Store, pool db.Pool, scp *atomic.Uint64, wg *sync.WaitGroup) error {
 	if pool.ReserveA == "0" || pool.ReserveB == "0" {
 		return nil
 	}
@@ -157,7 +157,7 @@ func updateValueV2(store db.Store, pool db.PoolsV2, scp *atomic.Uint64, wg *sync
 	return nil
 }
 
-func updateFees(store db.Store, client starknet.Client, pool db.PoolsV2, scp *atomic.Uint64, wg *sync.WaitGroup) error {
+func updateFees(store db.Store, client starknet.Client, pool db.Pool, scp *atomic.Uint64, wg *sync.WaitGroup) error {
 	dex, err := client.NewDex(int(pool.AmmID))
 	if err != nil {
 		logger.Error(err, "cannot get the dex "+strconv.Itoa(int(pool.AmmID))+" to update fees")

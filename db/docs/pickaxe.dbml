@@ -1,4 +1,4 @@
-Project Pickaxe {
+  Project Pickaxe {
   database_type: 'PostgreSQL'
   Note: '''
     # The project that indexes
@@ -21,7 +21,7 @@ Table tokens as T {
   created_at timestamptz [not null, default: `now()`]
 }
 
-Table pools_v2 as P2 {
+Table pools as P {
   pool_id bigserial [pk]
   address varchar [not null]
   amm_id bigint [not null, ref: > A.amm_id]
@@ -32,37 +32,7 @@ Table pools_v2 as P2 {
   fee varchar [not null, default:""]
   total_value numeric [not null, default:0]
   extra_data varchar
-  last_updated timestamptz [not null, default: '0001-01-01']
-  last_block bigint [not null, default:0]
-}
-
-Table pools_v3 as P3 {
-  pool_id bigserial [pk]
-  address varchar [not null]
-  amm_id bigint [not null, ref: > A.amm_id]
-  token_a varchar [not null, ref: > T.address]
-  token_b varchar [not null, ref: > T.address]
-
-  sqrt_price_X96 varchar [not null, note:'sqrtPriceX96']
-  tick varchar [not null, note:'tick']
-  observation_index varchar [not null, note:'observationIndex']
-  observation_cardinality varchar [not null, note:'observationCardinality']
-  observation_cardinality_next varchar [not null, note:'observationCardinalityNext']
-
-  fee numeric [not null, note:'feeProtocol']
-  unlocked bool [not null, note:'unlocked']
-
-  liquidity_gross varchar [not null, default:"0", note:'liquidityGross']
-  liquidity_net varchar [not null, default:"0", note:'liquidityNet']
-  fee_growth_outside_0X128 varchar [not null, default:"0", note:'feeGrowthOutside0X128']
-  fee_growth_outside_1X128 varchar [not null, default:"0", note:'feeGrowthOutside1X128']
-  tick_cumulative_outside varchar [not null, default:"0", note:'tickCumulativeOutside']
-  seconds_per_liquidity_outside_X128 varchar [not null, default:"0", note:'secondsPerLiquidityOutsideX128']
-  seconds_outside varchar [not null, default:"0", note:'secondsOutside']
-  initialized bool [not null, default:false, note:'initialized']
-
-  liquidity varchar [not null, note:'liquidity']
-
+  extra_data_general varchar
   last_updated timestamptz [not null, default: '0001-01-01']
   last_block bigint [not null, default:0]
 }
