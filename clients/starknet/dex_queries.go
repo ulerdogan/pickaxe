@@ -13,7 +13,7 @@ type PoolInfo struct {
 	ReserveA         decimal.Decimal
 	ReserveB         decimal.Decimal
 	ExtraData        string
-	ExtraDataGeneral string
+	GeneralExtraData string
 	Fee              string
 	Event            rpc.Event
 	Block            *big.Int

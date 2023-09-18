@@ -111,7 +111,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		return
 	}
 
-	if req.ExtraData != "" {
+	if req.ExtraData != "" && req.AmmId != 5 {
 		pool, err = r.store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
 			PoolID:    pool.PoolID,
 			ExtraData: sql.NullString{String: req.ExtraData, Valid: true},
@@ -123,8 +123,8 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	}
 
 	var ekuboFee string
-	if req.ExtraDataGeneral != nil {
-		jsonBytes, err := json.Marshal(req.ExtraDataGeneral)
+	if req.GeneralExtraData != nil {
+		jsonBytes, err := json.Marshal(req.GeneralExtraData)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
 			return
@@ -148,7 +148,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 
 		pool, err = r.store.UpdatePoolGeneralExtraData(context.Background(), db.UpdatePoolGeneralExtraDataParams{
 			PoolID:           pool.PoolID,
-			ExtraDataGeneral: sql.NullString{String: string(jsonBytes), Valid: true},
+			GeneralExtraData: sql.NullString{String: string(jsonBytes), Valid: true},
 		})
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -210,9 +210,9 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 	}
 
 	var ekuboData starknet.EkuboData
-	err = json.Unmarshal([]byte(pool.ExtraDataGeneral.String), &ekuboData)
+	err = json.Unmarshal([]byte(pool.GeneralExtraData.String), &ekuboData)
 	if err == nil {
-		rsp.ExtraDataGeneral = ekuboData
+		rsp.GeneralExtraData = ekuboData
 	}
 
 	ctx.JSON(http.StatusOK, rsp)

@@ -38,7 +38,7 @@ type Pool struct {
 	Fee              string         `json:"fee"`
 	TotalValue       string         `json:"total_value"`
 	ExtraData        sql.NullString `json:"extra_data"`
-	ExtraDataGeneral sql.NullString `json:"extra_data_general"`
+	GeneralExtraData sql.NullString `json:"general_extra_data"`
 	LastUpdated      time.Time      `json:"last_updated"`
 	LastBlock        int64          `json:"last_block"`
 }

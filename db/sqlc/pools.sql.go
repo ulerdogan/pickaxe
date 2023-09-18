@@ -18,7 +18,7 @@ INSERT INTO pools (
   token_b
 ) VALUES (
   $1, $2, $3, $4
-) RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+) RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block
 `
 
 type CreatePoolParams struct {
@@ -47,7 +47,7 @@ func (q *Queries) CreatePool(ctx context.Context, arg CreatePoolParams) (Pool, e
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -65,7 +65,7 @@ func (q *Queries) DeletePool(ctx context.Context, poolID int64) error {
 }
 
 const getAllPools = `-- name: GetAllPools :many
-SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block FROM pools
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block FROM pools
 ORDER BY address
 `
 
@@ -89,7 +89,7 @@ func (q *Queries) GetAllPools(ctx context.Context) ([]Pool, error) {
 			&i.Fee,
 			&i.TotalValue,
 			&i.ExtraData,
-			&i.ExtraDataGeneral,
+			&i.GeneralExtraData,
 			&i.LastUpdated,
 			&i.LastBlock,
 		); err != nil {
@@ -107,7 +107,7 @@ func (q *Queries) GetAllPools(ctx context.Context) ([]Pool, error) {
 }
 
 const getAllPoolsWithoutKeys = `-- name: GetAllPoolsWithoutKeys :many
-SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block FROM pools
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block FROM pools
 WHERE amm_id IN 
 (SELECT amm_id FROM amms WHERE key = '')
 ORDER BY address
@@ -133,7 +133,7 @@ func (q *Queries) GetAllPoolsWithoutKeys(ctx context.Context) ([]Pool, error) {
 			&i.Fee,
 			&i.TotalValue,
 			&i.ExtraData,
-			&i.ExtraDataGeneral,
+			&i.GeneralExtraData,
 			&i.LastUpdated,
 			&i.LastBlock,
 		); err != nil {
@@ -151,7 +151,7 @@ func (q *Queries) GetAllPoolsWithoutKeys(ctx context.Context) ([]Pool, error) {
 }
 
 const getPoolByAddress = `-- name: GetPoolByAddress :one
-SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block FROM pools
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block FROM pools
 WHERE address = $1 LIMIT 1
 `
 
@@ -169,7 +169,7 @@ func (q *Queries) GetPoolByAddress(ctx context.Context, address string) (Pool, e
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -177,7 +177,7 @@ func (q *Queries) GetPoolByAddress(ctx context.Context, address string) (Pool, e
 }
 
 const getPoolByAddressExtra = `-- name: GetPoolByAddressExtra :one
-SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block FROM pools
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block FROM pools
 WHERE address = $1 AND extra_data=$2 LIMIT 1
 `
 
@@ -200,7 +200,7 @@ func (q *Queries) GetPoolByAddressExtra(ctx context.Context, arg GetPoolByAddres
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -208,7 +208,7 @@ func (q *Queries) GetPoolByAddressExtra(ctx context.Context, arg GetPoolByAddres
 }
 
 const getPoolsByAmm = `-- name: GetPoolsByAmm :many
-SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block FROM pools
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block FROM pools
 WHERE amm_id = $1
 ORDER BY address
 `
@@ -233,7 +233,7 @@ func (q *Queries) GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error
 			&i.Fee,
 			&i.TotalValue,
 			&i.ExtraData,
-			&i.ExtraDataGeneral,
+			&i.GeneralExtraData,
 			&i.LastUpdated,
 			&i.LastBlock,
 		); err != nil {
@@ -251,7 +251,7 @@ func (q *Queries) GetPoolsByAmm(ctx context.Context, ammID int64) ([]Pool, error
 }
 
 const getPoolsByPair = `-- name: GetPoolsByPair :many
-SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block FROM pools
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block FROM pools
 WHERE token_a = $1 AND token_b = $2
 ORDER BY amm_id
 `
@@ -281,7 +281,7 @@ func (q *Queries) GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) 
 			&i.Fee,
 			&i.TotalValue,
 			&i.ExtraData,
-			&i.ExtraDataGeneral,
+			&i.GeneralExtraData,
 			&i.LastUpdated,
 			&i.LastBlock,
 		); err != nil {
@@ -299,7 +299,7 @@ func (q *Queries) GetPoolsByPair(ctx context.Context, arg GetPoolsByPairParams) 
 }
 
 const getPoolsByToken = `-- name: GetPoolsByToken :many
-SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block FROM pools
+SELECT pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block FROM pools
 WHERE token_a = $1 OR token_b = $1
 ORDER BY amm_id
 `
@@ -324,7 +324,7 @@ func (q *Queries) GetPoolsByToken(ctx context.Context, tokenA string) ([]Pool, e
 			&i.Fee,
 			&i.TotalValue,
 			&i.ExtraData,
-			&i.ExtraDataGeneral,
+			&i.GeneralExtraData,
 			&i.LastUpdated,
 			&i.LastBlock,
 		); err != nil {
@@ -345,7 +345,7 @@ const updatePoolExtraData = `-- name: UpdatePoolExtraData :one
 UPDATE pools
 SET extra_data = $2
 WHERE pool_id = $1
-RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block
 `
 
 type UpdatePoolExtraDataParams struct {
@@ -367,7 +367,7 @@ func (q *Queries) UpdatePoolExtraData(ctx context.Context, arg UpdatePoolExtraDa
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -378,7 +378,7 @@ const updatePoolFee = `-- name: UpdatePoolFee :one
 UPDATE pools
 SET fee = $2
 WHERE pool_id = $1
-RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block
 `
 
 type UpdatePoolFeeParams struct {
@@ -400,7 +400,7 @@ func (q *Queries) UpdatePoolFee(ctx context.Context, arg UpdatePoolFeeParams) (P
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -409,18 +409,19 @@ func (q *Queries) UpdatePoolFee(ctx context.Context, arg UpdatePoolFeeParams) (P
 
 const updatePoolGeneralExtraData = `-- name: UpdatePoolGeneralExtraData :one
 UPDATE pools
-SET extra_data_general = $2
+SET general_extra_data = $2, last_block = $3, last_updated = NOW()
 WHERE pool_id = $1
-RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block
 `
 
 type UpdatePoolGeneralExtraDataParams struct {
 	PoolID           int64          `json:"pool_id"`
-	ExtraDataGeneral sql.NullString `json:"extra_data_general"`
+	GeneralExtraData sql.NullString `json:"general_extra_data"`
+	LastBlock        int64          `json:"last_block"`
 }
 
 func (q *Queries) UpdatePoolGeneralExtraData(ctx context.Context, arg UpdatePoolGeneralExtraDataParams) (Pool, error) {
-	row := q.db.QueryRowContext(ctx, updatePoolGeneralExtraData, arg.PoolID, arg.ExtraDataGeneral)
+	row := q.db.QueryRowContext(ctx, updatePoolGeneralExtraData, arg.PoolID, arg.GeneralExtraData, arg.LastBlock)
 	var i Pool
 	err := row.Scan(
 		&i.PoolID,
@@ -433,7 +434,7 @@ func (q *Queries) UpdatePoolGeneralExtraData(ctx context.Context, arg UpdatePool
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -444,7 +445,7 @@ const updatePoolReserves = `-- name: UpdatePoolReserves :one
 UPDATE pools
 SET reserve_a = $2, reserve_b = $3, last_block = $4, last_updated = NOW()
 WHERE pool_id = $1
-RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block
 `
 
 type UpdatePoolReservesParams struct {
@@ -473,7 +474,7 @@ func (q *Queries) UpdatePoolReserves(ctx context.Context, arg UpdatePoolReserves
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -484,7 +485,7 @@ const updatePoolReservesWithExtraData = `-- name: UpdatePoolReservesWithExtraDat
 UPDATE pools
 SET extra_data = $2, last_block = $3, last_updated = NOW()
 WHERE pool_id = $1
-RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block
 `
 
 type UpdatePoolReservesWithExtraDataParams struct {
@@ -507,7 +508,7 @@ func (q *Queries) UpdatePoolReservesWithExtraData(ctx context.Context, arg Updat
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)
@@ -518,7 +519,7 @@ const updatePoolTV = `-- name: UpdatePoolTV :one
 UPDATE pools
 SET total_value = $2
 WHERE pool_id = $1
-RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, extra_data_general, last_updated, last_block
+RETURNING pool_id, address, amm_id, token_a, token_b, reserve_a, reserve_b, fee, total_value, extra_data, general_extra_data, last_updated, last_block
 `
 
 type UpdatePoolTVParams struct {
@@ -540,7 +541,7 @@ func (q *Queries) UpdatePoolTV(ctx context.Context, arg UpdatePoolTVParams) (Poo
 		&i.Fee,
 		&i.TotalValue,
 		&i.ExtraData,
-		&i.ExtraDataGeneral,
+		&i.GeneralExtraData,
 		&i.LastUpdated,
 		&i.LastBlock,
 	)

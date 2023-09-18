@@ -28,7 +28,7 @@ type PoolResponse struct {
 	LastUpdated      string      `json:"last_updated"`
 	LastBlock        int64       `json:"last_block"`
 	ExtraData        string      `json:"extra_data,omitempty"`
-	ExtraDataGeneral interface{} `json:"extra_data_general,omitempty"`
+	GeneralExtraData interface{} `json:"extra_data_general,omitempty"`
 }
 
 type AddPoolParams struct {
@@ -37,7 +37,7 @@ type AddPoolParams struct {
 	TokenB           string      `json:"token_b"`
 	AmmId            int64       `json:"amm_id"`
 	ExtraData        string      `json:"extra_data,omitempty"`
-	ExtraDataGeneral interface{} `json:"extra_data_general,omitempty"`
+	GeneralExtraData interface{} `json:"extra_data_general,omitempty"`
 }
 
 type AddEkuboPoolParams struct {

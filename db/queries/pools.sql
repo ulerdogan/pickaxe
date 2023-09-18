@@ -68,7 +68,7 @@ RETURNING *;
 
 -- name: UpdatePoolGeneralExtraData :one
 UPDATE pools
-SET extra_data_general = $2
+SET general_extra_data = $2, last_block = $3, last_updated = NOW()
 WHERE pool_id = $1
 RETURNING *;
  

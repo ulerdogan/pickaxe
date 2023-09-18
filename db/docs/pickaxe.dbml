@@ -32,7 +32,7 @@ Table pools as P {
   fee varchar [not null, default:""]
   total_value numeric [not null, default:0]
   extra_data varchar
-  extra_data_general varchar
+  general_extra_data varchar
   last_updated timestamptz [not null, default: '0001-01-01']
   last_block bigint [not null, default:0]
 }

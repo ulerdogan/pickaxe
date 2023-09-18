@@ -35,17 +35,20 @@ type amm struct {
 }
 
 type pool struct {
-	Address   string `json:"address"`
-	TokenA    string `json:"token_a"`
-	TokenB    string `json:"token_b"`
-	ExtraData string `json:"extra_data,omitempty"`
-	AmmID     int    `json:"amm_id"`
+	Address     string `json:"address"`
+	TokenA      string `json:"token_a"`
+	TokenB      string `json:"token_b"`
+	ExtraData   string `json:"extra_data,omitempty"`
+	AmmID       int    `json:"amm_id"`
+	Fee         string `json:"fee,omitempty"`
+	TickSpacing string `json:"tick_spacing,omitempty"`
 }
 
 var (
-	tokens []token
-	amms   []amm
-	pools  []pool
+	tokens    []token
+	amms      []amm
+	pools     []pool
+	ekuboFees map[string]string = make(map[string]string)
 )
 
 func initStates(initPath string) error {
@@ -168,11 +171,41 @@ func initPoolsToDB(store db.Store) {
 			continue
 		}
 
-		if p.ExtraData != "" {
+		if p.ExtraData != "" && p.AmmID != 5 {
 			store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
 				PoolID:    pool.PoolID,
 				ExtraData: sql.NullString{String: p.ExtraData, Valid: true},
 			})
+		}
+
+		if p.Fee != "" && p.TickSpacing != "" {
+			ekuboData := starknet.EkuboData{
+				TickSpacing:  p.TickSpacing,
+				KeyExtension: "0",
+			}
+
+			jsonBytes, _ := json.Marshal(ekuboData)
+			pool, err = store.UpdatePoolGeneralExtraData(context.Background(), db.UpdatePoolGeneralExtraDataParams{
+				PoolID:           pool.PoolID,
+				GeneralExtraData: sql.NullString{String: string(jsonBytes), Valid: true},
+			})
+			if err != nil {
+				logger.Error(err, "cannot create pool: "+p.Address)
+				continue
+			}
+
+			ekuboExtraData := starknet.GetUniqueEkuboHash(p.TokenA, p.TokenB, p.Fee, p.TickSpacing)
+			pool, err = store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
+				PoolID:    pool.PoolID,
+				ExtraData: sql.NullString{String: ekuboExtraData, Valid: true},
+			})
+
+			if err != nil {
+				logger.Error(err, "cannot create pool: "+p.Address)
+				continue
+			}
+
+			ekuboFees[ekuboExtraData] = p.Fee
 		}
 
 		succesfulls++
@@ -245,23 +278,26 @@ func syncPoolFromFnConc(jobs <-chan db.Pool, results chan<- bool, lastBlock uint
 	for pool := range jobs {
 		dex, _ := client.NewDex(int(pool.AmmID))
 
-		err := dex.SyncPoolFromFn(starknet.PoolInfo{
+		syncFeeInfo := starknet.PoolInfo{
+			Address:   pool.Address,
+			ExtraData: pool.ExtraData.String,
+			Fee:       ekuboFees[pool.ExtraData.String],
+		}
+
+		err := dex.SyncFee(syncFeeInfo, store, client)
+		if err != nil {
+			logger.Error(err, "sync fee error: "+pool.Address)
+			results <- false
+			continue
+		}
+
+		err = dex.SyncPoolFromFn(starknet.PoolInfo{
 			Address:   pool.Address,
 			ExtraData: pool.ExtraData.String,
 			Block:     big.NewInt(int64(lastBlock)),
 		}, store, client)
 		if err != nil {
 			logger.Error(err, "sync pool error: "+pool.Address)
-			results <- false
-			continue
-		}
-
-		err = dex.SyncFee(starknet.PoolInfo{
-			Address:   pool.Address,
-			ExtraData: pool.ExtraData.String,
-		}, store, client)
-		if err != nil {
-			logger.Error(err, "sync fee error: "+pool.Address)
 			results <- false
 			continue
 		}

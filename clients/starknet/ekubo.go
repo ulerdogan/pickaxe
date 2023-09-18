@@ -35,10 +35,9 @@ func (d *ekubo) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) err
 		return err
 	}
 
-	paHash := types.HexToHash(pool.Address)
-
+	paHash := types.HexToHash(pl.Address)
 	var data EkuboData
-	json.Unmarshal([]byte(pool.ExtraDataGeneral), &pl.ExtraDataGeneral)
+	json.Unmarshal([]byte(pl.GeneralExtraData.String), &data)
 
 	calldata := []string{pl.TokenA, pl.TokenB, pl.Fee, data.TickSpacing, data.KeyExtension}
 
@@ -67,9 +66,9 @@ func (d *ekubo) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) err
 
 	jsonBytes, _ := json.Marshal(data)
 
-	_, err = store.UpdatePoolReservesWithExtraData(context.Background(), db.UpdatePoolReservesWithExtraDataParams{
-		PoolID:    pl.PoolID,
-		ExtraData: sql.NullString{String: string(jsonBytes), Valid: true},
+	_, err = store.UpdatePoolGeneralExtraData(context.Background(), db.UpdatePoolGeneralExtraDataParams{
+		PoolID:           pl.PoolID,
+		GeneralExtraData: sql.NullString{String: string(jsonBytes), Valid: true},
 		LastBlock: pool.Block.Int64(),
 	})
 	if err != nil {
