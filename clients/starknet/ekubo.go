@@ -82,6 +82,7 @@ func (d *ekubo) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) err
 func (d *ekubo) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 	return nil
 }
+
 func (d *ekubo) SyncFee(pool PoolInfo, store db.Store, client Client) error {
 	pl, err := store.GetPoolByAddressExtra(context.Background(), db.GetPoolByAddressExtraParams{
 		Address:   pool.Address,
@@ -91,10 +92,10 @@ func (d *ekubo) SyncFee(pool PoolInfo, store db.Store, client Client) error {
 		return err
 	}
 
-	store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
+	_, err = store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
 		PoolID: pl.PoolID,
-		Fee:    pl.Fee,
+		Fee:    pool.Fee,
 	})
 
-	return nil
+	return err
 }

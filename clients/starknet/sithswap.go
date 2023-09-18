@@ -126,10 +126,10 @@ func (d *sithswap) SyncFee(pool PoolInfo, store db.Store, client Client) error {
 	}
 	jsonBytes, _ := json.Marshal(fees)
 
-	store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
+	_, err = store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
 		PoolID: pl.PoolID,
 		Fee:    string(jsonBytes),
 	})
 
-	return nil
+	return err
 }
