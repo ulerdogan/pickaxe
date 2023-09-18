@@ -23,7 +23,7 @@ func NewStarknetClient(cnfg config.Config) Client {
 }
 
 func (c *starknetClient) Call(fc types.FunctionCall) ([]string, error) {
-	return c.Rpc.Call(context.Background(), fc, rpc.WithBlockTag("latest"))
+	return c.Rpc.Call(context.Background(), fc, rpc.WithBlockTag("pending"))
 }
 
 func (c *starknetClient) GetEvents(from, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error) {
@@ -72,6 +72,8 @@ func (c *starknetClient) NewDex(amm_id int) (Dex, error) {
 		return newSwap10k(), nil
 	case 4:
 		return newSithswap(), nil
+	case 5:
+		return newEkubo(), nil
 	}
 
 	return nil, errors.New("cannot find the dex")

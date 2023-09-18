@@ -16,7 +16,7 @@ import (
 func (r *ginServer) GetAllPools(ctx *gin.Context) {
 	ammID, err := strconv.Atoi(strings.TrimSpace(ctx.Query("amm")))
 
-	var pools []db.PoolsV2
+	var pools []db.Pool
 
 	if err != nil {
 		pools, err = r.store.GetAllPools(context.Background())
@@ -111,7 +111,7 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		return
 	}
 
-	if req.ExtraData != "" {
+	if req.ExtraData != "" && req.AmmId != 5 {
 		pool, err = r.store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
 			PoolID:    pool.PoolID,
 			ExtraData: sql.NullString{String: req.ExtraData, Valid: true},
@@ -122,9 +122,54 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 		}
 	}
 
+	var ekuboFee string
+	if req.GeneralExtraData != nil {
+		jsonBytes, err := json.Marshal(req.GeneralExtraData)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+
+		var ekuboInput AddEkuboPoolParams
+		err = json.Unmarshal(jsonBytes, &ekuboInput)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+
+		ekuboFee = ekuboInput.Fee
+
+		ekuboData := starknet.EkuboData{
+			TickSpacing:  ekuboInput.TickSpacing,
+			KeyExtension: "0",
+		}
+
+		jsonBytes, _ = json.Marshal(ekuboData)
+
+		pool, err = r.store.UpdatePoolGeneralExtraData(context.Background(), db.UpdatePoolGeneralExtraDataParams{
+			PoolID:           pool.PoolID,
+			GeneralExtraData: sql.NullString{String: string(jsonBytes), Valid: true},
+		})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+
+		ekuboExtraData := starknet.GetUniqueEkuboHash(req.TokenA, req.TokenB, ekuboInput.Fee, ekuboInput.TickSpacing)
+		pool, err = r.store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
+			PoolID:    pool.PoolID,
+			ExtraData: sql.NullString{String: ekuboExtraData, Valid: true},
+		})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+	}
+
 	dex, _ := r.client.NewDex(int(pool.AmmID))
 	err = dex.SyncFee(starknet.PoolInfo{
 		Address:   pool.Address,
+		Fee:       ekuboFee,
 		ExtraData: pool.ExtraData.String,
 	}, r.store, r.client)
 	if err != nil {
@@ -162,6 +207,12 @@ func (r *ginServer) AddPool(ctx *gin.Context) {
 			ReserveB: pool.ReserveB,
 			Fee:      sf,
 		}
+	}
+
+	var ekuboData starknet.EkuboData
+	err = json.Unmarshal([]byte(pool.GeneralExtraData.String), &ekuboData)
+	if err == nil {
+		rsp.GeneralExtraData = ekuboData
 	}
 
 	ctx.JSON(http.StatusOK, rsp)

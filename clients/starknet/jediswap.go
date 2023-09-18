@@ -96,10 +96,10 @@ func (d *jediswap) SyncFee(pool PoolInfo, store db.Store, client Client) error {
 		return err
 	}
 
-	store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
+	_, err = store.UpdatePoolFee(context.Background(), db.UpdatePoolFeeParams{
 		PoolID: pl.PoolID,
 		Fee:    "0.3",
 	})
 
-	return nil
+	return err
 }
