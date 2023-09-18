@@ -16,7 +16,7 @@ import (
 func setupJobs(ix *Indexer) {
 	ix.Scheduler.Every(5).Minutes().Do(ix.QueryPrices)
 	ix.Scheduler.Every(1).Days().Do(ix.CheckFees)
-	ix.Scheduler.Every(25).Seconds().Do(ix.UpdateAllCron) // FIXME: this is for testing
+	ix.Scheduler.Every(20).Seconds().Do(ix.UpdateAllCron) // FIXME: this is for testing
 
 	go ix.Scheduler.StartBlocking()
 }
@@ -93,11 +93,11 @@ func (ix *Indexer) QueryPrices() {
 	var wg *sync.WaitGroup = &sync.WaitGroup{}
 	for _, pool := range pools {
 		wg.Add(1)
-		go updateValueV2(ix.Store, pool, scp, wg)
+		go updateValue(ix.Store, pool, scp, wg)
 	}
 
 	wg.Wait()
-	logger.Info("in " + strconv.Itoa(len(tokens)) + " pools, total values of " + strconv.Itoa(int(scp.Load())) + " is synced")
+	logger.Info("in " + strconv.Itoa(len(pools)) + " pools, total values of " + strconv.Itoa(int(scp.Load())) + " is synced")
 }
 
 func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Client) {
@@ -113,8 +113,9 @@ func getPriceConc(jobs <-chan db.Token, results chan<- *db.Token, rest rest.Clie
 	}
 }
 
-// FIXME: only compatible with the v2 pools for now, should be improved in the future
-func updateValueV2(store db.Store, pool db.Pool, scp *atomic.Uint64, wg *sync.WaitGroup) error {
+func updateValue(store db.Store, pool db.Pool, scp *atomic.Uint64, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	if pool.ReserveA == "0" || pool.ReserveB == "0" {
 		return nil
 	}
@@ -153,11 +154,13 @@ func updateValueV2(store db.Store, pool db.Pool, scp *atomic.Uint64, wg *sync.Wa
 	}
 
 	scp.Add(1)
-	wg.Done()
+
 	return nil
 }
 
 func updateFees(store db.Store, client starknet.Client, pool db.Pool, scp *atomic.Uint64, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	dex, err := client.NewDex(int(pool.AmmID))
 	if err != nil {
 		logger.Error(err, "cannot get the dex "+strconv.Itoa(int(pool.AmmID))+" to update fees")
@@ -174,7 +177,6 @@ func updateFees(store db.Store, client starknet.Client, pool db.Pool, scp *atomi
 	}
 
 	scp.Add(1)
-	wg.Done()
 
 	return nil
 }
