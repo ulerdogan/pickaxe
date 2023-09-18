@@ -82,6 +82,13 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 		if p.ExtraData.String != "" {
 			prp.ExtraData = p.ExtraData.String
 		}
+
+		if p.GeneralExtraData.String != "" && p.AmmID == 5 {
+			var ekuboData starknet.EkuboData
+			json.Unmarshal([]byte(p.GeneralExtraData.String), &ekuboData)
+			prp.GeneralExtraData = ekuboData
+		}
+
 		rsp[i] = prp
 	}
 
