@@ -9,12 +9,14 @@ import (
 )
 
 type PoolInfo struct {
-	Address   string
-	ReserveA  decimal.Decimal
-	ReserveB  decimal.Decimal
-	ExtraData string
-	Event     rpc.Event
-	Block     *big.Int
+	Address          string
+	ReserveA         decimal.Decimal
+	ReserveB         decimal.Decimal
+	ExtraData        string
+	GeneralExtraData string
+	Fee              string
+	Event            rpc.Event
+	Block            *big.Int
 }
 
 type Dex interface {

@@ -81,9 +81,6 @@ func (d *myswap) SyncFee(pool PoolInfo, store db.Store, client Client) error {
 		PoolID: pl.PoolID,
 		Fee:    "0.3",
 	})
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }

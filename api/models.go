@@ -16,26 +16,33 @@ type AddTokenParams struct {
 }
 
 type PoolResponse struct {
-	AmmID       int64       `json:"amm_id"`
-	PoolID      int64       `json:"pool_id"`
-	Address     string      `json:"address"`
-	TokenA      string      `json:"token_a"`
-	TokenB      string      `json:"token_b"`
-	ReserveA    string      `json:"reserve_a"`
-	ReserveB    string      `json:"reserve_b"`
-	TotalValue  string      `json:"total_value,omitempty"`
-	Fee         interface{} `json:"fee,omitempty"`
-	LastUpdated string      `json:"last_updated"`
-	LastBlock   int64       `json:"last_block"`
-	ExtraData   string      `json:"extra_data,omitempty"`
+	AmmID            int64       `json:"amm_id"`
+	PoolID           int64       `json:"pool_id"`
+	Address          string      `json:"address"`
+	TokenA           string      `json:"token_a"`
+	TokenB           string      `json:"token_b"`
+	ReserveA         string      `json:"reserve_a"`
+	ReserveB         string      `json:"reserve_b"`
+	TotalValue       string      `json:"total_value,omitempty"`
+	Fee              interface{} `json:"fee,omitempty"`
+	LastUpdated      string      `json:"last_updated"`
+	LastBlock        int64       `json:"last_block"`
+	ExtraData        string      `json:"extra_data,omitempty"`
+	GeneralExtraData interface{} `json:"extra_data_general,omitempty"`
 }
 
 type AddPoolParams struct {
-	Address   string `json:"address"`
-	TokenA    string `json:"token_a"`
-	TokenB    string `json:"token_b"`
-	AmmId     int64  `json:"amm_id"`
-	ExtraData string `json:"extra_data,omitempty"`
+	Address          string      `json:"address"`
+	TokenA           string      `json:"token_a"`
+	TokenB           string      `json:"token_b"`
+	AmmId            int64       `json:"amm_id"`
+	ExtraData        string      `json:"extra_data,omitempty"`
+	GeneralExtraData interface{} `json:"extra_data_general,omitempty"`
+}
+
+type AddEkuboPoolParams struct {
+	Fee         string `json:"fee"`
+	TickSpacing string `json:"tick_spacing"`
 }
 
 type RemovePoolParams struct {
