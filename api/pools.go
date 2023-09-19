@@ -17,6 +17,7 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 	ammID, err := strconv.Atoi(strings.TrimSpace(ctx.Query("amm")))
 
 	var pools []db.Pool
+	var skipped uint
 
 	if err != nil {
 		pools, err = r.store.GetAllPools(context.Background())
@@ -87,9 +88,22 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 			var ekuboData starknet.EkuboData
 			json.Unmarshal([]byte(p.GeneralExtraData.String), &ekuboData)
 			prp.GeneralExtraData = ekuboData
+
+			if ekuboData.Liqudity == "0" {
+				skipped++
+				continue
+			}
+
+			if prp.TotalValue == "" && ekuboData.Liqudity != "" {
+				prp.TotalValue = ekuboData.Liqudity
+			}
 		}
 
 		rsp[i] = prp
+	}
+
+	if skipped > 0 {
+		rsp = rsp[:len(rsp)-int(skipped)]
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
