@@ -89,12 +89,12 @@ func (r *ginServer) GetAllPools(ctx *gin.Context) {
 			json.Unmarshal([]byte(p.GeneralExtraData.String), &ekuboData)
 			prp.GeneralExtraData = ekuboData
 
-			if ekuboData.Liqudity == "0" {
+			if ekuboData.Liqudity == "0x0" {
 				skipped++
 				continue
 			}
 
-			if prp.TotalValue == "" && ekuboData.Liqudity != "" {
+			if prp.TotalValue == "0" && ekuboData.Liqudity != "" {
 				prp.TotalValue = ekuboData.Liqudity
 			}
 		}
