@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/NethermindEth/starknet.go/rpc"
 	"github.com/go-co-op/gocron"
-	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	config "github.com/ulerdogan/pickaxe/utils/config"
 )

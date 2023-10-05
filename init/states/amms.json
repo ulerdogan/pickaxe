@@ -1,32 +1,39 @@
 {
-    "amms": [
-        {
-            "id": 1,
-            "name": "myswap",
-            "router_address": "",
-            "key": "",
-            "algorithm_type": "v2"
-        },
-        {
-            "id": 2,
-            "name": "jediswap",
-            "router_address": "0x041fd22b238fa21cfcf5dd45a8548974d8263b3a531a60388411c5e230f97023",
-            "key": "0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232",
-            "algorithm_type": "v2"
-        },
-        {
-            "id": 3,
-            "name": "10kswap",
-            "router_address": "0x07a6f98c03379b9513ca84cca1373ff452a7462a3b61598f0af5bb27ad7f76d1",
-            "key": "0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232",
-            "algorithm_type": "v2"
-        },
-        {
-            "id": 4,
-            "name": "sithswap",
-            "router_address": "0x28c858a586fa12123a1ccb337a0a3b369281f91ea00544d0c086524b759f627",
-            "key": "0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232",
-            "algorithm_type": "v2"
-        }
-    ]
+  "amms": [
+    {
+      "id": 1,
+      "name": "myswap",
+      "router_address": "",
+      "key": "",
+      "algorithm_type": "v2"
+    },
+    {
+      "id": 2,
+      "name": "jediswap",
+      "router_address": "0x041fd22b238fa21cfcf5dd45a8548974d8263b3a531a60388411c5e230f97023",
+      "key": "0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232",
+      "algorithm_type": "v2"
+    },
+    {
+      "id": 3,
+      "name": "10kswap",
+      "router_address": "0x07a6f98c03379b9513ca84cca1373ff452a7462a3b61598f0af5bb27ad7f76d1",
+      "key": "0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232",
+      "algorithm_type": "v2"
+    },
+    {
+      "id": 4,
+      "name": "sithswap",
+      "router_address": "0x28c858a586fa12123a1ccb337a0a3b369281f91ea00544d0c086524b759f627",
+      "key": "0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232",
+      "algorithm_type": "v2"
+    },
+    {
+      "id": 5,
+      "name": "ekubo",
+      "router_address": "",
+      "key": "",
+      "algorithm_type": "v3_ekubo"
+    }
+  ]
 }

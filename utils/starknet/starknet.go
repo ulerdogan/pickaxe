@@ -1,18 +1,14 @@
 package starknet_utils
 
 import (
-	"github.com/dontpanicdao/caigo/types"
-	"github.com/shopspring/decimal"
 	"math/big"
+
+	"github.com/NethermindEth/juno/core/felt"
+	"github.com/shopspring/decimal"
 )
 
-func GetStrFormat(s string) string {
-	return types.StrToFelt(s).Big().String()
-}
-
-func GetDecimal(s string, dc int) decimal.Decimal {
-	b := types.StrToFelt(s).Big()
-	return toDecimal(b, dc)
+func GetDecimal(f *felt.Felt, dc int) decimal.Decimal {
+	return toDecimal(f.BigInt(new(big.Int)), dc)
 }
 
 func toDecimal(value *big.Int, decimals int) decimal.Decimal {

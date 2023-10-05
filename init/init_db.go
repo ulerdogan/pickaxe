@@ -10,7 +10,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/dontpanicdao/caigo/types"
+	"github.com/NethermindEth/juno/core/felt"
+	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/types"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	config "github.com/ulerdogan/pickaxe/utils/config"
@@ -214,11 +216,11 @@ func initPoolsToDB(store db.Store) {
 }
 
 func getTokenDecimal(c starknet.Client, address string) (*int, error) {
-	paHash := types.HexToHash(address)
-	r, err := c.Call(types.FunctionCall{
+	paHash := starknet.GetAddressFelt(address)
+	r, err := c.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "decimals",
-		Calldata:           []string{},
+		EntryPointSelector: types.GetSelectorFromNameFelt("decimals"),
+		Calldata:           []*felt.Felt{},
 	})
 
 	if err != nil {
@@ -226,7 +228,7 @@ func getTokenDecimal(c starknet.Client, address string) (*int, error) {
 		return nil, err
 	}
 
-	decimal := int(types.HexToBN(r[0]).Int64())
+	decimal := int(r[0].BigInt(new(big.Int)).Int64())
 	return &decimal, nil
 }
 

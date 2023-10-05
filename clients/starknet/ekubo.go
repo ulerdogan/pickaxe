@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/dontpanicdao/caigo/types"
+	"github.com/NethermindEth/juno/core/felt"
+	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/types"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
 
@@ -35,41 +37,41 @@ func (d *ekubo) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) err
 		return err
 	}
 
-	paHash := types.HexToHash(pl.Address)
+	paHash := GetAddressFelt(pl.Address)
 	var data EkuboData
 	json.Unmarshal([]byte(pl.GeneralExtraData.String), &data)
 
-	calldata := []string{pl.TokenA, pl.TokenB, pl.Fee, data.TickSpacing, data.KeyExtension}
+	calldata := []*felt.Felt{GetAddressFelt(pl.TokenA), GetAddressFelt(pl.TokenB), GetAddressFelt(pl.Fee), GetAddressFelt(data.TickSpacing), GetAddressFelt(data.KeyExtension)}
 
-	call, err := client.Call(types.FunctionCall{
+	call, err := client.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "get_pool_price",
+		EntryPointSelector: types.GetSelectorFromNameFelt("get_pool_price"),
 		Calldata:           calldata,
 	})
 	if err != nil {
 		return errors.New("starknet query error")
 	}
 
-	data.SqrtPriceLow, data.SqrtPriceHigh = call[0], call[1]
-	data.CurrentTick, data.TickSign = call[2], call[3]
+	data.SqrtPriceLow, data.SqrtPriceHigh = call[0].String(), call[1].String()
+	data.CurrentTick, data.TickSign = call[2].String(), call[3].String()
 
-	call, err = client.Call(types.FunctionCall{
+	call, err = client.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "get_pool_liquidity",
+		EntryPointSelector: types.GetSelectorFromNameFelt("get_pool_liquidity"),
 		Calldata:           calldata,
 	})
 	if err != nil {
 		return errors.New("starknet query error")
 	}
 
-	data.Liqudity = call[0]
+	data.Liqudity = call[0].String()
 
 	jsonBytes, _ := json.Marshal(data)
 
 	_, err = store.UpdatePoolGeneralExtraData(context.Background(), db.UpdatePoolGeneralExtraDataParams{
 		PoolID:           pl.PoolID,
 		GeneralExtraData: sql.NullString{String: string(jsonBytes), Valid: true},
-		LastBlock: pool.Block.Int64(),
+		LastBlock:        pool.Block.Int64(),
 	})
 	if err != nil {
 		return err

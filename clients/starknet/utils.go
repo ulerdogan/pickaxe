@@ -4,8 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	"github.com/dontpanicdao/caigo/types"
-	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
+	"github.com/NethermindEth/juno/core/felt"
+	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/utils"
 )
 
 func getBlockId(number uint64) rpc.BlockID {
@@ -20,13 +21,22 @@ func getBlockId(number uint64) rpc.BlockID {
 	}
 }
 
-func getAddressHash(address string) *types.Hash {
+func GetAddressFelt(address string) *felt.Felt {
 	if address == "" {
 		return nil
 	}
 
-	h := types.HexToHash(address)
-	return &h
+	h, _ := utils.HexToFelt(address)
+	return h
+}
+
+func getStrBigIntFelt(number string) *felt.Felt {
+	f, err := new(felt.Felt).SetString(number)
+	if err != nil {
+		return nil
+	}
+
+	return f
 }
 
 func GetUniqueEkuboHash(i, j, k, q string) string {

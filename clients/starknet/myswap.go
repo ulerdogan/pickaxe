@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/dontpanicdao/caigo/types"
+	"github.com/NethermindEth/juno/core/felt"
+	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/types"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 	utils "github.com/ulerdogan/pickaxe/utils/starknet"
@@ -26,12 +28,12 @@ func (d *myswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) er
 		return err
 	}
 
-	paHash := types.HexToHash(pool.Address)
+	paHash := GetAddressFelt(pool.Address)
 
-	call, err := client.Call(types.FunctionCall{
+	call, err := client.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "get_pool",
-		Calldata:           []string{pool.ExtraData},
+		EntryPointSelector: types.GetSelectorFromNameFelt("get_pool"),
+		Calldata:           []*felt.Felt{getStrBigIntFelt(pool.ExtraData)},
 	})
 	if err != nil {
 		return errors.New("starknet query error")

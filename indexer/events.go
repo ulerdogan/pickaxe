@@ -9,8 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dontpanicdao/caigo/types"
-	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
+	"github.com/NethermindEth/starknet.go/rpc"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
@@ -35,21 +34,21 @@ func (ix *Indexer) GetEvents(from uint64, to rpc.BlockHashAndNumberOutput) error
 
 func getEventsLoop(from uint64, to rpc.BlockHashAndNumberOutput, keys []string, ix *Indexer) error {
 	var events []rpc.EmittedEvent
-	var c_token *string
+	var c_token string = ""
 	var err error
-	th := types.HexToHash(to.BlockHash)
+	th := to.BlockHash
 
 	for i := 0; i < 4; i++ {
 		events, c_token, err = ix.Client.GetEventsWithID(
 			rpc.BlockID{Number: &from},
-			rpc.BlockID{Hash: &th},
-			"", nil, keys)
+			rpc.BlockID{Hash: to.BlockHash},
+			"", c_token, keys)
 		if err != nil {
 			if strings.Compare(err.Error(), "Block not found") == 0 {
 				if i == 3 {
 					return err
 				}
-				logger.Info("requerying to wait block sync. block hash: " + to.BlockHash)
+				logger.Info("requerying to wait block sync. block hash: " + to.BlockHash.String())
 				time.Sleep(5 * time.Second)
 			} else {
 				return err
@@ -68,18 +67,18 @@ func getEventsLoop(from uint64, to rpc.BlockHashAndNumberOutput, keys []string, 
 		dn <- true
 	}(done)
 
-	for c_token != nil {
+	for c_token != "" {
 		for i := 0; i < 4; i++ {
 			events, c_token, err = ix.Client.GetEventsWithID(
 				rpc.BlockID{Number: &from},
-				rpc.BlockID{Hash: &th},
-				"", nil, keys)
+				rpc.BlockID{Hash: th},
+				"", c_token, keys)
 			if err != nil {
 				if strings.Compare(err.Error(), "Block not found") == 0 {
 					if i == 3 {
 						return err
 					}
-					logger.Info("requerying to wait block sync. block hash: " + to.BlockHash)
+					logger.Info("requerying to wait block sync. block hash: " + to.BlockHash.String())
 					time.Sleep(5 * time.Second)
 				} else {
 					return err
