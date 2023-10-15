@@ -61,7 +61,7 @@ func (d *swap10k) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) e
 }
 
 func (d *swap10k) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
-	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	pl, err := store.GetPoolByAddress(context.Background(), GetAdressFormatFromStr(pool.Address))
 	if err != nil {
 		return err
 	}
@@ -70,8 +70,8 @@ func (d *swap10k) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 		return nil
 	}
 
-	tA, _ := store.GetTokenByAddress(context.Background(), pl.TokenA)
-	tB, _ := store.GetTokenByAddress(context.Background(), pl.TokenB)
+	tA, _ := store.GetTokenByAddress(context.Background(), GetAdressFormatFromStr(pl.TokenA))
+	tB, _ := store.GetTokenByAddress(context.Background(), GetAdressFormatFromStr(pl.TokenB))
 
 	rsA := utils.GetDecimal(pool.Event.Data[0], int(tA.Decimals))
 	rsB := utils.GetDecimal(pool.Event.Data[1], int(tB.Decimals))
@@ -91,7 +91,7 @@ func (d *swap10k) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 }
 
 func (d *swap10k) SyncFee(pool PoolInfo, store db.Store, client Client) error {
-	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	pl, err := store.GetPoolByAddress(context.Background(), GetAdressFormatFromStr(pool.Address))
 	if err != nil {
 		return err
 	}
