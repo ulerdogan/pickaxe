@@ -127,23 +127,23 @@ func (ix *Indexer) ProcessEvents() {
 		}
 
 		// FIXME: pool processing may not be compatible with each type of the pools in future
-		pool, err := ix.Store.GetPoolByAddress(context.Background(), event.Event.FromAddress.String())
+		pool, err := ix.Store.GetPoolByAddress(context.Background(), starknet.GetAdressFormatFromFelt(event.Event.FromAddress))
 		if err != nil {
 			if err == sql.ErrNoRows {
 				continue
 			}
-			logger.Error(err, "cannot get the pool by address: "+event.Event.FromAddress.String())
+			logger.Error(err, "cannot get the pool by address: "+starknet.GetAdressFormatFromFelt(event.Event.FromAddress))
 			continue
 		}
 
 		dex, _ := ix.Client.NewDex(int(pool.AmmID))
 		err = dex.SyncPoolFromEvent(starknet.PoolInfo{
-			Address: event.Event.FromAddress.String(),
+			Address: starknet.GetAdressFormatFromFelt(event.Event.FromAddress),
 			Event:   event.Event,
 			Block:   big.NewInt(int64(event.BlockNumber)),
 		}, ix.Store)
 		if err != nil {
-			logger.Error(err, "cannot sync pool from event: "+event.Event.FromAddress.String())
+			logger.Error(err, "cannot sync pool from event: "+starknet.GetAdressFormatFromFelt(event.Event.FromAddress))
 			continue
 		}
 	}
