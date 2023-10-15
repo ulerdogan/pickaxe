@@ -130,7 +130,7 @@
       "amm_id": 2
     },
     {
-      "address": "0x7f409bd2e266e00486566dd3cb72bacc6996f49c0b19f04c0a8b5bd7bf991d1",
+      "address": "0x07f409bd2e266e00486566dd3cb72bacc6996f49c0b19f04c0a8b5bd7bf991d1",
       "token_a": "lords",
       "token_b": "usdc",
       "amm_id": 2

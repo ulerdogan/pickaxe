@@ -31,8 +31,8 @@
     {
       "id": 5,
       "name": "ekubo",
-      "router_address": "",
-      "key": "",
+      "router_address": "0x00000005dd3D2F4429AF886cD1a3b08289DBcEa99A294197E9eB43b0e0325b4b",
+      "key": "0x157717768aca88da4ac4279765f09f4d0151823d573537fbbeb950cdbd9a870",
       "algorithm_type": "v3_ekubo"
     }
   ]
