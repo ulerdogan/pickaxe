@@ -27,6 +27,7 @@ ORDER BY dex_name;
 
 -- name: GetAmmKeys :many
 SELECT DISTINCT key FROM amms
+WHERE key IS NOT NULL AND key != ''
 ORDER BY KEY;
 
 -- name: DeleteAmm :exec

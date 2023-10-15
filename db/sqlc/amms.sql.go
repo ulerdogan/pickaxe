@@ -148,6 +148,7 @@ func (q *Queries) GetAmmById(ctx context.Context, ammID int64) (Amm, error) {
 
 const getAmmKeys = `-- name: GetAmmKeys :many
 SELECT DISTINCT key FROM amms
+WHERE key IS NOT NULL AND key != ''
 ORDER BY KEY
 `
 
