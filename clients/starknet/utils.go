@@ -6,6 +6,7 @@ import (
 
 	"github.com/NethermindEth/juno/core/felt"
 	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/types"
 	"github.com/NethermindEth/starknet.go/utils"
 )
 
@@ -43,4 +44,14 @@ func GetUniqueEkuboHash(i, j, k, q string) string {
 	combined := i + j + k + q
 	hash := sha256.Sum256([]byte(combined))
 	return hex.EncodeToString(hash[:])
+}
+
+func GetAdressFormatFromFelt(fl *felt.Felt) string {
+	b, _ := types.HexToBytes(fl.String())
+	return "0x" + hex.EncodeToString(b)
+}
+
+func GetAdressFormatFromStr(s string) string {
+	hx, _ := hex.DecodeString(s[2:])
+	return "0x" + hex.EncodeToString(hx)
 }
