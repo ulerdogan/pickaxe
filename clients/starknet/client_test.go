@@ -52,15 +52,15 @@ func TestGetEventsWithID(t *testing.T) {
 	cnfg, _ := config.LoadConfig("app", "../..")
 	c := NewStarknetClient(cnfg)
 
-	from := uint64(29588)
-	to := GetAddressFelt("0x0072b6284d5003086dc23a568949f6e72129c3f594dbbee194ed150862e91dae")
+	from := uint64(325998)
+	to := GetAddressFelt("0x038e1a8e97ca5729650d44858e2c8597b4f1ad5d046f73cc3d2b394b2e3fc2a2")
 
 	events, _, err := c.GetEventsWithID(
 		rpc.BlockID{Number: &from},
 		rpc.BlockID{Hash: to},
-		"0x04d0390b777b424e43839cd1e744799f3de6c176c7e32c1812a41dbd9c19db6a",
 		"",
-		[]string{"0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232"},
+		"",
+		[]string{"0xe14a408baf7f453312eec68e9b7d728ec5337fbdf671f917ee8c80f3255232", "0x157717768aca88da4ac4279765f09f4d0151823d573537fbbeb950cdbd9a870"},
 	)
 
 	assert.Nil(t, err)

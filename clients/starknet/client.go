@@ -28,10 +28,12 @@ func (c *starknetClient) Call(fc rpc.FunctionCall) ([]*felt.Felt, error) {
 }
 
 func (c *starknetClient) GetEvents(from, to uint64, address string, c_token string, keys []string) ([]rpc.EmittedEvent, string, error) {
-	felt_keys := make([][]*felt.Felt, len(keys))
+	var felt_keys [][]*felt.Felt
+	felt_keys = append(felt_keys, []*felt.Felt{})
+
 	for i := range keys {
 		feltKey, _ := utils.HexToFelt(keys[i])
-		felt_keys[i] = append(felt_keys[i][:], feltKey)
+		felt_keys[0] = append(felt_keys[0], feltKey)
 	}
 
 	output, err := c.Rpc.Events(context.Background(), rpc.EventsInput{
@@ -54,10 +56,12 @@ func (c *starknetClient) GetEvents(from, to uint64, address string, c_token stri
 }
 
 func (c *starknetClient) GetEventsWithID(from, to rpc.BlockID, address string, c_token string, keys []string) ([]rpc.EmittedEvent, string, error) {
-	felt_keys := make([][]*felt.Felt, len(keys))
+	var felt_keys [][]*felt.Felt
+	felt_keys = append(felt_keys, []*felt.Felt{})
+
 	for i := range keys {
 		feltKey, _ := utils.HexToFelt(keys[i])
-		felt_keys[i] = append(felt_keys[i][:], feltKey)
+		felt_keys[0] = append(felt_keys[0], feltKey)
 	}
 
 	output, err := c.Rpc.Events(context.Background(), rpc.EventsInput{
