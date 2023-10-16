@@ -67,7 +67,7 @@ func (d *jediswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 		return err
 	}
 
-	if pl.LastBlock >= pool.Block.Int64() {
+	if pl.LastBlock > pool.Block.Int64() {
 		return nil
 	}
 
