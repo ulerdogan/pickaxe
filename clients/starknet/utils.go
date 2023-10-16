@@ -41,6 +41,8 @@ func getStrBigIntFelt(number string) *felt.Felt {
 	return f
 }
 
+// Get a unique pool identifier for the Ekubo pools with given data:
+// TokenA, TokenB, Fee, TickSpacing
 func GetUniqueEkuboHash(i, j, k, q string) string {
 	combined := i + j + k + q
 	hash := sha256.Sum256([]byte(combined))
