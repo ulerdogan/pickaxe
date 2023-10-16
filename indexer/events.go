@@ -126,7 +126,6 @@ func (ix *Indexer) ProcessEvents() {
 			continue
 		}
 
-		// FIXME: pool processing may not be compatible with each type of the pools in future
 		pool, err := ix.Store.GetPoolByAddress(context.Background(), starknet.GetAdressFormatFromFelt(event.Event.FromAddress))
 		if err != nil {
 			if err == sql.ErrNoRows {
