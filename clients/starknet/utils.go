@@ -3,6 +3,7 @@ package starknet_client
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"strings"
 
 	"github.com/NethermindEth/juno/core/felt"
 	"github.com/NethermindEth/starknet.go/rpc"
@@ -48,10 +49,10 @@ func GetUniqueEkuboHash(i, j, k, q string) string {
 
 func GetAdressFormatFromFelt(fl *felt.Felt) string {
 	b, _ := types.HexToBytes(fl.String())
-	return "0x" + hex.EncodeToString(b)
+	return "0x" + strings.Repeat("0", 64-len(hex.EncodeToString(b))) + hex.EncodeToString(b)
 }
 
 func GetAdressFormatFromStr(s string) string {
 	hx, _ := hex.DecodeString(s[2:])
-	return "0x" + hex.EncodeToString(hx)
+	return "0x" + strings.Repeat("0", 64-len(hex.EncodeToString(hx))) + hex.EncodeToString(hx)
 }
