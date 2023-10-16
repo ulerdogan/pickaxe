@@ -81,6 +81,43 @@ func (d *ekubo) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) err
 }
 
 func (d *ekubo) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
+	tokenA := GetAdressFormatFromFelt(pool.Event.Data[1])
+	tokenB := GetAdressFormatFromFelt(pool.Event.Data[2])
+	fee := pool.Event.Data[3].String()
+	tickSpacing := pool.Event.Data[4].String()
+
+	ekuboHash := GetUniqueEkuboHash(tokenA, tokenB, fee, tickSpacing)
+
+	pl, err := store.GetPoolByAddressExtra(context.Background(), db.GetPoolByAddressExtraParams{
+		Address:   pool.Address,
+		ExtraData: sql.NullString{String: ekuboHash, Valid: true},
+	})
+	if err != nil {
+		return err
+	}
+
+	if pl.LastBlock > pool.Block.Int64() {
+		return nil
+	}
+
+	var data EkuboData
+	json.Unmarshal([]byte(pl.GeneralExtraData.String), &data)
+
+	data.SqrtPriceLow, data.SqrtPriceHigh = pool.Event.Data[16].String(), pool.Event.Data[17].String()
+	data.CurrentTick, data.TickSign = pool.Event.Data[18].String(), pool.Event.Data[19].String()
+	data.Liqudity = pool.Event.Data[20].String()
+
+	jsonBytes, _ := json.Marshal(data)
+
+	_, err = store.UpdatePoolGeneralExtraData(context.Background(), db.UpdatePoolGeneralExtraDataParams{
+		PoolID:           pl.PoolID,
+		GeneralExtraData: sql.NullString{String: string(jsonBytes), Valid: true},
+		LastBlock:        pool.Block.Int64(),
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
