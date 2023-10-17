@@ -196,7 +196,7 @@ func initPoolsToDB(store db.Store) {
 				continue
 			}
 
-			ekuboExtraData := starknet.GetUniqueEkuboHash(p.TokenA, p.TokenB, p.Fee, p.TickSpacing)
+			ekuboExtraData := starknet.GetUniqueEkuboHash(ta.Address, tb.Address, p.Fee, p.TickSpacing)
 			pool, err = store.UpdatePoolExtraData(context.Background(), db.UpdatePoolExtraDataParams{
 				PoolID:    pool.PoolID,
 				ExtraData: sql.NullString{String: ekuboExtraData, Valid: true},
