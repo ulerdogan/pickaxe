@@ -93,6 +93,10 @@ func (d *ekubo) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 		ExtraData: sql.NullString{String: ekuboHash, Valid: true},
 	})
 	if err != nil {
+		if err == sql.ErrNoRows {
+
+			return nil
+		}
 		return err
 	}
 
