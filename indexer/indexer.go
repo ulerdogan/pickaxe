@@ -57,13 +57,13 @@ func (ix *Indexer) syncBlockFromDB() {
 			return
 		}
 
-		ix.LastQueried.BlockHash, ix.LastQueried.BlockNumber = lb.BlockHash, lb.BlockNumber
+		ix.LastQueried.BlockHash, ix.LastQueried.BlockNumber = lb.BlockHash.String(), lb.BlockNumber
 		ix.LastQueried.Timestamp = ixStatus.LastUpdated.Time
 
 		ix.Store.InitIndexer(context.Background(), db.InitIndexerParams{
 			HashedPassword:   hasher.HashPassword(ix.Config.AuthPassword),
 			LastQueriedBlock: sql.NullInt64{Int64: int64(lb.BlockNumber), Valid: true},
-			LastQueriedHash:  sql.NullString{String: lb.BlockHash, Valid: true},
+			LastQueriedHash:  sql.NullString{String: lb.BlockHash.String(), Valid: true},
 		})
 		logger.Info("indexer initialized with the last block: " + fmt.Sprint(lb.BlockNumber))
 		if err != nil {

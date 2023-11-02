@@ -33,13 +33,13 @@ ORDER BY address;
 
 -- name: GetAllPools :many
 SELECT * FROM pools
-ORDER BY address;
+ORDER BY pool_id;
 
 -- name: GetAllPoolsWithoutKeys :many
 SELECT * FROM pools
 WHERE amm_id IN 
 (SELECT amm_id FROM amms WHERE key = '')
-ORDER BY address;
+ORDER BY pool_id;
 
 
 -- name: UpdatePoolReserves :one

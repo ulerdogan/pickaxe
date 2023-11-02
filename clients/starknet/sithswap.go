@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/dontpanicdao/caigo/types"
+	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/types"
 	"github.com/shopspring/decimal"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
@@ -29,11 +30,11 @@ func (d *sithswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) 
 		return err
 	}
 
-	paHash := types.HexToHash(pool.Address)
+	paHash := GetAddressFelt(pool.Address)
 
-	call, err := client.Call(types.FunctionCall{
+	call, err := client.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "getReserves",
+		EntryPointSelector: types.GetSelectorFromNameFelt("getReserves"),
 	})
 	if err != nil {
 		return errors.New("starknet query error")
@@ -68,20 +69,20 @@ func (d *sithswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) 
 }
 
 func (d *sithswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
-	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	pl, err := store.GetPoolByAddress(context.Background(), GetAdressFormatFromStr(pool.Address))
 	if err != nil {
 		return err
 	}
 
-	if pl.LastBlock >= pool.Block.Int64() {
+	if pl.LastBlock > pool.Block.Int64() {
 		return nil
 	}
 
-	tA, _ := store.GetTokenByAddress(context.Background(), pl.TokenA)
-	tB, _ := store.GetTokenByAddress(context.Background(), pl.TokenB)
+	tA, _ := store.GetTokenByAddress(context.Background(), GetAdressFormatFromStr(pl.TokenA))
+	tB, _ := store.GetTokenByAddress(context.Background(), GetAdressFormatFromStr(pl.TokenB))
 
-	rsA := utils.GetDecimal(types.HexToBN(pool.Event.Data[0]).String(), int(tA.Decimals))
-	rsB := utils.GetDecimal(types.HexToBN(pool.Event.Data[2]).String(), int(tB.Decimals))
+	rsA := utils.GetDecimal(pool.Event.Data[0], int(tA.Decimals))
+	rsB := utils.GetDecimal(pool.Event.Data[2], int(tB.Decimals))
 
 	_, err = store.UpdatePoolReserves(context.Background(), db.UpdatePoolReservesParams{
 		PoolID:    pl.PoolID,
@@ -98,31 +99,31 @@ func (d *sithswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 }
 
 func (d *sithswap) SyncFee(pool PoolInfo, store db.Store, client Client) error {
-	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	pl, err := store.GetPoolByAddress(context.Background(), GetAdressFormatFromStr(pool.Address))
 	if err != nil {
 		return err
 	}
 
-	paHash := types.HexToHash(pool.Address)
+	paHash := GetAddressFelt(pool.Address)
 
-	call0, err := client.Call(types.FunctionCall{
+	call0, err := client.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "getFee0",
+		EntryPointSelector: types.GetSelectorFromNameFelt("getFee0"),
 	})
 	if err != nil {
 		return errors.New("starknet query error")
 	}
-	call1, err := client.Call(types.FunctionCall{
+	call1, err := client.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "getFee1",
+		EntryPointSelector: types.GetSelectorFromNameFelt("getFee1"),
 	})
 	if err != nil {
 		return errors.New("starknet query error")
 	}
 
 	fees := sithFees{
-		Fee0: decimal.NewFromInt(types.HexToBN(call0[0]).Int64()).Div(decimal.NewFromInt(10000)).String(),
-		Fee1: decimal.NewFromInt(types.HexToBN(call1[0]).Int64()).Div(decimal.NewFromInt(10000)).String(),
+		Fee0: decimal.NewFromInt(types.HexToBN(call0[0].String()).Int64()).Div(decimal.NewFromInt(10000)).String(),
+		Fee1: decimal.NewFromInt(types.HexToBN(call1[0].String()).Int64()).Div(decimal.NewFromInt(10000)).String(),
 	}
 	jsonBytes, _ := json.Marshal(fees)
 

@@ -3,10 +3,14 @@ package api
 import (
 	"context"
 	"database/sql"
+	"math/big"
 	"net/http"
 
-	"github.com/dontpanicdao/caigo/types"
+	"github.com/NethermindEth/juno/core/felt"
+	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/types"
 	"github.com/gin-gonic/gin"
+
 	//auth "github.com/ulerdogan/pickaxe/auth"
 	starknet "github.com/ulerdogan/pickaxe/clients/starknet"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
@@ -73,17 +77,17 @@ func (r *ginServer) AddToken(ctx *gin.Context) {
 }
 
 func getTokenDecimal(c starknet.Client, address string) (*int, error) {
-	paHash := types.HexToHash(address)
-	r, err := c.Call(types.FunctionCall{
+	paHash := starknet.GetAddressFelt(address)
+	r, err := c.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "decimals",
-		Calldata:           []string{},
+		EntryPointSelector: types.GetSelectorFromNameFelt("decimals"),
+		Calldata:           []*felt.Felt{},
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	decimal := int(types.HexToBN(r[0]).Int64())
+	decimal := int((r[0].BigInt(new(big.Int)).Int64()))
 	return &decimal, nil
 }

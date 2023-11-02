@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/dontpanicdao/caigo/types"
+	"github.com/NethermindEth/starknet.go/rpc"
+	"github.com/NethermindEth/starknet.go/types"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 	utils "github.com/ulerdogan/pickaxe/utils/starknet"
@@ -22,11 +23,11 @@ func (d *jediswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) 
 		return err
 	}
 
-	paHash := types.HexToHash(pool.Address)
+	paHash := GetAddressFelt(pool.Address)
 
-	call, err := client.Call(types.FunctionCall{
+	call, err := client.Call(rpc.FunctionCall{
 		ContractAddress:    paHash,
-		EntryPointSelector: "get_reserves",
+		EntryPointSelector: types.GetSelectorFromNameFelt("get_reserves"),
 	})
 	if err != nil {
 		return errors.New("starknet query error")
@@ -61,20 +62,20 @@ func (d *jediswap) SyncPoolFromFn(pool PoolInfo, store db.Store, client Client) 
 }
 
 func (d *jediswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
-	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	pl, err := store.GetPoolByAddress(context.Background(), GetAdressFormatFromStr(pool.Address))
 	if err != nil {
 		return err
 	}
 
-	if pl.LastBlock >= pool.Block.Int64() {
+	if pl.LastBlock > pool.Block.Int64() {
 		return nil
 	}
 
-	tA, _ := store.GetTokenByAddress(context.Background(), pl.TokenA)
-	tB, _ := store.GetTokenByAddress(context.Background(), pl.TokenB)
+	tA, _ := store.GetTokenByAddress(context.Background(), GetAdressFormatFromStr(pl.TokenA))
+	tB, _ := store.GetTokenByAddress(context.Background(), GetAdressFormatFromStr(pl.TokenB))
 
-	rsA := utils.GetDecimal(types.HexToBN(pool.Event.Data[0]).String(), int(tA.Decimals))
-	rsB := utils.GetDecimal(types.HexToBN(pool.Event.Data[2]).String(), int(tB.Decimals))
+	rsA := utils.GetDecimal(pool.Event.Data[0], int(tA.Decimals))
+	rsB := utils.GetDecimal(pool.Event.Data[2], int(tB.Decimals))
 
 	_, err = store.UpdatePoolReserves(context.Background(), db.UpdatePoolReservesParams{
 		PoolID:    pl.PoolID,
@@ -91,7 +92,7 @@ func (d *jediswap) SyncPoolFromEvent(pool PoolInfo, store db.Store) error {
 }
 
 func (d *jediswap) SyncFee(pool PoolInfo, store db.Store, client Client) error {
-	pl, err := store.GetPoolByAddress(context.Background(), pool.Address)
+	pl, err := store.GetPoolByAddress(context.Background(), GetAdressFormatFromStr(pool.Address))
 	if err != nil {
 		return err
 	}

@@ -3,8 +3,8 @@ package starknet_client
 import (
 	"math/big"
 
+	"github.com/NethermindEth/starknet.go/rpc"
 	"github.com/shopspring/decimal"
-	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 )
 

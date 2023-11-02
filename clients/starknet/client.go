@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/dontpanicdao/caigo/types"
+	"github.com/NethermindEth/juno/core/felt"
+	"github.com/NethermindEth/starknet.go/rpc"
+	utils "github.com/NethermindEth/starknet.go/utils"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
-	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
 	config "github.com/ulerdogan/pickaxe/utils/config"
 )
 
@@ -22,37 +23,61 @@ func NewStarknetClient(cnfg config.Config) Client {
 	}
 }
 
-func (c *starknetClient) Call(fc types.FunctionCall) ([]string, error) {
+func (c *starknetClient) Call(fc rpc.FunctionCall) ([]*felt.Felt, error) {
 	return c.Rpc.Call(context.Background(), fc, rpc.WithBlockTag("pending"))
 }
 
-func (c *starknetClient) GetEvents(from, to uint64, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error) {
+func (c *starknetClient) GetEvents(from, to uint64, address string, c_token string, keys []string) ([]rpc.EmittedEvent, string, error) {
+	var felt_keys [][]*felt.Felt
+	felt_keys = append(felt_keys, []*felt.Felt{})
+
+	for i := range keys {
+		feltKey, _ := utils.HexToFelt(keys[i])
+		felt_keys[0] = append(felt_keys[0], feltKey)
+	}
+
 	output, err := c.Rpc.Events(context.Background(), rpc.EventsInput{
-		FromBlock:         getBlockId(from),
-		ToBlock:           getBlockId(to),
-		Address:           getAddressHash(address),
-		Keys:              keys,
-		ContinuationToken: c_token,
-		ChunkSize:         1024,
+		EventFilter: rpc.EventFilter{
+			FromBlock: getBlockId(from),
+			ToBlock:   getBlockId(to),
+			Address:   GetAddressFelt(address),
+			Keys:      felt_keys,
+		},
+		ResultPageRequest: rpc.ResultPageRequest{
+			ContinuationToken: "",
+			ChunkSize:         1024,
+		},
 	})
 	if err != nil {
-		return nil, nil, err
+		return nil, "", err
 	}
 
 	return output.Events, output.ContinuationToken, nil
 }
 
-func (c *starknetClient) GetEventsWithID(from, to rpc.BlockID, address string, c_token *string, keys []string) ([]rpc.EmittedEvent, *string, error) {
+func (c *starknetClient) GetEventsWithID(from, to rpc.BlockID, address string, c_token string, keys []string) ([]rpc.EmittedEvent, string, error) {
+	var felt_keys [][]*felt.Felt
+	felt_keys = append(felt_keys, []*felt.Felt{})
+
+	for i := range keys {
+		feltKey, _ := utils.HexToFelt(keys[i])
+		felt_keys[0] = append(felt_keys[0], feltKey)
+	}
+
 	output, err := c.Rpc.Events(context.Background(), rpc.EventsInput{
-		FromBlock:         from,
-		ToBlock:           to,
-		Address:           getAddressHash(address),
-		Keys:              keys,
-		ContinuationToken: c_token,
-		ChunkSize:         1024,
+		EventFilter: rpc.EventFilter{
+			FromBlock: from,
+			ToBlock:   to,
+			Address:   GetAddressFelt(address),
+			Keys:      felt_keys,
+		},
+		ResultPageRequest: rpc.ResultPageRequest{
+			ContinuationToken: c_token,
+			ChunkSize:         1024,
+		},
 	})
 	if err != nil {
-		return nil, nil, err
+		return nil, "", err
 	}
 
 	return output.Events, output.ContinuationToken, nil

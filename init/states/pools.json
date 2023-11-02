@@ -130,7 +130,7 @@
       "amm_id": 2
     },
     {
-      "address": "0x7f409bd2e266e00486566dd3cb72bacc6996f49c0b19f04c0a8b5bd7bf991d1",
+      "address": "0x07f409bd2e266e00486566dd3cb72bacc6996f49c0b19f04c0a8b5bd7bf991d1",
       "token_a": "lords",
       "token_b": "usdc",
       "amm_id": 2
@@ -325,269 +325,775 @@
     },
 
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
-      "tick_spacing": "0x4d5a",
-      "amm_id": 5
+      "tick_spacing": "0x4d5a"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x68db8bac710cb4000000000000000",
-      "tick_spacing": "0xc8",
-      "amm_id": 5
+      "tick_spacing": "0xc8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "amm_id": 5,
       "token_a": "usdc",
       "token_b": "usdt",
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x68db8bac710cb4000000000000000",
-      "tick_spacing": "0xc8",
-      "amm_id": 5
+      "tick_spacing": "0xc8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "amm_id": 5,
       "token_a": "eth",
       "token_b": "usdc",
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "usdc",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "usdc",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x68db8bac710cb4000000000000000",
-      "tick_spacing": "0xc8",
-      "amm_id": 5
+      "tick_spacing": "0xc8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x68db8bac710cb4000000000000000",
-      "tick_spacing": "0xc8",
-      "amm_id": 5
+      "tick_spacing": "0xc8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "wbtc",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "wbtc",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "dai",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
-      "tick_spacing": "0x4d5a",
-      "amm_id": 5
+      "tick_spacing": "0x4d5a"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
-      "token_a": "eth",
-      "token_b": "usdt",
-      "fee": "0xccccccccccccccccccccccccccccccc",
-      "tick_spacing": "0x1744e",
-      "amm_id": 5
-    },
-    {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "wsteth",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x68db8bac710cb4000000000000000",
-      "tick_spacing": "0xc8",
-      "amm_id": 5
+      "tick_spacing": "0xc8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "wsteth",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "lords",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
-      "tick_spacing": "0x4d5a",
-      "amm_id": 5
+      "tick_spacing": "0x4d5a"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xccccccccccccccccccccccccccccccc",
-      "tick_spacing": "0x1744e",
-      "amm_id": 5
+      "tick_spacing": "0x1744e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "wbtc",
       "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x68db8bac710cb4000000000000000",
-      "tick_spacing": "0xc8",
-      "amm_id": 5
+      "tick_spacing": "0xc8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "wsteth",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
-      "tick_spacing": "0x4d5a",
-      "amm_id": 5
+      "tick_spacing": "0x4d5a"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "eth",
       "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "lords",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "lords",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "wsteth",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
     },
 
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "lords",
-      "token_b": "usdc",
-      "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
-    },
-    {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
-      "token_a": "dai",
       "token_b": "usdt",
-      "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
-    },
-    {
+      "amm_id": 5,
       "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
-      "token_a": "lords",
-      "token_b": "usdc",
-      "fee": "0xccccccccccccccccccccccccccccccc",
-      "tick_spacing": "0x1744e",
-      "amm_id": 5
-    },
-    {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
-      "token_a": "lords",
-      "token_b": "eth",
       "fee": "0xc49ba5e353f7d00000000000000000",
-      "tick_spacing": "0x175e",
-      "amm_id": 5
+      "tick_spacing": "0x175e"
     },
     {
-      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "token_a": "reth",
       "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wbtc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "reth",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
       "fee": "0x20c49ba5e353f80000000000000000",
-      "tick_spacing": "0x3e8",
-      "amm_id": 5
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "lords",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+
+    {
+      "token_a": "dai",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "wsteth",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
+    },
+    {
+      "token_a": "lords",
+      "token_b": "wbtc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wbtc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wbtc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wbtc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "lords",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "lords",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "wsteth",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xc49ba5e353f7d00000000000000000",
+      "tick_spacing": "0x175e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "lords",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "wsteth",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x28f5c28f5c28f5c28f5c28f5c28f5c2",
+      "tick_spacing": "0x4d5a"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "wsteth",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+
+    {
+      "token_a": "wsteth",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346dc5d638865a000000000000000",
+      "tick_spacing": "0x64"
+    },
+    {
+      "token_a": "wsteth",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "wsteth",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "eth",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346dc5d638865a000000000000000",
+      "tick_spacing": "0x64"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "eth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0xccccccccccccccccccccccccccccccc",
+      "tick_spacing": "0x1744e"
+    },
+    {
+      "token_a": "wbtc",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "reth",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x20c49ba5e353f80000000000000000",
+      "tick_spacing": "0x3e8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346dc5d638865a000000000000000",
+      "tick_spacing": "0x64"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346c6e3d4a63513c5d63886594af5",
+      "tick_spacing": "0x32"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346c29851ac2b74eb73d7ad600000",
+      "tick_spacing": "0x32"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346be4cceb222e1daa4b36f100000",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "eth",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346c6e3d4a63513c5d63886594af5",
+      "tick_spacing": "0x32"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x66c2acb85a4f00000000000000000",
+      "tick_spacing": "0xc4"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346bc270d351be26e8e0a9e600000",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x5e5f30e7ff583c000000000000000",
+      "tick_spacing": "0xb4"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x29f16b11c6d1e199999999999999a",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "reth",
+      "token_b": "wsteth",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x68db8bac710cb4000000000000000",
+      "tick_spacing": "0xc8"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x5e5f30e7ff583c000000000000000",
+      "tick_spacing": "0xb4"
+    },
+    {
+      "token_a": "eth",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x346bc270d351be26e8e0a9e600000",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x5e5c81b62312522601522d8900000",
+      "tick_spacing": "0x32"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x5e5c81b62312522601522d8900000",
+      "tick_spacing": "0xa"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x1eabbcb1cc964691eb851eb851eb8",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x1e68a0d349be905c28234f68d45b5",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x5e5c81b62312522601522d8900000",
+      "tick_spacing": "0xa"
+    },
+    {
+      "token_a": "usdc",
+      "token_b": "usdt",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x1a36f7200f9480334c761cb851eb8",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "eth",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x1eabbcb1cc964691eb851eb851eb8",
+      "tick_spacing": "0x19"
+    },
+    {
+      "token_a": "dai",
+      "token_b": "usdc",
+      "amm_id": 5,
+      "address": "0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b",
+      "fee": "0x53e2d6238da3c4000000000000000",
+      "tick_spacing": "0xa"
     }
   ]
 }

@@ -8,7 +8,7 @@ import (
 	"net"
 	"time"
 
-	rpc "github.com/ulerdogan/caigo-rpcv02/rpcv02"
+	"github.com/NethermindEth/starknet.go/rpc"
 	db "github.com/ulerdogan/pickaxe/db/sqlc"
 	logger "github.com/ulerdogan/pickaxe/utils/logger"
 )
@@ -73,7 +73,7 @@ func (ix *Indexer) ListenBlocks() {
 }
 
 func updateIxStatusDB(lqs *status, bi rpc.BlockHashAndNumberOutput, store db.Store) error {
-	lqs.BlockHash, lqs.BlockNumber = bi.BlockHash, bi.BlockNumber
+	lqs.BlockHash, lqs.BlockNumber = bi.BlockHash.String(), bi.BlockNumber
 	lqs.Timestamp = time.Now().UTC()
 
 	_, err := store.UpdateIndexerStatus(
